@@ -30,6 +30,7 @@ export interface SchemaField {
   allowed_values?: unknown[]
   items?: SchemaField | SchemaGroup
   fields?: SchemaField[]
+  rules?: string[]
 }
 
 export interface SchemaGroup {
