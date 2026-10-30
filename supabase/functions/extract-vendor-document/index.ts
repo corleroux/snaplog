@@ -6,7 +6,7 @@
  * CANONICAL ARCHITECTURE RULES:
  * - MAY read scan_sessions
  * - MAY read source images from storage
- * - MAY call the extraction provider via _shared/providers (default: Gemini)
+ * - MAY call the extraction provider via _shared/providers (default: muse-spark)
  * - MAY update scan_sessions.raw_payload
  * - MAY update scan_sessions.normalized_payload
  * - MAY update extraction_status and error fields
@@ -110,7 +110,7 @@ function validateVendorScanType(value: string): void {
 // ============================================================================
 // The catalogue schema comes from the registry (migration 083); the provider
 // builds the prompt from it, calls the model and normalises the output.
-// All Gemini specifics live in _shared/providers/geminiProvider.ts.
+// Provider selection and all provider-specific logic live in _shared/providers/.
 
 const EXTRACTOR_VERSION = '1.0.0'
 const CATALOGUE_SLUG = 'vendor'
@@ -276,8 +276,11 @@ serve(async (req) => {
       supabase,
       scanSessionId,
       {
-        // Key kept byte-compatible with the pre-registry extractor.
-        raw_payload: { gemini_raw: extraction.raw },
+        // Keep the legacy `gemini_raw` key for Gemini to stay byte-compatible
+        // with pre-registry rows; other providers get their own key.
+        raw_payload: {
+          [extraction.provider === 'gemini' ? 'gemini_raw' : `${extraction.provider}_raw`]: extraction.raw,
+        },
         normalized_payload: extractionResult,
         metadata: extractionResult.metadata,
         run: buildExtractionRunInfo(extraction, schema),

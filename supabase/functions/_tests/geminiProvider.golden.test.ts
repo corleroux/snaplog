@@ -22,12 +22,12 @@
 import { assertEquals, assertRejects } from 'https://deno.land/std@0.208.0/assert/mod.ts'
 import type { CatalogueSchema, SchemaField } from '../_shared/catalogueSchemaRegistry.ts'
 import {
-  buildPrompt,
   buildRequestBody,
   geminiProvider,
-  normaliseModelOutput,
   parseGeminiResponse,
 } from '../_shared/providers/geminiProvider.ts'
+import { buildPrompt } from '../_shared/providers/extractionPrompt.ts'
+import { normaliseModelOutput } from '../_shared/providers/extractionNormaliser.ts'
 import fabricProductTagFixture from './fixtures/gemini/fabric-product-tag.json' with { type: 'json' }
 import vendorCardFixture from './fixtures/gemini/vendor-card.json' with { type: 'json' }
 

@@ -1,0 +1,22 @@
+{
+  "id": "chatcmpl-muse-fabric-001",
+  "object": "chat.completion",
+  "created": 1761849600,
+  "model": "muse-spark-1.3",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "{\"style\":{\"item_code\":\" TF-2401 \",\"name\":\"Cotton Twill 2401\",\"composition\":\"98% Cotton 2% Elastane\",\"category\":\"Denim\",\"construction\":\"Twill Weave 3/1\",\"finish\":\" Enzyme Washed \",\"pattern\":\"Solid\",\"width_cm\":150,\"width_in\":null,\"weight_gsm\":245.5,\"weight_ozsy\":null,\"season\":\"SS26\",\"metadata\":{\"mill\":\"Ningbo Textile Mill\",\"lot\":\"A-12\"},\"variants\":[{\"color_code\":\"IND-42\",\"color_name\":\"Indigo 42\",\"variant_name\":null,\"wash_code\":\"STF\",\"finish_override\":\"\",\"quantity\":3000,\"unit\":\"meters\",\"batch_no\":\" B-2026-04 \",\"metadata\":null,\"price\":{\"currency\":\"USD\",\"price\":4.85,\"price_unit\":\"meter\",\"minimum_order_quantity\":1000,\"minimum_order_unit\":\"meters\",\"lead_time_value\":21,\"lead_time_unit\":\"days\",\"notes\":\" FOB Ningbo \"}},{\"color_code\":null,\"color_name\":\"Raw\",\"variant_name\":null,\"wash_code\":null,\"finish_override\":null,\"quantity\":1500,\"unit\":null,\"batch_no\":null,\"metadata\":null,\"price\":null}]}}"
+      },
+      "logprobs": null,
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 1512,
+    "completion_tokens": 284,
+    "total_tokens": 1796
+  }
+}
