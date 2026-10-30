@@ -295,3 +295,95 @@ describe.skipIf(!rlsEnabled)('catalogue_types RLS policies', () => {
     expect(error).not.toBeNull()
   })
 })
+
+describe.skipIf(!rlsEnabled)('catalogue_items RLS policies', () => {
+  let eventId: string
+  let vendorId: string
+  let ownerClient: SupabaseClient
+  let editorClient: SupabaseClient
+
+  beforeAll(async () => {
+    const owner = await createUserWithProfile(
+      `catalogue-items-owner-${Date.now()}@example.com`,
+      'password123'
+    )
+    ownerClient = owner.client
+
+    const editor = await createUserWithProfile(
+      `catalogue-items-editor-${Date.now()}@example.com`,
+      'password123'
+    )
+    editorClient = editor.client
+
+    const { data: event } = await service
+      .from('events')
+      .insert({ name: 'Garment RLS Test Event', created_by: owner.userId })
+      .select('id')
+      .single()
+    eventId = event!.id
+
+    const { data: vendor } = await service
+      .from('vendors')
+      .insert({ event_id: eventId, name: 'Garment RLS Vendor', created_by: owner.userId })
+      .select('id')
+      .single()
+    vendorId = vendor!.id
+
+    await service.from('event_members').insert([
+      { event_id: eventId, user_id: owner.userId, role: 'owner' },
+      { event_id: eventId, user_id: editor.userId, role: 'editor' },
+    ])
+  })
+
+  it('members can SELECT catalogue_items', async () => {
+    const { data, error } = await ownerClient
+      .from('catalogue_items')
+      .select('id')
+      .eq('event_id', eventId)
+
+    expect(error).toBeNull()
+    expect(data).toHaveLength(0)
+  })
+
+  it('members can INSERT catalogue_items', async () => {
+    const { data, error } = await ownerClient
+      .from('catalogue_items')
+      .insert({
+        event_id: eventId,
+        vendor_id: vendorId,
+        schema_type: 'garment',
+        schema_version: 1,
+        item_code: 'GRLS-001',
+        extracted_fields: { garment_type: 'Dress' },
+      })
+      .select('id')
+      .single()
+
+    expect(error).toBeNull()
+    expect(data).not.toBeNull()
+  })
+
+  it('editor cannot DELETE catalogue_items', async () => {
+    const { data: item } = await ownerClient
+      .from('catalogue_items')
+      .insert({
+        event_id: eventId,
+        vendor_id: vendorId,
+        schema_type: 'garment',
+        schema_version: 1,
+        item_code: 'GRLS-002',
+        extracted_fields: {},
+      })
+      .select('id')
+      .single()
+
+    const { data, error } = await editorClient
+      .from('catalogue_items')
+      .delete()
+      .eq('id', item!.id)
+      .select('id')
+
+    expect(error).toBeNull()
+    expect(data).toHaveLength(0)
+  })
+})
