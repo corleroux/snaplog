@@ -6,7 +6,7 @@
  * CANONICAL ARCHITECTURE RULES:
  * - MAY read scan_sessions
  * - MAY read source images from storage
- * - MAY call Gemini
+ * - MAY call the extraction provider via _shared/providers (default: Gemini)
  * - MAY update scan_sessions.raw_payload
  * - MAY update scan_sessions.normalized_payload
  * - MAY update extraction_status and error fields
@@ -29,8 +29,10 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.4'
 import { handleCors, requireMethod, json, internalError } from '../_shared/http.ts'
 import { createLogger } from '../_shared/logger.ts'
 import { createAdminClient, requireUser } from '../_shared/supabase.ts'
-import { markExtractionProcessing, markExtractionSucceeded, markExtractionFailed } from '../_shared/scanSession.ts'
+import { markExtractionProcessing, markExtractionSucceeded, markExtractionFailed, buildExtractionRunInfo } from '../_shared/scanSession.ts'
 import { createExtractAudit } from '../_shared/extractAudit.ts'
+import { loadSchema } from '../_shared/catalogueSchemaRegistry.ts'
+import { getProvider } from '../_shared/providers/getProvider.ts'
 import { validateUUID } from '../_shared/validation.ts'
 import { validateEnv } from '../_shared/envValidation.ts'
 import { classifyError, ErrorType } from '../_shared/errorTypes.ts'
@@ -104,148 +106,14 @@ function validateVendorScanType(value: string): void {
 }
 
 // ============================================================================
-// GEMINI INTEGRATION
+// EXTRACTION PROVIDER (FR-MOD-01)
 // ============================================================================
+// The catalogue schema comes from the registry (migration 083); the provider
+// builds the prompt from it, calls the model and normalises the output.
+// All Gemini specifics live in _shared/providers/geminiProvider.ts.
 
 const EXTRACTOR_VERSION = '1.0.0'
-const EXTRACTOR_NAME = 'gemini-vendor-extractor'
-
-async function callGemini(
-  imageBase64: string,
-  mimeType: string,
-  scanType: string
-): Promise<{ result: VendorExtractionResponse; rawText: string }> {
-  const apiKey = Deno.env.get('GEMINI_API_KEY')
-  if (!apiKey) {
-    throw new Error('GEMINI_API_KEY is not configured')
-  }
-
-  const prompt = buildVendorExtractionPrompt(scanType)
-  const { callGeminiWithRetry, getGeminiUrl } = await import('../_shared/geminiClient.ts')
-
-  const response = await callGeminiWithRetry(
-    getGeminiUrl(apiKey),
-    {
-      contents: [{
-        parts: [
-          { text: prompt },
-          {
-            inline_data: {
-              mime_type: mimeType,
-              data: imageBase64,
-            },
-          },
-        ],
-      }],
-      generationConfig: {
-        temperature: 0.1,
-        maxOutputTokens: 2048,
-        responseMimeType: 'application/json',
-      },
-    }
-  )
-
-  if (!response.ok) {
-    const errorText = await response.text()
-    audit.extractionFailed({ status: response.status, error: errorText })
-    throw new Error(`Gemini API error: ${response.status} ${errorText}`)
-  }
-
-  const data = await response.json()
-  const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text
-
-  if (!rawText) {
-    throw new Error('Empty response from Gemini')
-  }
-
-  // Parse the JSON response
-  let parsed: ExtractedVendorDocument
-  try {
-    parsed = JSON.parse(rawText)
-  } catch (parseError) {
-    throw new Error(`Failed to parse Gemini extraction response as JSON: ${parseError instanceof Error ? parseError.message : String(parseError)}`)
-  }
-
-  return {
-    result: {
-      document: normalizeExtractedVendor(parsed),
-      metadata: {
-        extractor_name: EXTRACTOR_NAME,
-        extractor_model: 'gemini-flash-lite-latest',
-        extractor_version: EXTRACTOR_VERSION,
-        extraction_timestamp: new Date().toISOString(),
-      },
-    },
-    rawText,
-  }
-}
-
-function buildVendorExtractionPrompt(scanType: string): string {
-  const scanTypeGuidance: Record<string, string> = {
-    vendor_card: 'This is a business card. Extract company name, contact details, and any brand information.',
-    vendor_signage: 'This is booth signage. Focus on company name, booth number, and brand names.',
-    vendor_brochure: 'This is a brochure. Extract all company, contact, and product information visible.',
-    vendor_catalog: 'This is a catalog cover. Extract company name, brands, and any contact information.',
-  }
-
-  const guidance = scanTypeGuidance[scanType] || ''
-
-  return `You are a textile trade fair vendor data extraction assistant.
-
-${guidance}
-
-Extract the following information from this image and return ONLY a JSON object with this exact structure:
-
-{
-  "company_name": "string (required - the main company name)",
-  "booth_number": "string or null (booth/stan number if visible)",
-  "contact_person": "string or null (name of contact person)",
-  "email": "string or null (email address)",
-  "phone": "string or null (phone number with country code if available)",
-  "whatsapp": "string or null (WhatsApp number if shown separately)",
-  "website_url": "string or null (website URL)",
-  "address": "string or null (physical address)",
-  "country_of_origin": "string or null (country where the vendor is based)",
-  "brand_names": ["array of brand names shown"] or null,
-  "notes": "string or null (any other relevant information)"
-}
-
-IMPORTANT TRANSLATION REQUIREMENT:
-- If the image contains Chinese text, you MUST translate ALL extracted information to English
-- Return ONLY English translated text in the JSON response
-- Disregard the original Chinese characters - do not include them in your response
-- All field values must be in English, even if the source text is in Chinese
-
-Rules:
-- company_name is REQUIRED and must never be null
-- If information is not visible in the image, use null
-- For brand_names, extract all brand/textile brand logos visible and translate to English
-- Phone numbers should include the country code if visible (e.g., +86 for China)
-- Websites should start with https:// if implied
-- Return ONLY valid JSON, no markdown formatting
-- TRANSLATE ALL CHINESE TEXT TO ENGLISH before including in the JSON response
-}`
-}
-
-function normalizeExtractedVendor(raw: unknown): ExtractedVendorDocument {
-  const data = raw as Record<string, unknown>
-
-  return {
-    company_name: String(data.company_name || '').trim(),
-    booth_number: data.booth_number ? String(data.booth_number).trim() : null,
-    contact_person: data.contact_person ? String(data.contact_person).trim() : null,
-    email: data.email ? String(data.email).trim() : null,
-    phone: data.phone ? String(data.phone).trim() : null,
-    whatsapp: data.whatsapp ? String(data.whatsapp).trim() : null,
-    website_url: data.website_url ? String(data.website_url).trim() : null,
-    address: data.address ? String(data.address).trim() : null,
-    country_of_origin: data.country_of_origin ? String(data.country_of_origin).trim() : null,
-    brand_names: Array.isArray(data.brand_names)
-      ? (data.brand_names as string[]).map(b => String(b).trim()).filter(Boolean)
-      : null,
-    notes: data.notes ? String(data.notes).trim() : null,
-  }
-}
+const CATALOGUE_SLUG = 'vendor'
 
 // ============================================================================
 // STORAGE
@@ -379,11 +247,26 @@ serve(async (req) => {
     // ============================================================================
 
     audit.extractionStarted({ scan_type: body.scan_type })
-    const { result: extractionResult, rawText } = await callGemini(
-      imageBase64,
-      body.mime_type,
-      body.scan_type
-    )
+
+    const schema = await loadSchema(CATALOGUE_SLUG)
+    const provider = getProvider()
+    const extraction = await provider.extract({
+      images: [{ base64: imageBase64, mimeType: body.mime_type }],
+      schema,
+      scanType: body.scan_type,
+    })
+
+    // Same response shape as the pre-registry extractor: the schema's output
+    // graph (document + fields) plus extractor metadata.
+    const extractionResult: VendorExtractionResponse = {
+      ...(extraction.json as VendorExtractionResponse),
+      metadata: {
+        extractor_name: `${extraction.provider}-${CATALOGUE_SLUG}-extractor`,
+        extractor_model: extraction.model,
+        extractor_version: EXTRACTOR_VERSION,
+        extraction_timestamp: new Date().toISOString(),
+      },
+    }
 
     // ============================================================================
     // PERSIST SUCCESS — raw and normalized stored separately (T3.3)
@@ -393,9 +276,11 @@ serve(async (req) => {
       supabase,
       scanSessionId,
       {
-        raw_payload: { gemini_raw: rawText },
+        // Key kept byte-compatible with the pre-registry extractor.
+        raw_payload: { gemini_raw: extraction.raw },
         normalized_payload: extractionResult,
         metadata: extractionResult.metadata,
+        run: buildExtractionRunInfo(extraction, schema),
       }
     )
 
