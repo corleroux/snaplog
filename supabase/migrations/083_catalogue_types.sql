@@ -57,7 +57,11 @@ VALUES (
         'rules', jsonb_build_array(
             'All numeric fields should be numbers, not strings.',
             'If information is not visible, use null.',
+            'For variants, extract all color/size/wash variations visible and translate to English.',
+            'For prices, extract currency, amount, and unit clearly.',
+            'Weight and width should be numeric values in both metric and imperial if shown.',
             'Item code is the most important field — extract it carefully.',
+            'Return ONLY valid JSON, no markdown formatting.',
             'TRANSLATE ALL CHINESE TEXT TO ENGLISH before including in the JSON response.'
         ),
         'scan_types', jsonb_build_object(
@@ -220,8 +224,10 @@ VALUES (
         'rules', jsonb_build_array(
             'company_name is REQUIRED and must never be null.',
             'If information is not visible in the image, use null.',
+            'For brand_names, extract all brand/textile brand logos visible and translate to English.',
             'Phone numbers should include the country code if visible (e.g., +86 for China).',
             'Websites should start with https:// if implied.',
+            'Return ONLY valid JSON, no markdown formatting.',
             'TRANSLATE ALL CHINESE TEXT TO ENGLISH before including in the JSON response.'
         ),
         'scan_types', jsonb_build_object(

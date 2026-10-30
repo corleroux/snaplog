@@ -30,7 +30,6 @@ export interface SchemaField {
   allowed_values?: unknown[]
   items?: SchemaField | SchemaGroup
   fields?: SchemaField[]
-  rules?: string[]
 }
 
 export interface SchemaGroup {
@@ -45,6 +44,7 @@ export interface CatalogueSchema {
   version: number
   schema: {
     translate_to_english?: boolean
+    rules?: string[]
     scan_types?: Record<string, string>
     output_root?: string
     fields: SchemaField[]
