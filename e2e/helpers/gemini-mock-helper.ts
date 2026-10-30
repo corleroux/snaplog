@@ -27,7 +27,8 @@ import { Page, Route } from '@playwright/test'
 // ---------------------------------------------------------------------------
 
 const EDGE_FUNCTION_BASE =
-  process.env.VITE_SUPABASE_URL ?? 'https://sqshnzkgqdoiocnaunpu.supabase.co'
+  process.env.VITE_SUPABASE_URL
+  ?? (process.env.SUPABASE_PROJECT_REF ? `https://${process.env.SUPABASE_PROJECT_REF}.supabase.co` : '')
 
 const VENDOR_EXTRACTION_URL = `${EDGE_FUNCTION_BASE}/functions/v1/extract-vendor-document*`
 const FABRIC_EXTRACTION_URL = `${EDGE_FUNCTION_BASE}/functions/v1/extract-fabric-document*`

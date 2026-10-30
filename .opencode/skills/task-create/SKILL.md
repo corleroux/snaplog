@@ -12,7 +12,7 @@ autonomously from context — do not ask the user to write descriptions or steps
 This skill is part of the task lifecycle: `task-create` → `task-plan` → `task-claim` → `task-complete`. Each skill can run independently, but they are designed to chain together.
 
 All reads/writes go through `supabase db query --linked`, which connects to the
-linked Supabase project (project ref `sqshnzkgqdoiocnaunpu`) and bypasses RLS. The
+linked Supabase project (project ref `<project-ref>`) and bypasses RLS. The
 Supabase CLI must be authenticated and linked before using this skill. Note:
 `SUPABASE_ACCESS_TOKEN` **and** `SUPABASE_DB_PASSWORD` must both be set — without
 the DB password the command hangs at `Initialising login role...`.

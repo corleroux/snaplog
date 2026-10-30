@@ -1,31 +1,34 @@
 name: Mobile Build — Staging
 
-on:
-  push:
-    branches:
-      - staging
-    paths:
-      - 'src/**'
-      - 'index.html'
-      - 'vite.config.ts'
-      - 'package.json'
-      - 'pnpm-lock.yaml'
-      - 'capacitor.config.ts'
-      - 'eas.json'
-      - 'app.json'
-      - 'ios/**'
-      - 'android/**'
-  workflow_dispatch:
-    inputs:
-      platform:
-        description: 'Platform to build for'
-        required: true
-        default: 'all'
-        type: choice
-        options:
-          - all
-          - android
-          - ios
+# DISABLED (2026-10-30): all CI is outdated and turned off until it is rebuilt.
+# To re-enable, restore the `on:` triggers below.
+# on:
+#   push:
+#     branches:
+#       - staging
+#     paths:
+#       - 'src/**'
+#       - 'index.html'
+#       - 'vite.config.ts'
+#       - 'package.json'
+#       - 'pnpm-lock.yaml'
+#       - 'capacitor.config.ts'
+#       - 'eas.json'
+#       - 'app.json'
+#       - 'ios/**'
+#       - 'android/**'
+#   workflow_dispatch:
+#     inputs:
+#       platform:
+#         description: 'Platform to build for'
+#         required: true
+#         default: 'all'
+#         type: choice
+#         options:
+#           - all
+#           - android
+#           - ios
+on: []
 
 jobs:
   build-android:

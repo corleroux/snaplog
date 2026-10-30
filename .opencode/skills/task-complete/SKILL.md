@@ -6,11 +6,11 @@ compatibility: Requires the Supabase CLI (supabase), git, and the GitHub CLI (gh
 
 # task-complete
 
-Closes an active task in the Supabase task database (shared project `sqshnzkgqdoiocnaunpu`). Handles three terminal paths: `done`, `blocked`, and `cancelled`. Each has different downstream behaviour — read carefully before writing any SQL.
+Closes an active task in the Supabase task database (shared project `<project-ref>`). Handles three terminal paths: `done`, `blocked`, and `cancelled`. Each has different downstream behaviour — read carefully before writing any SQL.
 
 This skill is part of the task lifecycle: `task-create` → `task-plan` → `task-claim` → `task-complete`. Each skill can run independently, but they are designed to chain together.
 
-All reads/writes go through `supabase db query --linked`, which connects to the linked Supabase project (project ref `sqshnzkgqdoiocnaunpu`) and bypasses RLS. The Supabase CLI must be authenticated and linked before using this skill. Note: `SUPABASE_ACCESS_TOKEN` **and** `SUPABASE_DB_PASSWORD` must both be set — without the DB password the command hangs at `Initialising login role...`.
+All reads/writes go through `supabase db query --linked`, which connects to the linked Supabase project (project ref `<project-ref>`) and bypasses RLS. The Supabase CLI must be authenticated and linked before using this skill. Note: `SUPABASE_ACCESS_TOKEN` **and** `SUPABASE_DB_PASSWORD` must both be set — without the DB password the command hangs at `Initialising login role...`.
 
 **SQL execution note:** The CLI can be slow and occasionally times out (≈120s) on long single-quoted SQL that embeds newlines or JSON. For any multi-line statement (especially the Phase 6 CTE with an `actual_todos` JSONB blob), write the SQL to a temp file and pass it with `supabase db query --linked --file <path>` rather than inlining it in the shell. Inline single-line queries are fine.
 

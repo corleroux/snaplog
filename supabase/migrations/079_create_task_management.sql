@@ -1,6 +1,6 @@
 -- Migration 079: Create task management tables
 -- Mirrors the local SQLite task schema for web UI access.
--- STAGING ONLY: deploy with supabase db push --project-ref sqshnzkgqdoiocnaunpu
+-- STAGING ONLY: deploy with supabase db push --project-ref <project-ref>
 
 -- ============================================================
 -- TABLE: tasks

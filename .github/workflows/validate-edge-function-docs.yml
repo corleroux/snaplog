@@ -1,10 +1,13 @@
 name: Validate Edge Function Docs
 
-on:
-  push:
-    branches: [staging, main]
-  pull_request:
-    branches: [staging]
+# DISABLED (2026-10-30): all CI is outdated and turned off until it is rebuilt.
+# To re-enable, restore the `on:` triggers below.
+# on:
+#   push:
+#     branches: [staging, main]
+#   pull_request:
+#     branches: [staging]
+on: []
 
 jobs:
   validate:

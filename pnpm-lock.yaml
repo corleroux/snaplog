@@ -147,6 +147,9 @@ importers:
       autoprefixer:
         specifier: ^10.4.27
         version: 10.4.27(postcss@8.5.10)
+      dotenv:
+        specifier: ^18.0.9
+        version: 18.0.9
       eslint:
         specifier: ^9.25.0
         version: 9.39.4(jiti@2.6.1)
@@ -1847,6 +1850,11 @@ packages:
   dotenv@17.3.1:
     resolution: {integrity: sha512-IO8C/dzEb6O3F9/twg6ZLXz164a2fhTnEWb95H23Dm4OuN+92NmEAlTrupP9VW6Jm3sO26tQlqyvyi4CsnY9GA==}
     engines: {node: '>=12'}
+
+  dotenv@18.0.9:
+    resolution: {integrity: sha512-3fVOW4cB02R066PUSwn8O4TJyz9NckQl7F81blIbaq9jKBm2tSmOKky7ZHIXzGvkVPXCSn6jkpziBPZdGFs8Tw==}
+    engines: {node: '>=12'}
+    hasBin: true
 
   dunder-proto@1.0.1:
     resolution: {integrity: sha512-KIN/nDJBQRcXw0MLVhZE9iQHmG68qAVIBg9CqmUYjmQIhgij9U5MFvrqkUL5FbtyyzZuOeOt0zdeRe4UY7ct+A==}
@@ -5540,6 +5548,8 @@ snapshots:
       '@types/trusted-types': 2.0.7
 
   dotenv@17.3.1: {}
+
+  dotenv@18.0.9: {}
 
   dunder-proto@1.0.1:
     dependencies:

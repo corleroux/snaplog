@@ -68,7 +68,8 @@ test.describe('Authentication Flow @core', () => {
     test('signup flow creates account and redirects to events', async ({ page }) => {
       const timestamp = Date.now()
       const email = `e2e-test-${timestamp}@example.com`
-      const password = 'TestPassword123!'
+      // Random per-run password — never hardcode the real test-account password here.
+      const password = `E2e-${timestamp}-Test!`
 
       await authPage.gotoSignup()
       await authPage.signup(email, password, password)

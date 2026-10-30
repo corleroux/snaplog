@@ -12,7 +12,7 @@ This skill is part of the task lifecycle: `task-create` → `task-plan` → `tas
 
 **Contract:** Agent MUST invoke this skill to start work on any task. Do NOT manually set `state = 'in_progress'` or create worktrees/branches outside this skill. Completion is handled by `task-complete` (which handles PR creation → merge → cleanup).
 
-All reads and writes go through `supabase db query --linked`, which connects to the linked Supabase project (project ref `sqshnzkgqdoiocnaunpu`) and bypasses RLS. The Supabase CLI must be authenticated and linked before using this skill. Note: `SUPABASE_ACCESS_TOKEN` **and** `SUPABASE_DB_PASSWORD` must both be set — without the DB password the command hangs at `Initialising login role...`.
+All reads and writes go through `supabase db query --linked`, which connects to the linked Supabase project (project ref `<project-ref>`) and bypasses RLS. The Supabase CLI must be authenticated and linked before using this skill. Note: `SUPABASE_ACCESS_TOKEN` **and** `SUPABASE_DB_PASSWORD` must both be set — without the DB password the command hangs at `Initialising login role...`.
 
 **SQL execution note:** The CLI can be slow and occasionally times out (≈120s) on long single-quoted SQL that embeds newlines or JSON. For any multi-line statement (especially `UPDATE ... RETURNING` with a `plan_todos` JSONB blob), write the SQL to a temp file and pass it with `supabase db query --linked --file <path>` rather than inlining it in the shell. Inline single-line queries are fine.
 

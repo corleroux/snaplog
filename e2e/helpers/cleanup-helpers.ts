@@ -24,7 +24,7 @@ config({ path: envPath })
 // Support both VITE_ prefix (for Vite) and plain names (for tests)
 const supabaseUrl = process.env.VITE_SUPABASE_URL
   || process.env.SUPABASE_URL
-  || 'https://sqshnzkgqdoiocnaunpu.supabase.co'
+  || (process.env.SUPABASE_PROJECT_REF ? `https://${process.env.SUPABASE_PROJECT_REF}.supabase.co` : '')
 const supabaseKey = process.env.VITE_SUPABASE_ANON_KEY
   || process.env.SUPABASE_ANON_KEY
   || ''

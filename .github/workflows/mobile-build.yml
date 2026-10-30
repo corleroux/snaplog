@@ -1,10 +1,13 @@
 name: Mobile Build — Production
 
-on:
-  push:
-    tags:
-      - 'v*'
-  workflow_dispatch:
+# DISABLED (2026-10-30): all CI is outdated and turned off until it is rebuilt.
+# To re-enable, restore the `on:` triggers below.
+# on:
+#   push:
+#     tags:
+#       - 'v*'
+#   workflow_dispatch:
+on: []
 
 jobs:
   build-android:

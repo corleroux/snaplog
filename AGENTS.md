@@ -81,18 +81,18 @@ Centralise offline state in: `draftStore`, `uploadQueue`, `syncEngine`
 
 | Environment | Project slot | Project ref | Env file | When touched |
 |-------------|--------------|-------------|----------|--------------|
-| **STAGING** (default) | shared project `sqshnzkgqdoiocnaunpu` | `sqshnzkgqdoiocnaunpu` | `.env.local`, `.env.staging`, `.env.test` | **All day-to-day development.** Migrations, edge functions, task DB, CLI (`--linked`) all target the shared project. |
-| **PRODUCTION** | shared project `sqshnzkgqdoiocnaunpu` | `sqshnzkgqdoiocnaunpu` | `.env` | **Only during a planned release** (`staging → main`). Never touched while developing. |
+| **STAGING** (default) | shared project `<project-ref>` | `<project-ref>` | `.env.local`, `.env.staging`, `.env.test` | **All day-to-day development.** Migrations, edge functions, task DB, CLI (`--linked`) all target the shared project. |
+| **PRODUCTION** | shared project `<project-ref>` | `<project-ref>` | `.env` | **Only during a planned release** (`staging → main`). Never touched while developing. |
 
 **Rules:**
-- The Supabase CLI is linked to the **shared project** (`supabase/.temp/project-ref` = `sqshnzkgqdoiocnaunpu`). `supabase db query --linked`, `supabase migration list`, `supabase functions ...` all operate on the shared project by default. This is correct — do **not** flag it as a discrepancy.
+- The Supabase CLI is linked to the **shared project** (`supabase/.temp/project-ref` = `<project-ref>`). `supabase db query --linked`, `supabase migration list`, `supabase functions ...` all operate on the shared project by default. This is correct — do **not** flag it as a discrepancy.
 - Because staging and production slots share one project, **treat all data as production data**. No throwaway test data in the shared project; use a disposable branch or local stack for tests.
 - **Production (main) is only ever deployed during a release.** `supabase db push` is safe to re-run (migrations are idempotent via history), but destructive SQL against the shared project still needs explicit user confirmation.
 - Credentials live in `secrets/secrets.md` (gitignored). Never commit or echo them. Old tokens remain in git history — rotate if they were ever shared.
 
 ## TASK MANAGEMENT
 
-**Source of truth:** Supabase shared project (project ref: `sqshnzkgqdoiocnaunpu`)
+**Source of truth:** Supabase shared project (project ref: `<project-ref>`)
 
 All work is tracked in the Supabase task management tables. CLI access via `supabase db query --linked "SQL"` (requires `SUPABASE_ACCESS_TOKEN` **and** `SUPABASE_DB_PASSWORD` env vars — without the DB password the command hangs at `Initialising login role...`).
 
@@ -290,9 +290,9 @@ End every task with:
 - Supabase RLS policies must use `profiles.role` pattern (join to `public.profiles`), NOT `auth.jwt() ->> 'role'` which always returns `'authenticated'`
 
 **Deploy procedures:**
-- Migrations: `supabase link --project-ref sqshnzkgqdoiocnaunpu` then `supabase db push`
-- Edge Functions: `supabase functions deploy <name> --project-ref sqshnzkgqdoiocnaunpu`
-- Secrets: `supabase secrets set KEY=val --project-ref sqshnzkgqdoiocnaunpu`
+- Migrations: `supabase link --project-ref <project-ref>` then `supabase db push`
+- Edge Functions: `supabase functions deploy <name> --project-ref <project-ref>`
+- Secrets: `supabase secrets set KEY=val --project-ref <project-ref>`
 - All commands require `SUPABASE_ACCESS_TOKEN` (read from `secrets/secrets.md`) with project access
 
 **Admin UI:** Error Tracking card lives at `/admin/health` with Sync button and error list.

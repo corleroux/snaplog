@@ -1,12 +1,15 @@
 name: CI
 
-on:
-  pull_request:
-    branches: [main, staging]
-  push:
-    branches: [main, staging]
-    tags:
-      - 'v*.*.*'
+# DISABLED (2026-10-30): all CI is outdated and turned off until it is rebuilt.
+# To re-enable, restore the `on:` triggers below.
+# on:
+#   pull_request:
+#     branches: [main, staging]
+#   push:
+#     branches: [main, staging]
+#     tags:
+#       - 'v*.*.*'
+on: []
 
 jobs:
   # ============================================================================

@@ -6,22 +6,46 @@
  */
 
 import { type Page, type BrowserContext, expect } from '@playwright/test'
+import { config } from 'dotenv'
+import { resolve } from 'path'
+
+// Playwright doesn't auto-load .env files — load staging config for local runs.
+// (CI provides real env vars directly, which take precedence over file values.)
+config({ path: resolve(process.cwd(), '.env.staging') })
+
+/**
+ * Read a required e2e credential from the environment.
+ * Fails fast with a clear message instead of silently falling back to a
+ * hardcoded value (which would leak a real credential into the repo).
+ */
+function requiredEnv(name: string): string {
+  const value = process.env[name]
+  if (!value) {
+    throw new Error(
+      `[e2e] Missing required environment variable ${name}. ` +
+        'Set it in .env.staging (see .env.example).'
+    )
+  }
+  return value
+}
 
 /**
  * Test credentials (must match staging environment)
  *
- * Staging environment: sqshnzkgqdoiocnaunpu.supabase.co (shared project)
+ * Staging environment: shared Supabase project
+ * (configure via VITE_SUPABASE_URL or SUPABASE_PROJECT_REF — see .env.example)
  */
 export const TEST_USER = {
   email: process.env.E2E_USER_EMAIL || 'e2e-test@example.com',
-  password: process.env.E2E_USER_PASSWORD || 'TestPassword123!',
+  password: requiredEnv('E2E_USER_PASSWORD'),
 }
 
 /**
  * Staging configuration
  */
 export const STAGING_CONFIG = {
-  supabaseUrl: process.env.VITE_SUPABASE_URL || 'https://sqshnzkgqdoiocnaunpu.supabase.co',
+  supabaseUrl: process.env.VITE_SUPABASE_URL
+    || (process.env.SUPABASE_PROJECT_REF ? `https://${process.env.SUPABASE_PROJECT_REF}.supabase.co` : ''),
   supabaseAnonKey: process.env.VITE_SUPABASE_ANON_KEY || '',
 }
 

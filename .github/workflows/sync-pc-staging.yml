@@ -1,17 +1,20 @@
 name: Sync pc/staging
 
-# Keeps the Pure-Collections/fair-app staging branch in lock-step with this
-# repo's staging branch. Requires:
+# DISABLED (2026-10-30): all CI is outdated and turned off until it is rebuilt.
+# To re-enable, restore the `on:` triggers below.
+# on:
+#   push:
+#     branches: [staging]
+#   workflow_dispatch:
+on: []
+
+# NOTE (preserved for re-enable): this keeps the Pure-Collections/fair-app
+# staging branch in lock-step with this repo's staging branch. Requires:
 #   - Repo secret PC_PUSH_TOKEN: a PAT with Contents: Read/Write on
 #     Pure-Collections/fair-app
 #   - A self-hosted runner (label: pc-sync) — GitHub-hosted runners are blocked
 #     by the Pure-Collections org network policy ("Repository not found")
 # Skips silently when the secret is not configured.
-
-on:
-  push:
-    branches: [staging]
-  workflow_dispatch:
 
 jobs:
   sync:

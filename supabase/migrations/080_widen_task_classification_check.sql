@@ -2,7 +2,7 @@
 -- The SQLite task database used 13 classification values; migration 079 only allowed 4.
 -- This widens the constraint to accept the full union taxonomy, preserving rich data
 -- from the legacy SQLite system without lossy mapping.
--- STAGING ONLY: deploy with supabase db push --project-ref sqshnzkgqdoiocnaunpu
+-- STAGING ONLY: deploy with supabase db push --project-ref <project-ref>
 
 ALTER TABLE public.tasks DROP CONSTRAINT IF EXISTS tasks_classification_check;
 
