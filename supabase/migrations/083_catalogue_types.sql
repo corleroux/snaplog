@@ -54,6 +54,12 @@ VALUES (
     1,
     jsonb_build_object(
         'translate_to_english', true,
+        'rules', jsonb_build_array(
+            'All numeric fields should be numbers, not strings.',
+            'If information is not visible, use null.',
+            'Item code is the most important field — extract it carefully.',
+            'TRANSLATE ALL CHINESE TEXT TO ENGLISH before including in the JSON response.'
+        ),
         'scan_types', jsonb_build_object(
             'product_tag', 'This is a product tag. Extract style code, name, composition, and any variant/color information.',
             'stock_sheet', 'This is a stock sheet. Focus on item codes, variants, quantities, and inventory information.',
@@ -211,6 +217,13 @@ VALUES (
     1,
     jsonb_build_object(
         'translate_to_english', true,
+        'rules', jsonb_build_array(
+            'company_name is REQUIRED and must never be null.',
+            'If information is not visible in the image, use null.',
+            'Phone numbers should include the country code if visible (e.g., +86 for China).',
+            'Websites should start with https:// if implied.',
+            'TRANSLATE ALL CHINESE TEXT TO ENGLISH before including in the JSON response.'
+        ),
         'scan_types', jsonb_build_object(
             'vendor_card', 'This is a business card. Extract company name, contact details, and any brand information.',
             'vendor_signage', 'This is booth signage. Focus on company name, booth number, and brand names.',
@@ -265,7 +278,7 @@ VALUES (
                 'path', 'document.website_url',
                 'type', 'string',
                 'label', 'Website URL',
-                'hint', 'website URL',
+                'hint', 'website URL (should start with https:// if implied)',
                 'required', false
             ),
             jsonb_build_object(

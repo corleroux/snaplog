@@ -30,6 +30,7 @@ export interface SchemaField {
   allowed_values?: unknown[]
   items?: SchemaField | SchemaGroup
   fields?: SchemaField[]
+  rules?: string[]
 }
 
 export interface SchemaGroup {
@@ -103,13 +104,30 @@ function validateField(field: unknown, pathPrefix = ''): SchemaField {
     if (typedField.items) {
       if (typedField.items.type === 'group') {
         validateGroup(typedField.items as SchemaGroup, typedField.path)
+      } else if ((typedField.items as SchemaField).path) {
+        // Array of objects/groups described by a field template
+        validateField(typedField.items, typedField.path)
+      } else if (typedField.items.type) {
+        // Scalar array item type must be valid
+        if (!VALID_FIELD_TYPES.includes(typedField.items.type as SchemaFieldType)) {
+          throw new Error(
+            `Array "${typedField.path}" has invalid item type "${typedField.items.type}"`
+          )
+        }
       }
-      // scalar item type is allowed; no further validation needed
     }
   }
 
   if (typedField.type === 'group') {
     validateGroup(typedField as unknown as SchemaGroup, typedField.path)
+  }
+
+  if (typedField.allowed_values !== undefined) {
+    if (!Array.isArray(typedField.allowed_values)) {
+      throw new Error(
+        `Field "${typedField.path}" allowed_values must be an array`
+      )
+    }
   }
 
   return typedField
