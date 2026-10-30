@@ -122,7 +122,13 @@ done < <(git diff --diff-filter=A --name-only -z "$BASELINE_TAG..HEAD" || true)
 
 mkdir -p "$SUB_REPO/$PATCH_DIR"
 
-PATCH_NAME="${PREV_SHORT}-to-${SOURCE_SHORT}.patch"
+# Number patches sequentially so `git apply patches/*.patch` applies them in
+# chronological order regardless of commit hash sorting.
+SEQ_NUM=$(ls "$SUB_REPO/$PATCH_DIR"/[0-9][0-9][0-9][0-9]-*.patch 2>/dev/null | wc -l)
+SEQ_NUM=$((SEQ_NUM + 1))
+SEQ_PREFIX=$(printf "%04d" "$SEQ_NUM")
+
+PATCH_NAME="${SEQ_PREFIX}-${PREV_SHORT}-to-${SOURCE_SHORT}.patch"
 PATCH_PATH="$SUB_REPO/$PATCH_DIR/$PATCH_NAME"
 
 if [[ ${#MODIFIED_FILES[@]} -gt 0 ]]; then
@@ -183,7 +189,7 @@ Generated from [snaplog](https://github.com/corleroux/snaplog) at \`$SOURCE_COMM
 - Previous source commit: \`$PREV_COMMIT\`
 - Incremental patch: \`${PATCH_NAME:-_none_}\`
 
-## Baseline files modified since baseline
+## Baseline files modified since previous submission update
 
 ${MODIFIED_FILES_LIST:-_none_}
 
