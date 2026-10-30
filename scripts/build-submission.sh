@@ -26,7 +26,7 @@ NEW_DIR="new-files"
 EXCLUDE_PATTERNS=(
   "verification-todo.md"
   "docs/hackathon-status-update.md"
-  "*.Zone.Identifier"
+  "*Zone.Identifier"
   "*.DS_Store"
 )
 
@@ -152,6 +152,14 @@ for file in "${ADDED_FILES[@]}"; do
   target="$SUB_REPO/$NEW_DIR/$file"
   mkdir -p "$(dirname "$target")"
   cp -a "$file" "$target"
+
+  # Redact the Supabase project reference in the public copy so the submission
+  # repo stays consistent with the rest of the docs, while the working repo
+  # keeps the real identifier for development.
+  if [[ "$file" == ".opencode/opencode.jsonc" ]]; then
+    sed -i 's/project_ref=[a-z0-9]*/project_ref=<project-ref>/g' "$target"
+  fi
+
   NEW_FILES_COUNT=$((NEW_FILES_COUNT + 1))
 done
 
