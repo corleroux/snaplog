@@ -1,9 +1,11 @@
 /**
- * Provider factory tests (FR-MOD-01).
+ * Provider factory tests (FR-MOD-01, FR-MOD-02a).
  *
  * getProvider resolves the active extraction provider from the
- * EXTRACTION_PROVIDER edge secret (default: gemini) and fails loudly on
- * unknown values — no silent fallback (that is FR-MOD-03).
+ * EXTRACTION_PROVIDER edge secret (default: muse-spark since FR-MOD-02a —
+ * the demo runtime is all-Meta; Gemini stays registered as the baseline)
+ * and fails loudly on unknown values — no silent fallback (that is
+ * FR-MOD-03).
  *
  * Also covers buildExtractionRunInfo, which maps a provider result onto the
  * scan_sessions run columns added by migration 084.
@@ -24,11 +26,11 @@ function restoreEnv(saved: Record<string, string | undefined>): void {
   }
 }
 
-Deno.test('getProvider: defaults to gemini when EXTRACTION_PROVIDER is unset', () => {
+Deno.test('getProvider: defaults to muse-spark when EXTRACTION_PROVIDER is unset', () => {
   const saved = Deno.env.get('EXTRACTION_PROVIDER')
   Deno.env.delete('EXTRACTION_PROVIDER')
   try {
-    assertEquals(getProvider().name, 'gemini')
+    assertEquals(getProvider().name, 'muse-spark')
   } finally {
     restoreEnv({ EXTRACTION_PROVIDER: saved })
   }
@@ -44,11 +46,23 @@ Deno.test('getProvider: selects gemini when configured explicitly', () => {
   }
 })
 
+Deno.test('getProvider: selects muse-spark when configured explicitly', () => {
+  const saved = Deno.env.get('EXTRACTION_PROVIDER')
+  Deno.env.set('EXTRACTION_PROVIDER', 'muse-spark')
+  try {
+    assertEquals(getProvider().name, 'muse-spark')
+  } finally {
+    restoreEnv({ EXTRACTION_PROVIDER: saved })
+  }
+})
+
 Deno.test('getProvider: is case- and whitespace-insensitive', () => {
   const saved = Deno.env.get('EXTRACTION_PROVIDER')
-  Deno.env.set('EXTRACTION_PROVIDER', '  Gemini ')
   try {
+    Deno.env.set('EXTRACTION_PROVIDER', '  Gemini ')
     assertEquals(getProvider().name, 'gemini')
+    Deno.env.set('EXTRACTION_PROVIDER', '  Muse-Spark ')
+    assertEquals(getProvider().name, 'muse-spark')
   } finally {
     restoreEnv({ EXTRACTION_PROVIDER: saved })
   }
@@ -56,19 +70,23 @@ Deno.test('getProvider: is case- and whitespace-insensitive', () => {
 
 Deno.test('getProvider: unknown provider fails loudly with the available list', () => {
   const saved = Deno.env.get('EXTRACTION_PROVIDER')
-  Deno.env.set('EXTRACTION_PROVIDER', 'muse-spark')
+  Deno.env.set('EXTRACTION_PROVIDER', 'openai')
   try {
-    assertThrows(() => getProvider(), Error, 'Unknown EXTRACTION_PROVIDER "muse-spark"')
+    assertThrows(
+      () => getProvider(),
+      Error,
+      'Unknown EXTRACTION_PROVIDER "openai". Available providers: gemini, muse-spark'
+    )
   } finally {
     restoreEnv({ EXTRACTION_PROVIDER: saved })
   }
 })
 
-Deno.test('getProvider: empty value falls back to gemini', () => {
+Deno.test('getProvider: empty value falls back to the muse-spark default', () => {
   const saved = Deno.env.get('EXTRACTION_PROVIDER')
   Deno.env.set('EXTRACTION_PROVIDER', '')
   try {
-    assertEquals(getProvider().name, 'gemini')
+    assertEquals(getProvider().name, 'muse-spark')
   } finally {
     restoreEnv({ EXTRACTION_PROVIDER: saved })
   }
@@ -101,6 +119,28 @@ Deno.test('buildExtractionRunInfo: maps provider result and schema to run column
       model: 'gemini-flash-lite-latest',
       latency_ms: 1234,
       usage: { input_tokens: 1487, output_tokens: 296 },
+      cost_usd: null,
+    }
+  )
+})
+
+Deno.test('buildExtractionRunInfo: maps a muse-spark run onto the same columns', () => {
+  assertEquals(
+    buildExtractionRunInfo(
+      providerResult({
+        provider: 'muse-spark',
+        model: 'muse-spark-1.3',
+        usage: { inputTokens: 1512, outputTokens: 284 },
+      }),
+      { slug: 'fabric', version: 1 }
+    ),
+    {
+      schema_type: 'fabric',
+      schema_version: 1,
+      provider: 'muse-spark',
+      model: 'muse-spark-1.3',
+      latency_ms: 1234,
+      usage: { input_tokens: 1512, output_tokens: 284 },
       cost_usd: null,
     }
   )

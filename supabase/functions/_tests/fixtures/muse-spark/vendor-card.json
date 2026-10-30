@@ -1,0 +1,22 @@
+{
+  "id": "chatcmpl-muse-vendor-001",
+  "object": "chat.completion",
+  "created": 1761849600,
+  "model": "muse-spark-1.3",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "{\"document\":{\"company_name\":\" Hangzhou Sunrise Fabrics Co., Ltd. \",\"booth_number\":\"3.1 E71\",\"contact_person\":\"Li Wei\",\"email\":\"sales@sunrisefabrics.example.com\",\"phone\":\"+86 571 8899 1234\",\"whatsapp\":null,\"website_url\":\"https://sunrisefabrics.example.com\",\"address\":\" No. 88 Yanjiang Road, Hangzhou, Zhejiang, China \",\"country_of_origin\":\"China\",\"brand_names\":[\"SunRise\",\"  \",\"EastLoom\",\"\"],\"notes\":\"Specialises in linen and ramie blends\"}}"
+      },
+      "logprobs": null,
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 998,
+    "completion_tokens": 131,
+    "total_tokens": 1129
+  }
+}
