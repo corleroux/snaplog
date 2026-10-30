@@ -83,7 +83,7 @@ cd - >/dev/null
 PREV_COMMIT=""
 cd "$SUB_REPO"
 if git rev-parse HEAD >/dev/null 2>&1; then
-  PREV_COMMIT="$(git log -1 --pretty=format:%B | grep -oE 'Source: corleroux/snaplog@[a-f0-9]+' | tail -1 | cut -d@ -f2 || true)"
+  PREV_COMMIT="$(git log --pretty=format:%B | grep -oE 'Source: corleroux/snaplog@[a-f0-9]+' | head -1 | cut -d@ -f2 || true)"
 fi
 cd - >/dev/null
 
