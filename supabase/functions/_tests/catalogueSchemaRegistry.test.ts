@@ -97,13 +97,12 @@ Deno.test('catalogueSchemaRegistry: unknown slug throws', async () => {
   )
 })
 
-Deno.test('catalogueSchemaRegistry: validates schema shape and rejects invalid schemas', async () => {
+Deno.test('catalogueSchemaRegistry: loaded fabric schema has well-formed fields', async () => {
   clearSchemaCache()
 
-  // Re-expose validation via loadSchema by importing the module internals is
-  // not possible; instead we rely on the migration inserting valid schemas.
-  // This test documents that an invalid schema would be rejected at load time.
-  // We verify the contract by loading the valid fabric schema successfully.
+  // The registry validates schema shape on load. An invalid schema would be
+  // rejected; here we verify the seeded fabric schema loads and every field
+  // has the required shape properties.
   const schema = await loadSchema('fabric')
   assertExists(schema.schema.fields)
   assertEquals(schema.schema.fields.every((f) => f.path && f.type && f.label), true)
