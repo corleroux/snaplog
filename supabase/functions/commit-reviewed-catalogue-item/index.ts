@@ -47,9 +47,6 @@ interface CommitCatalogueItemRequest {
   event_id: string
   vendor_id: string
   reviewed_document: ReviewedCatalogueItemDocument
-  schema_type: string
-  schema_version: number
-  source_images?: Array<{ storage_path: string; public_url?: string | null }> | null
 }
 
 function validateReviewedDocument(doc: ReviewedCatalogueItemDocument): void {
@@ -78,8 +75,6 @@ serve(async (req) => {
     if (!body.event_id) throw new Error('event_id is required')
     if (!body.vendor_id) throw new Error('vendor_id is required')
     if (!body.reviewed_document) throw new Error('reviewed_document is required')
-    if (!body.schema_type) throw new Error('schema_type is required')
-    if (typeof body.schema_version !== 'number') throw new Error('schema_version is required')
 
     validateUUID(body.scan_session_id, 'scan_session_id')
     validateUUID(body.event_id, 'event_id')
@@ -121,53 +116,33 @@ serve(async (req) => {
 
     const itemCode = String(body.reviewed_document.item.item_code).trim()
 
-    const { data: existingItem, error: checkError } = await supabase
-      .from('catalogue_items')
-      .select('id, item_code')
-      .eq('vendor_id', body.vendor_id)
-      .eq('item_code', itemCode)
-      .maybeSingle()
-
-    if (checkError) {
-      log.warn('Error checking for duplicate item_code', { error: checkError.message })
-    } else if (existingItem) {
-      return json(
-        {
-          error: 'Conflict',
-          message: `A catalogue item with item_code "${itemCode}" already exists for this vendor`,
-          existing_item_id: existingItem.id,
-        },
-        409,
-        req
-      )
-    }
-
-    const { data: itemData, error: itemError } = await supabaseAdmin
-      .from('catalogue_items')
-      .insert({
-        event_id: body.event_id,
-        vendor_id: body.vendor_id,
-        schema_type: body.schema_type,
-        schema_version: body.schema_version,
-        item_code: itemCode,
-        name: (body.reviewed_document.item.name as string | undefined)?.trim() || null,
-        extracted_fields: body.reviewed_document.item,
-        status: 'active',
-        created_by: user.id,
-        updated_by: user.id,
+    // Atomic commit: schema provenance is read from scan_sessions by the RPC.
+    const { data: commitResult, error: commitError } = await supabaseAdmin
+      .rpc('commit_catalogue_item', {
+        p_event_id: body.event_id,
+        p_vendor_id: body.vendor_id,
+        p_scan_session_id: body.scan_session_id,
+        p_item_code: itemCode,
+        p_name: (body.reviewed_document.item.name as string | undefined)?.trim() || null,
+        p_extracted_fields: body.reviewed_document.item,
+        p_reviewed_payload: body.reviewed_document,
+        p_created_by: user.id,
       })
-      .select('id')
-      .single()
 
-    if (itemError || !itemData) {
-      if (itemError?.message?.includes('unique constraint') || itemError?.message?.includes('duplicate key')) {
+    if (commitError || !commitResult) {
+      log.error('Atomic catalogue item commit failed', { error: commitError?.message || 'Unknown error' })
+
+      if (commitError?.message?.includes('unique constraint') ||
+          commitError?.message?.includes('duplicate key') ||
+          commitError?.message?.includes('Duplicate item_code')) {
         return conflict(`A catalogue item with item_code "${itemCode}" already exists for this vendor`, req)
       }
-      log.error('Failed to create catalogue item', { error: itemError?.message || 'Unknown error' })
-      return internalError(itemError?.message || 'Unknown error', 'Failed to create catalogue item', req)
+
+      return internalError(commitError?.message || 'Unknown error', 'Failed to create catalogue item', req)
     }
 
-    const itemId = itemData.id
+    const typedResult = commitResult as { item_id: string; schema_type: string; schema_version: number }
+    const itemId = typedResult.item_id
     audit.scanSessionUpdated({ scan_session_id: body.scan_session_id, item_id: itemId })
 
     const variantIds: string[] = []
@@ -202,21 +177,6 @@ serve(async (req) => {
           })
         }
       }
-    }
-
-    // Finalize scan session with reviewed payload and item_id.
-    const { error: finalizeError } = await supabaseAdmin
-      .from('scan_sessions')
-      .update({
-        reviewed_payload: body.reviewed_document,
-        reviewed_by: user.id,
-        reviewed_at: new Date().toISOString(),
-        item_id: itemId,
-      })
-      .eq('id', body.scan_session_id)
-
-    if (finalizeError) {
-      log.error('Failed to finalize scan session', { error: finalizeError.message })
     }
 
     audit.completed({ item_id: itemId, scan_session_id: body.scan_session_id, variant_count: variantIds.length })

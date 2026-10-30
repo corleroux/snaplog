@@ -64,9 +64,10 @@ Deno.test('extract-catalogue-item: missing required fields returns 500', async (
 })
 
 Deno.test('extract-catalogue-item: invalid catalogue_type returns 500', async () => {
-  const { status } = await callFunction('extract-catalogue-item', {
+  const { status, data } = await callFunction('extract-catalogue-item', {
     ...validRequestBody,
     catalogue_type: 'nonexistent',
   })
   assertEquals(status, 500)
+  assertEquals(typeof data === 'string' && data.includes('not found'), true)
 })

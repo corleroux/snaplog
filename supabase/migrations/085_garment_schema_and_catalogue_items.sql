@@ -95,7 +95,8 @@ CREATE TABLE IF NOT EXISTS public.catalogue_items (
     created_at      TIMESTAMPTZ NOT NULL DEFAULT now(),
     updated_at      TIMESTAMPTZ NOT NULL DEFAULT now(),
 
-    UNIQUE (vendor_id, item_code)
+    UNIQUE (vendor_id, item_code),
+    FOREIGN KEY (schema_type, schema_version) REFERENCES public.catalogue_types(slug, version)
 );
 
 CREATE INDEX IF NOT EXISTS idx_catalogue_items_event_id ON public.catalogue_items(event_id);
@@ -216,3 +217,96 @@ ALTER TABLE public.scan_sessions
     );
 
 CREATE INDEX IF NOT EXISTS idx_scan_sessions_item_id ON public.scan_sessions(item_id);
+
+-- ============================================================
+-- RPC: commit_catalogue_item
+-- Atomic insert of catalogue_items + scan_sessions finalisation,
+-- mirroring commit_fabric_style. Derives schema_type/schema_version
+-- from the scan session's extraction run columns, not from the client.
+-- ============================================================
+CREATE OR REPLACE FUNCTION public.commit_catalogue_item(
+    p_event_id UUID,
+    p_vendor_id UUID,
+    p_scan_session_id UUID,
+    p_item_code TEXT,
+    p_name TEXT,
+    p_extracted_fields JSONB,
+    p_reviewed_payload JSONB,
+    p_created_by UUID
+)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    v_schema_type TEXT;
+    v_schema_version INTEGER;
+    v_item_id UUID;
+    v_existing_item_id UUID;
+    v_scan_vendor_id UUID;
+BEGIN
+    -- Lock scan session and read schema provenance + vendor match
+    SELECT vendor_id, schema_type, schema_version
+    INTO v_scan_vendor_id, v_schema_type, v_schema_version
+    FROM public.scan_sessions
+    WHERE id = p_scan_session_id
+    FOR UPDATE;
+
+    IF v_scan_vendor_id IS NULL THEN
+        RAISE EXCEPTION 'Scan session not found';
+    END IF;
+
+    IF v_scan_vendor_id <> p_vendor_id THEN
+        RAISE EXCEPTION 'vendor_id does not match scan session';
+    END IF;
+
+    IF v_schema_type IS NULL OR v_schema_version IS NULL THEN
+        RAISE EXCEPTION 'Scan session missing schema provenance; run extraction first';
+    END IF;
+
+    -- Idempotency / duplicate guard
+    SELECT id INTO v_existing_item_id
+    FROM public.catalogue_items
+    WHERE vendor_id = p_vendor_id AND item_code = p_item_code;
+
+    IF v_existing_item_id IS NOT NULL THEN
+        RAISE EXCEPTION 'Duplicate item_code: %', p_item_code;
+    END IF;
+
+    -- Insert catalogue item
+    INSERT INTO public.catalogue_items (
+        event_id,
+        vendor_id,
+        schema_type,
+        schema_version,
+        item_code,
+        name,
+        extracted_fields,
+        status,
+        created_by,
+        updated_by
+    ) VALUES (
+        p_event_id,
+        p_vendor_id,
+        v_schema_type,
+        v_schema_version,
+        p_item_code,
+        p_name,
+        p_extracted_fields,
+        'active',
+        p_created_by,
+        p_created_by
+    )
+    RETURNING id INTO v_item_id;
+
+    -- Finalize scan session
+    UPDATE public.scan_sessions
+    SET reviewed_payload = p_reviewed_payload,
+        reviewed_by = p_created_by,
+        reviewed_at = now(),
+        item_id = v_item_id
+    WHERE id = p_scan_session_id;
+
+    RETURN jsonb_build_object('item_id', v_item_id, 'schema_type', v_schema_type, 'schema_version', v_schema_version);
+END;
+$$;

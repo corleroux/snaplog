@@ -119,6 +119,16 @@ serve(async (req) => {
     validateUUID(body.event_id, 'event_id')
     validateUUID(body.vendor_id, 'vendor_id')
 
+    const schema = await loadSchema(body.catalogue_type)
+
+    const allowedScanTypes = schema.schema.scan_types ? Object.keys(schema.schema.scan_types) : []
+    if (!allowedScanTypes.includes(body.scan_type)) {
+      throw new Error(
+        `Invalid scan_type "${body.scan_type}" for catalogue_type "${body.catalogue_type}". ` +
+        `Allowed: ${allowedScanTypes.join(', ')}`
+      )
+    }
+
     await markExtractionProcessing(supabase, scanSessionId)
     audit.processingStarted({ scan_session_id: scanSessionId })
 
@@ -127,8 +137,6 @@ serve(async (req) => {
     const imageBase64 = uint8ArrayToBase64(imageData.data)
 
     audit.extractionStarted({ scan_type: body.scan_type })
-
-    const schema = await loadSchema(body.catalogue_type)
     const provider = getProvider()
     const extraction = await provider.extract({
       images: [{ base64: imageBase64, mimeType: body.mime_type }],
