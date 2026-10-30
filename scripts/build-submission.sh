@@ -6,8 +6,9 @@ set -euo pipefail
 # event work from this snaplog repo.
 #
 # For every task merged to staging, the script produces one incremental patch
-# of files modified/renamed/deleted since the previous submission update, plus
-# a verbatim copy of every file added since the hackathon baseline.
+# of files that existed at the hackathon baseline and were modified, deleted or
+# renamed since the previous submission update. Files added since the baseline
+# are copied verbatim in their current state.
 #
 # Usage:
 #   ./scripts/build-submission.sh [../snaplog-meta-hackathon]
@@ -93,44 +94,66 @@ fi
 
 PREV_SHORT="$(git rev-parse --short "$PREV_COMMIT")"
 
-# --- generate incremental patch for modified files -------------------------
+# --- classify files ---------------------------------------------------------
 
-mkdir -p "$SUB_REPO/$PATCH_DIR"
+# Files modified/deleted/renamed/type-changed between PREV_COMMIT and HEAD
+# that ALSO existed at the baseline. These are safe to express as patches
+# against a baseline checkout.
+MODIFIED_FILES=()
+while IFS= read -r -d '' file; do
+  [[ -z "$file" ]] && continue
+  if git cat-file -e "$BASELINE_TAG:$file" 2>/dev/null; then
+    MODIFIED_FILES+=("$file")
+  fi
+done < <(git diff --diff-filter=MDRT --name-only -z "${PREV_COMMIT}..${SOURCE_COMMIT}" || true)
 
-PATCH_NAME="${PREV_SHORT}-to-${SOURCE_SHORT}.patch"
-PATCH_PATH="$SUB_REPO/$PATCH_DIR/$PATCH_NAME"
-
-# M = modified, D = deleted, R = renamed, T = type-changed.
-# --binary ensures binary files are represented in the patch.
-git diff \
-  --find-renames \
-  --binary \
-  --diff-filter=MDRT \
-  "${PREV_COMMIT}..${SOURCE_COMMIT}" \
-  > "$PATCH_PATH"
-
-if [[ ! -s "$PATCH_PATH" ]]; then
-  rm "$PATCH_PATH"
-  PATCH_NAME=""
-fi
-
-# --- copy new files verbatim -----------------------------------------------
-
-rm -rf "$SUB_REPO/$NEW_DIR"
-mkdir -p "$SUB_REPO/$NEW_DIR"
-
-NEW_FILES_COUNT=0
+# Files added since the baseline. These are copied verbatim in current state.
+ADDED_FILES=()
 while IFS= read -r -d '' file; do
   [[ -z "$file" ]] && continue
   if should_exclude "$file"; then
     echo "Excluding: $file"
     continue
   fi
+  ADDED_FILES+=("$file")
+done < <(git diff --diff-filter=A --name-only -z "$BASELINE_TAG..HEAD" || true)
+
+# --- generate incremental patch for modified baseline files -----------------
+
+mkdir -p "$SUB_REPO/$PATCH_DIR"
+
+PATCH_NAME="${PREV_SHORT}-to-${SOURCE_SHORT}.patch"
+PATCH_PATH="$SUB_REPO/$PATCH_DIR/$PATCH_NAME"
+
+if [[ ${#MODIFIED_FILES[@]} -gt 0 ]]; then
+  git diff \
+    --find-renames \
+    --binary \
+    "${PREV_COMMIT}..${SOURCE_COMMIT}" \
+    -- "${MODIFIED_FILES[@]}" \
+    > "$PATCH_PATH"
+else
+  rm -f "$PATCH_PATH"
+  PATCH_NAME=""
+fi
+
+if [[ -n "$PATCH_NAME" && ! -s "$PATCH_PATH" ]]; then
+  rm "$PATCH_PATH"
+  PATCH_NAME=""
+fi
+
+# --- copy new files verbatim ------------------------------------------------
+
+rm -rf "$SUB_REPO/$NEW_DIR"
+mkdir -p "$SUB_REPO/$NEW_DIR"
+
+NEW_FILES_COUNT=0
+for file in "${ADDED_FILES[@]}"; do
   target="$SUB_REPO/$NEW_DIR/$file"
   mkdir -p "$(dirname "$target")"
   cp -a "$file" "$target"
   NEW_FILES_COUNT=$((NEW_FILES_COUNT + 1))
-done < <(git diff --diff-filter=A --name-only -z "$BASELINE_TAG..HEAD" || true)
+done
 
 if [[ "$NEW_FILES_COUNT" -eq 0 ]]; then
   rmdir "$SUB_REPO/$NEW_DIR" 2>/dev/null || true
@@ -138,8 +161,8 @@ fi
 
 # --- manifest --------------------------------------------------------------
 
-MODIFIED_FILES_LIST="$(git diff --diff-filter=MDRT --name-only "$BASELINE_TAG..HEAD" || true)"
-ADDED_FILES_LIST="$(git diff --diff-filter=A --name-only "$BASELINE_TAG..HEAD" || true)"
+MODIFIED_FILES_LIST="$(printf '%s\n' "${MODIFIED_FILES[@]}")"
+ADDED_FILES_LIST="$(printf '%s\n' "${ADDED_FILES[@]}")"
 
 cat > "$SUB_REPO/MANIFEST.md" <<EOF
 # Submission manifest
@@ -152,7 +175,7 @@ Generated from [snaplog](https://github.com/corleroux/snaplog) at \`$SOURCE_COMM
 - Previous source commit: \`$PREV_COMMIT\`
 - Incremental patch: \`${PATCH_NAME:-_none_}\`
 
-## Files modified since baseline
+## Baseline files modified since baseline
 
 ${MODIFIED_FILES_LIST:-_none_}
 
