@@ -2,20 +2,44 @@
 set -euo pipefail
 
 # scripts/build-submission.sh
-# Populates the public submission repo (snaplog-meta-hackathon) with the
-# event work from this snaplog repo: patches for files modified since the
-# hackathon baseline, plus verbatim copies of new files.
+# Populates the public submission repo (corleroux/snaplog-meta-hackathon) with
+# event work from this snaplog repo.
+#
+# For every task merged to staging, the script produces one incremental patch
+# of files modified/renamed/deleted since the previous submission update, plus
+# a verbatim copy of every file added since the hackathon baseline.
 #
 # Usage:
 #   ./scripts/build-submission.sh [../snaplog-meta-hackathon]
 #
-# Run this from the root of the snaplog repo, on the staging branch (or a
-# task branch that has been merged to staging), after each task merges.
+# Run this from the root of the snaplog repo, on the staging branch, after each
+# task merges.
 
 SUB_REPO="${1:-../snaplog-meta-hackathon}"
 BASELINE_TAG="hackathon-baseline"
 PATCH_DIR="patches"
 NEW_DIR="new-files"
+
+# Files that are event work but should not be published to the submission repo.
+# Shell glob patterns, matched with `case`.
+EXCLUDE_PATTERNS=(
+  "verification-todo.md"
+  "docs/hackathon-status-update.md"
+  "*.Zone.Identifier"
+  "*.DS_Store"
+)
+
+# --- helpers ---------------------------------------------------------------
+
+should_exclude() {
+  local path="$1"
+  for pattern in "${EXCLUDE_PATTERNS[@]}"; do
+    case "$path" in
+      $pattern) return 0 ;;
+    esac
+  done
+  return 1
+}
 
 # --- sanity checks ---------------------------------------------------------
 
@@ -34,10 +58,9 @@ SOURCE_SHORT="$(git rev-parse --short HEAD)"
 SOURCE_DATE="$(git log -1 --format=%cd --date=iso-strict HEAD)"
 SOURCE_BRANCH="$(git branch --show-current)"
 
-if [[ "$SOURCE_BRANCH" != "staging" && "$SOURCE_BRANCH" != task/* ]]; then
-  echo "Warning: current branch is '$SOURCE_BRANCH', expected 'staging' or 'task/*'." >&2
-  read -rp "Continue? [y/N] " reply
-  [[ "$reply" =~ ^[Yy]$ ]] || exit 1
+if [[ "$SOURCE_BRANCH" != "staging" ]]; then
+  echo "Error: current branch is '$SOURCE_BRANCH'; run this script on 'staging' after merging the task." >&2
+  exit 1
 fi
 
 # --- submission repo setup -------------------------------------------------
@@ -55,20 +78,40 @@ fi
 
 cd - >/dev/null
 
-# --- generate patches for modified files -----------------------------------
+# --- determine the previous source commit ----------------------------------
+
+PREV_COMMIT=""
+cd "$SUB_REPO"
+if git rev-parse HEAD >/dev/null 2>&1; then
+  PREV_COMMIT="$(git log -1 --pretty=format:%B | grep -oE 'Source: corleroux/snaplog@[a-f0-9]+' | tail -1 | cut -d@ -f2 || true)"
+fi
+cd - >/dev/null
+
+if [[ -z "$PREV_COMMIT" ]]; then
+  PREV_COMMIT="$(git rev-parse "$BASELINE_TAG")"
+fi
+
+PREV_SHORT="$(git rev-parse --short "$PREV_COMMIT")"
+
+# --- generate incremental patch for modified files -------------------------
 
 mkdir -p "$SUB_REPO/$PATCH_DIR"
 
-# All changes *except* pure additions go into the patch so that the baseline
-# checkout can be transformed cleanly. Additions are copied verbatim below.
+PATCH_NAME="${PREV_SHORT}-to-${SOURCE_SHORT}.patch"
+PATCH_PATH="$SUB_REPO/$PATCH_DIR/$PATCH_NAME"
+
+# M = modified, D = deleted, R = renamed, T = type-changed.
+# --binary ensures binary files are represented in the patch.
 git diff \
   --find-renames \
-  --diff-filter=MDR \
-  "$BASELINE_TAG..HEAD" \
-  > "$SUB_REPO/$PATCH_DIR/snaplog-modified.patch"
+  --binary \
+  --diff-filter=MDRT \
+  "${PREV_COMMIT}..${SOURCE_COMMIT}" \
+  > "$PATCH_PATH"
 
-if [[ ! -s "$SUB_REPO/$PATCH_DIR/snaplog-modified.patch" ]]; then
-  rm "$SUB_REPO/$PATCH_DIR/snaplog-modified.patch"
+if [[ ! -s "$PATCH_PATH" ]]; then
+  rm "$PATCH_PATH"
+  PATCH_NAME=""
 fi
 
 # --- copy new files verbatim -----------------------------------------------
@@ -79,6 +122,10 @@ mkdir -p "$SUB_REPO/$NEW_DIR"
 NEW_FILES_COUNT=0
 while IFS= read -r -d '' file; do
   [[ -z "$file" ]] && continue
+  if should_exclude "$file"; then
+    echo "Excluding: $file"
+    continue
+  fi
   target="$SUB_REPO/$NEW_DIR/$file"
   mkdir -p "$(dirname "$target")"
   cp -a "$file" "$target"
@@ -91,6 +138,9 @@ fi
 
 # --- manifest --------------------------------------------------------------
 
+MODIFIED_FILES_LIST="$(git diff --diff-filter=MDRT --name-only "$BASELINE_TAG..HEAD" || true)"
+ADDED_FILES_LIST="$(git diff --diff-filter=A --name-only "$BASELINE_TAG..HEAD" || true)"
+
 cat > "$SUB_REPO/MANIFEST.md" <<EOF
 # Submission manifest
 
@@ -99,14 +149,16 @@ Generated from [snaplog](https://github.com/corleroux/snaplog) at \`$SOURCE_COMM
 - Branch: \`$SOURCE_BRANCH\`
 - Date: $SOURCE_DATE
 - Baseline: [$BASELINE_TAG](https://github.com/corleroux/snaplog/releases/tag/$BASELINE_TAG)
+- Previous source commit: \`$PREV_COMMIT\`
+- Incremental patch: \`${PATCH_NAME:-_none_}\`
 
 ## Files modified since baseline
 
-$(git diff --diff-filter=MDR --name-only "$BASELINE_TAG..HEAD" || echo "_none_")
+${MODIFIED_FILES_LIST:-_none_}
 
 ## Files added since baseline (copied verbatim to \`$NEW_DIR/\`)
 
-$(git diff --diff-filter=A --name-only "$BASELINE_TAG..HEAD" || echo "_none_")
+${ADDED_FILES_LIST:-_none_}
 EOF
 
 # --- commit and push -------------------------------------------------------
@@ -125,6 +177,8 @@ git commit -m "Update submission from snaplog@${SOURCE_SHORT}
 - Source: corleroux/snaplog@${SOURCE_COMMIT}
 - Branch: ${SOURCE_BRANCH}
 - Baseline: ${BASELINE_TAG}
+- Previous source: ${PREV_COMMIT}
+- Patch: ${PATCH_NAME:-_none_}
 - Generated: ${SOURCE_DATE}"
 
 git push origin HEAD
