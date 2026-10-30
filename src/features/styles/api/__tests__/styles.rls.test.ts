@@ -242,3 +242,56 @@ describe.skipIf(!rlsEnabled)('fabric_styles RLS policies', () => {
     expect(data![0].id).toBe(styleForOwnerDeleteId)
   })
 })
+
+describe.skipIf(!rlsEnabled)('catalogue_types RLS policies', () => {
+  let authClient: SupabaseClient
+
+  beforeAll(async () => {
+    const user = await createUserWithProfile(
+      `catalogue-types-rls-${Date.now()}@example.com`,
+      'password123'
+    )
+    authClient = user.client
+  })
+
+  it('authenticated users can SELECT active catalogue_types', async () => {
+    const { data, error } = await authClient
+      .from('catalogue_types')
+      .select('slug, version, schema')
+      .eq('slug', 'fabric')
+      .single()
+
+    expect(error).toBeNull()
+    expect(data).not.toBeNull()
+    expect(data!.slug).toBe('fabric')
+    expect(data!.version).toBe(1)
+    expect(data!.schema).toHaveProperty('fields')
+  })
+
+  it('anonymous users cannot SELECT catalogue_types', async () => {
+    const anon = createClient(LOCAL_URL, ANON_KEY, {
+      auth: { persistSession: false, autoRefreshToken: false },
+    })
+
+    const { data, error } = await anon
+      .from('catalogue_types')
+      .select('slug')
+      .eq('slug', 'fabric')
+      .single()
+
+    expect(error).not.toBeNull()
+    expect(data).toBeNull()
+  })
+
+  it('authenticated users cannot INSERT catalogue_types', async () => {
+    const { error } = await authClient.from('catalogue_types').insert({
+      slug: 'malicious',
+      kind: 'catalogue_type',
+      display_name: 'Malicious',
+      version: 1,
+      schema: { fields: [] },
+    })
+
+    expect(error).not.toBeNull()
+  })
+})
