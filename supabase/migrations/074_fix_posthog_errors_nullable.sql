@@ -1,0 +1,2 @@
+ALTER TABLE posthog_errors ALTER COLUMN last_seen DROP NOT NULL;
+ALTER TABLE posthog_errors ALTER COLUMN title DROP NOT NULL;

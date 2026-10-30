@@ -1,0 +1,118 @@
+-- Informational migration placeholder.
+--
+-- STORAGE BUCKETS - Current and Planned
+--
+-- Current (active):
+--   scan-originals - Private bucket for AI extraction source images
+--
+-- Planned (not yet implemented):
+--   event-covers - Public bucket for event cover images
+--   vendor-media - Public bucket for vendor logos, business cards, gallery
+--   fabric-media - Public bucket for fabric style thumbnails and gallery
+--
+-- IMPORTANT: Use 'fabric-media', NOT 'product-media' (fabric-centric naming)
+--
+-- ==============================================================================
+-- SECURITY NOTES - For Future Implementation
+-- ==============================================================================
+--
+-- scan-originals bucket security considerations:
+--
+-- 1. CURRENT IMPLEMENTATION (016_create_scan_originals_bucket.sql):
+--    - Any authenticated user can upload/read/delete
+--    - Sufficient for initial development and trusted user environments
+--    - Service role has full access for edge functions
+--
+-- 2. RECOMMENDED ENHANCEMENTS (for production / multi-tenant environments):
+--
+--    a) Event-based access control via folder paths:
+--       - Users should only access scan-originals/{eventId}/... for events they are members of
+--       - Leverage public.is_event_member(event_id) RLS helper function
+--       - Pattern: (storage.foldername(name))[1] = event_id check
+--
+--    b) Draft ownership validation:
+--       - Users can only upload/read their own draft images
+--       - Pattern: scan-originals/{eventId}/vendor/{draftId}/...
+--       - Validate: draft.owner_id = auth.uid() OR draft IN user's drafts
+--
+--    c) Signed URL generation for public access:
+--       - If source images need to be shared (e.g., review screen collaboration)
+--       - Use storage.createSignedUrl() instead of public bucket
+--       - URLs should expire after review period
+--
+--    d) Rate limiting considerations:
+--       - Storage uploads should be rate-limited per user
+--       - Consider file size limits per event to prevent abuse
+--       - Monitor for excessive upload patterns
+--
+-- 3. RLS POLICY UPGRADES (future):
+--
+--    -- Enhanced upload policy (event membership check)
+--    create policy "Users can upload to events they are members of"
+--    on storage.objects
+--    for insert
+--    to authenticated
+--    with check (
+--      bucket_id = 'scan-originals'
+--      and exists (
+--        select 1 from event_members
+--        where event_id = (storage.foldername(name))[1]::uuid
+--        and user_id = auth.uid()
+--      )
+--    );
+--
+--    -- Enhanced read policy (event membership + draft ownership)
+--    create policy "Users can read event scans they are members of"
+--    on storage.objects
+--    for select
+--    to authenticated
+--    using (
+--      bucket_id = 'scan-originals'
+--      and exists (
+--        select 1 from event_members
+--        where event_id = (storage.foldername(name))[1]::uuid
+--        and user_id = auth.uid()
+--      )
+--    );
+--
+--    -- Enhanced delete policy (draft ownership only)
+--    create policy "Users can delete their own draft uploads"
+--    on storage.objects
+--    for delete
+--    to authenticated
+--    using (
+--      bucket_id = 'scan-originals'
+--      and exists (
+--        select 1 from drafts
+--        where id = (storage.foldername(name))[3]::uuid -- extract draftId from path
+--        and owner_id = auth.uid()
+--      )
+--    );
+--
+-- 4. MONITORING & AUDITING:
+--
+--    - Log all storage access (who uploaded what, when)
+--    - Monitor for unusual access patterns
+--    - Set up alerts for cross-event access attempts
+--    - Track storage usage per event/vendor
+--
+-- ==============================================================================
+-- Path conventions:
+-- ==============================================================================
+--
+-- scan-originals (current):
+--   scan-originals/{eventId}/vendor/{draftId}/original.{ext}
+--   scan-originals/{eventId}/styles/{vendorId}/{draftId}/{index}.{ext}
+--
+-- event-covers (planned):
+--   event-covers/{eventId}/cover.{ext}
+--
+-- vendor-media (planned):
+--   vendor-media/{eventId}/{vendorId}/logo.{ext}
+--   vendor-media/{eventId}/{vendorId}/business-card.{ext}
+--   vendor-media/{eventId}/{vendorId}/gallery/{imageId}.{ext}
+--
+-- fabric-media (planned):
+--   fabric-media/{eventId}/{vendorId}/{styleId}/thumb.{ext}
+--   fabric-media/{eventId}/{vendorId}/{styleId}/gallery/{imageId}.{ext}
+--

@@ -1,0 +1,9 @@
+  Session   Recursive backlog planning with subagents
+  Continue  opencode -s ses_20dbaca8fffeJI5awwOQM3lQfP
+
+  Session   Task pickup conversation (mobile task 35)
+  Continue  opencode -s ses_20c920c1cffe9FwXcQy1FRcSm4
+
+  Session   Task pickup and prioritization discussion (mobile task 36)
+  Continue  opencode -s ses_20c94ce93ffe03SKXDQfPNgLnx
+

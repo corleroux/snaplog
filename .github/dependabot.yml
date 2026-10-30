@@ -1,0 +1,63 @@
+# Dependabot configuration for automated dependency updates
+# https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+
+version: 2
+updates:
+  # Enable version updates for npm
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekday"  # Check for updates on weekdays (Mon-Fri)
+      time: "09:00"        # At 9 AM UTC
+      timezone: "America/New_York"
+    open-pull-requests-limit: 3
+    pull-request-branch-name:
+      separator: "-"
+    labels:
+      - "dependencies"
+      - "dependabot"
+    commit-message:
+      prefix: "chore(deps)"
+      prefix-development: "chore(deps-dev)"
+      include: "scope"
+
+  # Enable version updates for GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "github-actions"
+      - "dependabot"
+
+  # Separate grouping for production dependencies
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekday"
+      time: "09:00"
+      timezone: "America/New_York"
+    groups:
+      react-dependencies:
+        patterns:
+          - "react"
+          - "react-dom"
+        exclude-patterns:
+          - "@types/*"
+      supabase-dependencies:
+        patterns:
+          - "@supabase/**"
+      dev-dependencies:
+        patterns:
+          - "@types/*"
+          - "eslint*"
+          - "prettier*"
+          - "vitest*"
+          - "@vitejs/*"
+        dependency-type: "development"
+    pull-request-branch-name:
+      separator: "-"
+    labels:
+      - "dependencies"
+      - "dependabot"

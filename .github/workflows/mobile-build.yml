@@ -1,0 +1,98 @@
+name: Mobile Build — Production
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build-android:
+    name: Build Android (Production)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build web assets
+        run: pnpm build
+
+      - name: Sync Capacitor
+        run: pnpm exec cap sync android
+
+      - name: Setup EAS
+        if: ${{ env.SKIP_EAS_BUILD != 'true' }}
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Build Android via EAS
+        if: ${{ env.SKIP_EAS_BUILD != 'true' }}
+        run: eas build --platform android --profile production --non-interactive
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+      - name: "DRY-RUN: Skip EAS Android build"
+        if: ${{ env.SKIP_EAS_BUILD == 'true' }}
+        run: echo "SKIP_EAS_BUILD=true — skipping EAS build (local dry-run)"
+
+      - name: Submit to Google Play Production
+        if: ${{ success() && env.SKIP_EAS_BUILD != 'true' }}
+        run: eas submit --platform android --profile production --non-interactive
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+  build-ios:
+    name: Build iOS (Production)
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build web assets
+        run: pnpm build
+
+      - name: Sync Capacitor
+        run: pnpm exec cap sync ios
+
+      - name: Setup EAS
+        if: ${{ env.SKIP_EAS_BUILD != 'true' }}
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Build iOS via EAS
+        if: ${{ env.SKIP_EAS_BUILD != 'true' }}
+        run: eas build --platform ios --profile production --non-interactive
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+      - name: "DRY-RUN: Skip EAS iOS build"
+        if: ${{ env.SKIP_EAS_BUILD == 'true' }}
+        run: echo "SKIP_EAS_BUILD=true — skipping EAS build (local dry-run)"
+
+      - name: Submit to App Store
+        if: ${{ success() && env.SKIP_EAS_BUILD != 'true' }}
+        run: eas submit --platform ios --profile production --non-interactive
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}

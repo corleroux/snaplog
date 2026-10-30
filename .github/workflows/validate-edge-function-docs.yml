@@ -1,0 +1,18 @@
+name: Validate Edge Function Docs
+
+on:
+  push:
+    branches: [staging, main]
+  pull_request:
+    branches: [staging]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Check all edge functions are documented
+        run: deno run --allow-read scripts/validate-edge-function-docs.ts

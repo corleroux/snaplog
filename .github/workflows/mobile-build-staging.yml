@@ -1,0 +1,121 @@
+name: Mobile Build — Staging
+
+on:
+  push:
+    branches:
+      - staging
+    paths:
+      - 'src/**'
+      - 'index.html'
+      - 'vite.config.ts'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'capacitor.config.ts'
+      - 'eas.json'
+      - 'app.json'
+      - 'ios/**'
+      - 'android/**'
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: 'Platform to build for'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - android
+          - ios
+
+jobs:
+  build-android:
+    name: Build Android (Staging)
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'push' || github.event.inputs.platform == 'all' || github.event.inputs.platform == 'android' }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build web assets
+        run: pnpm build
+
+      - name: Sync Capacitor
+        run: pnpm exec cap sync android
+
+      - name: Setup EAS
+        if: ${{ env.SKIP_EAS_BUILD != 'true' }}
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Build Android via EAS
+        if: ${{ env.SKIP_EAS_BUILD != 'true' }}
+        run: eas build --platform android --profile staging --non-interactive
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+      - name: "DRY-RUN: Skip EAS Android build"
+        if: ${{ env.SKIP_EAS_BUILD == 'true' }}
+        run: echo "SKIP_EAS_BUILD=true — skipping EAS build (local dry-run)"
+
+      - name: Submit to Google Play Internal Testing
+        if: ${{ success() && env.SKIP_EAS_BUILD != 'true' }}
+        run: eas submit --platform android --profile staging --non-interactive
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+  build-ios:
+    name: Build iOS (Staging)
+    runs-on: macos-latest
+    if: ${{ github.event_name == 'push' || github.event.inputs.platform == 'all' || github.event.inputs.platform == 'ios' }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build web assets
+        run: pnpm build
+
+      - name: Sync Capacitor
+        run: pnpm exec cap sync ios
+
+      - name: Setup EAS
+        if: ${{ env.SKIP_EAS_BUILD != 'true' }}
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Build iOS via EAS
+        if: ${{ env.SKIP_EAS_BUILD != 'true' }}
+        run: eas build --platform ios --profile staging --non-interactive
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+      - name: "DRY-RUN: Skip EAS iOS build"
+        if: ${{ env.SKIP_EAS_BUILD == 'true' }}
+        run: echo "SKIP_EAS_BUILD=true — skipping EAS build (local dry-run)"
+
+      - name: Submit to TestFlight
+        if: ${{ success() && env.SKIP_EAS_BUILD != 'true' }}
+        run: eas submit --platform ios --profile staging --non-interactive
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}

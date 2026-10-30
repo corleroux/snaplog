@@ -1,0 +1,239 @@
+@import "tailwindcss";
+
+/**
+ * Snaplog - Design System Tokens
+ *
+ * Visual language: premium, calm, tactile, visual, modern, trustworthy
+ * - Warm orange accent for primary actions
+ * - Premium dark surfaces for operational screens
+ * - Modern rounded surfaces with soft depth
+ * - Mobile-first touch-friendly sizing
+ */
+
+@theme {
+  /* Dark mode configuration */
+  --color-mode-dark: class;
+
+  /* Container customization */
+  --max-container-2xl: 1400px;
+  --container-padding: 2rem;
+
+  /* Color system - mapped from CSS variables */
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+
+  /* Border radius tokens */
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-radius-sm: var(--radius-sm);
+  --radius-radius-md: var(--radius-md);
+  --radius-radius-lg: var(--radius-lg);
+  --radius-radius-xl: var(--radius-xl);
+  --radius-radius-pill: var(--radius-pill);
+}
+
+@layer base {
+  :root {
+    /* Light mode - operational screens */
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    /* Primary is now the warm orange accent */
+    --primary: 24 95% 53%; /* orange-500: #f97316 */
+    --primary-foreground: 0 0% 100%;
+
+    /* Secondary for alternative actions */
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    /* Muted for subtle backgrounds */
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    /* Accent for hover states and subtle highlights */
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    /* Destructive for error states */
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    /* Borders and inputs */
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 24 95% 53%; /* Orange ring to match primary */
+
+    /* Focus ring enhancement for dark backgrounds */
+    --ring-dark: 24 95% 68%; /* Lighter orange for dark mode focus */
+
+    /* Radius tokens for rounded surfaces */
+    --radius: 0.5rem;
+    --radius-sm: 0.375rem; /* chips, small controls */
+    --radius-md: 0.5rem; /* inputs, secondary buttons */
+    --radius-lg: 0.75rem; /* cards and grouped panels */
+    --radius-xl: 1rem; /* hero image cards / large surfaces */
+    --radius-pill: 9999px; /* primary CTA buttons, segmented controls, badges */
+  }
+
+  .dark {
+    /* Dark mode - premium dark surfaces */
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    /* Primary remains warm orange in dark mode */
+    --primary: 24 95% 53%; /* orange-500 */
+    --primary-foreground: 0 0% 100%;
+
+    /* Secondary for dark surfaces */
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    /* Muted for subtle backgrounds */
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    /* Accent for hover states */
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    /* Destructive for error states */
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    /* Borders and inputs */
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 24 95% 53%; /* Orange ring to match primary */
+
+    /* Enhanced focus ring for dark backgrounds */
+    --ring-dark: 24 95% 68%; /* Lighter orange for better visibility */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground text-base;
+  }
+
+  /* Typography hierarchy */
+  h1 {
+    @apply text-2xl font-semibold tracking-tight;
+  }
+  h2 {
+    @apply text-xl font-semibold tracking-tight;
+  }
+  h3 {
+    @apply text-lg font-semibold tracking-tight;
+  }
+  h4 {
+    @apply text-base font-semibold tracking-tight;
+  }
+
+  /* Enhanced focus states for better visibility */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-offset-2 ring-offset-background;
+  }
+  .dark *:focus-visible {
+    @apply ring-offset-background;
+  }
+}
+
+@layer utilities {
+  /* Z-index scale - consistent layer ordering */
+  .z-nav {
+    z-index: 40;
+  }
+  .z-overlay {
+    z-index: 50;
+  }
+  .z-modal {
+    z-index: 60;
+  }
+  .z-toast {
+    z-index: 70;
+  }
+
+  /* Touch-friendly tap targets (min 44x44px) */
+  .tap-target {
+    @apply min-h-[44px] min-w-[44px];
+  }
+
+  /* Rounded surface variants */
+  .surface-sm {
+    @apply rounded-lg;
+  }
+  .surface-md {
+    @apply rounded-xl;
+  }
+  .surface-lg {
+    @apply rounded-2xl;
+  }
+  .surface-pill {
+    @apply rounded-full;
+  }
+
+  /* Safe area utilities - normalize approach */
+  .safe-area-top {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .safe-area-left {
+    padding-left: env(safe-area-inset-left, 0px);
+  }
+  .safe-area-right {
+    padding-right: env(safe-area-inset-right, 0px);
+  }
+  .safe-area-all {
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    padding-left: env(safe-area-inset-left, 0px);
+    padding-right: env(safe-area-inset-right, 0px);
+  }
+}
+
+/* Keyframe animations */
+@keyframes slideInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
