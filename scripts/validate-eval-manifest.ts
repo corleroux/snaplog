@@ -87,7 +87,15 @@ for (const [index, entry] of manifest.captures.entries()) {
     try {
       await Deno.stat(new URL(entry.file, new URL('../eval/', import.meta.url)))
     } catch {
-      errors.push(`${where}: file not found: ${entry.file}`)
+      // Captures stay gitignored/local-only, so a clean checkout legitimately
+      // lacks web-sourced files until they are synced. Fresh/production
+      // captures must exist; web captures warn.
+      const message = `${where}: file not found: ${entry.file}`
+      if (entry.source === 'web') {
+        warnings.push(message)
+      } else {
+        errors.push(message)
+      }
     }
   }
 

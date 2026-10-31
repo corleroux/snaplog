@@ -162,10 +162,10 @@
         "item": {
           "item_code": null,
           "name": null,
-          "garment_type": null,
+          "garment_type": "Jeans",
           "silhouette": null,
           "construction": null,
-          "fabric_composition": null,
+          "fabric_composition": "Denim",
           "closure": null,
           "neckline": null,
           "sleeve": null,
@@ -173,7 +173,9 @@
           "sizing": null,
           "season": null,
           "metadata": null,
-          "colourways": null
+          "colourways": [
+            { "colour_code": null, "colour_name": "Light blue", "variant_name": "folded jeans", "sizing": null, "metadata": null }
+          ]
         }
       },
       "languages": [],
@@ -193,7 +195,7 @@
           "garment_type": "Dress",
           "silhouette": "A-line",
           "construction": null,
-          "fabric_composition": "Wool",
+          "fabric_composition": null,
           "closure": null,
           "neckline": "V-neck",
           "sleeve": "Short sleeve",

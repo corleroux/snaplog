@@ -28,8 +28,20 @@ inputs (PRD §8). Data only — no product code.
   brand names. An empty hanger labels to all-nulls (never-guess check).
 - Multi-item photos label the prominent item; add the `multi-item` tag.
 - Tag capture conditions honestly: `glare` / `blur` / `mixed-language` /
-  `clutter` / `low-light` / `back-view` / `worn` / `mannequin` / `people` /
-  `text-signage` / `no-garment`.
+  `clutter` / `low-light` / `backlight` / `back-view` / `worn` / `mannequin` /
+  `museum` / `people` / `text-signage` / `no-garment` / `multi-item` /
+  `multi-garment` / `folded` / `rack`. Keep the list in sync with tags used
+  in `manifest.json`.
+- Vendor cards and stall fronts may contain PII: owner's explicit OK required
+  before including them, and never in published material or the demo video
+  without clearance.
+- Images showing identifiable people (e.g. `web-garment-09`) are eval-only:
+  blur or crop faces, or replace the capture, before any demo or published
+  use. Third-party captures (Wikimedia Commons, Mixkit) require their
+  licence attribution if published — keep `source_url` on every web entry.
+- Video `expected_distinct_items` counts are estimates until the first Modal
+  run tunes them (`expected_items_estimated: true`); re-run the validator
+  after tuning.
 - Vendor cards and stall fronts may contain PII: owner's explicit OK required
   before including them, and never in published material or the demo video
   without clearance.
