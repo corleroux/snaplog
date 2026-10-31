@@ -5,7 +5,7 @@
  * from the catalogue type definition — no per-category form code.
  */
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Sparkles, AlertTriangle } from 'lucide-react'
 import { cn } from '@/lib/utils/cn'
 import { Button, BottomActionBar, Badge } from '@/components/ui'
@@ -49,7 +49,10 @@ export function CatalogueItemReviewScreen({
   headerContent,
   className,
 }: CatalogueItemReviewScreenProps) {
-  const displayImages = allImages || (infoImage ? [infoImage] : [])
+  const displayImages = useMemo(
+    () => allImages || (infoImage ? [infoImage] : []),
+    [allImages, infoImage]
+  )
   const [heroImage, setHeroImage] = useState<CaptureImage | null>(infoImage)
 
   // Keep the hero in sync when new extraction results arrive (extraction
