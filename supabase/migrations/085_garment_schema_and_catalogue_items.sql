@@ -31,7 +31,7 @@ VALUES (
         ),
         'output_root', 'item',
         'fields', jsonb_build_array(
-            jsonb_build_object('path', 'item.item_code', 'type', 'string', 'label', 'Item code', 'hint', 'style/product code', 'required', false),
+            jsonb_build_object('path', 'item.item_code', 'type', 'string', 'label', 'Item code', 'hint', 'style/product code', 'required', true),
             jsonb_build_object('path', 'item.name', 'type', 'string', 'label', 'Name', 'hint', 'style or product name', 'required', false),
             jsonb_build_object('path', 'item.garment_type', 'type', 'string', 'label', 'Garment type', 'hint', 'e.g., Dress, Shirt, Jacket, Trousers, Skirt', 'required', false),
             jsonb_build_object('path', 'item.silhouette', 'type', 'string', 'label', 'Silhouette', 'hint', 'e.g., A-line, Slim, Boxy, Oversized', 'required', false),

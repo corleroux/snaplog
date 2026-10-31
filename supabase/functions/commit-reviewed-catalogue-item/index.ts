@@ -17,15 +17,16 @@
  */
 
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-import { handleCors, requireMethod, json, conflict, internalError } from '../_shared/http.ts'
+import { handleCors, requireMethod, conflict, internalError } from '../_shared/http.ts'
 import { createLogger } from '../_shared/logger.ts'
 import { createAdminClient, requireUser } from '../_shared/supabase.ts'
-import { validateUUID, requireObject, requireNonEmptyString } from '../_shared/validation.ts'
+import { validateUUID, requireObject } from '../_shared/validation.ts'
 import { verifyOwnedScanSession } from '../_shared/scanSessionVerification.ts'
 import { getExistingCommittedResourceId } from '../_shared/idempotency.ts'
 import { attemptNonFatal } from '../_shared/nonFatal.ts'
 import { commitSuccessResponse } from '../_shared/commitResponse.ts'
 import { createCommitAudit } from '../_shared/commitAudit.ts'
+import { loadSchema } from '../_shared/catalogueSchemaRegistry.ts'
 import { validateEnv } from '../_shared/envValidation.ts'
 import { initEdgePostHog, captureException } from '../_shared/posthogEdge.ts'
 
@@ -51,7 +52,25 @@ interface CommitCatalogueItemRequest {
 
 function validateReviewedDocument(doc: ReviewedCatalogueItemDocument): void {
   requireObject(doc.item, 'item')
-  requireNonEmptyString(doc.item.item_code as string | undefined | null, 'item.item_code')
+}
+
+/** Read a dotted schema path out of the reviewed item payload. */
+function readReviewedPath(item: Record<string, unknown>, path: string): unknown {
+  const segments = path.split('.')
+  let current: unknown = item
+  for (const segment of segments) {
+    if (current === null || current === undefined) return undefined
+    if (Array.isArray(current)) {
+      const index = Number(segment)
+      if (!Number.isInteger(index)) return undefined
+      current = current[index]
+    } else if (typeof current === 'object') {
+      current = (current as Record<string, unknown>)[segment]
+    } else {
+      return undefined
+    }
+  }
+  return current
 }
 
 serve(async (req) => {
@@ -86,13 +105,14 @@ serve(async (req) => {
       event_id: string
       vendor_id: string | null
       item_id: string | null
+      schema_type: string | null
       created_by: string
     }>({
       supabase,
       scanSessionId: body.scan_session_id,
       eventId: body.event_id,
       userId: user.id,
-      select: 'id, event_id, vendor_id, item_id, created_by',
+      select: 'id, event_id, vendor_id, item_id, schema_type, created_by',
       req,
     })
 
@@ -101,6 +121,32 @@ serve(async (req) => {
 
     if (scanSession.vendor_id !== body.vendor_id) {
       return conflict('vendor_id does not match scan session', req)
+    }
+
+    // Validate required fields against the registry schema for this run's
+    // catalogue type — never hardcode per-category requirements here.
+    // Schema paths carry the output-root prefix (e.g. item.item_code) while
+    // reviewed fields live flat under reviewed_document.item, so strip the
+    // root before lookup.
+    if (scanSession.schema_type) {
+      const schema = await loadSchema(scanSession.schema_type)
+      const outputRoot = schema.schema.output_root ?? 'item'
+      const missing = (schema.schema.fields ?? [])
+        .filter((f) => f.required)
+        .map((f) => f.path)
+        .filter((path) => {
+          const relative = path.startsWith(`${outputRoot}.`)
+            ? path.slice(outputRoot.length + 1)
+            : path
+          const value = readReviewedPath(body.reviewed_document.item, relative)
+          return value === null || value === undefined ||
+            (typeof value === 'string' && value.trim() === '')
+        })
+      if (missing.length > 0) {
+        throw new Error(`Missing required fields: ${missing.join(', ')}`)
+      }
+    } else {
+      throw new Error('Scan session has no schema provenance; run extraction first')
     }
 
     const idempotency = getExistingCommittedResourceId(scanSession.item_id)

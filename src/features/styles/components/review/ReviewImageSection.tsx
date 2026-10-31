@@ -54,15 +54,17 @@ export function ThumbnailStrip({
   selectedImageId: string | undefined
   onImageSelect: (image: CaptureImage) => void
 }) {
-  if (images.length <= 1) return null
+  if (images.length <= 1) {return null}
 
   return (
     <div className="flex gap-2 overflow-x-auto pb-2">
-      {images.map((img) => (
+      {images.map((img, index) => (
         <button
           key={img.id}
           type="button"
           onClick={() => onImageSelect(img)}
+          aria-label={`View image ${index + 1}`}
+          aria-pressed={img.id === selectedImageId}
           className={cn(
             "flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 bg-muted transition-all",
             img.id === selectedImageId ? "border-orange-500 ring-2 ring-orange-500/20" : "border-border hover:border-orange-500/50"
