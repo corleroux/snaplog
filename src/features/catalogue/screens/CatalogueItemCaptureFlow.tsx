@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom'
 import { X, Camera, AlertTriangle } from 'lucide-react'
 import { Button, BottomActionBar, AppFrame, AppHeader } from '@/components/ui'
 import { LoadingState } from '@/components/ui/LoadingState'
+import { ErrorState } from '@/components/ui/ErrorState'
 import { useToast } from '@/components/ui/toast'
 import { CaptureSessionPanel } from '@/components/capture/CaptureSessionPanel'
 import { ConfirmationDialog } from '@/components/feedback/ConfirmationDialog'
@@ -109,7 +110,7 @@ export function CatalogueItemCaptureFlow({
       <AppHeader
         title={title}
         rightAction={
-          <Button variant="ghost" size="icon" aria-label="Discard and close" onClick={handleCancelClick} type="button">
+          <Button variant="ghost" size="icon" aria-label="Discard and close" onClick={handleCancelClick} type="button" className="min-h-[44px] min-w-[44px]">
             <X className="h-5 w-5" />
           </Button>
         }
@@ -159,18 +160,16 @@ export function CatalogueItemCaptureFlow({
             {state.screen === 'processing' ? (
               <LoadingState message="Extracting item details…" />
             ) : (
-              <>
-                <AlertTriangle className="h-10 w-10 text-destructive mx-auto" />
-                <p className="text-sm text-muted-foreground text-center">{state.error || 'An error occurred'}</p>
-                <div className="flex gap-3 justify-center">
+              <ErrorState
+                title="Something went wrong"
+                message={state.error || 'An error occurred'}
+                onRetry={retryProcessing}
+                customAction={
                   <Button variant="outline" onClick={goBack} type="button">
                     Back
                   </Button>
-                  <Button variant="accent" onClick={retryProcessing} type="button" radius="pill">
-                    Try Again
-                  </Button>
-                </div>
-              </>
+                }
+              />
             )}
           </div>
         )}
@@ -180,10 +179,12 @@ export function CatalogueItemCaptureFlow({
             definition={state.definition}
             values={reviewedValues}
             confidences={state.confidences}
+            warnings={state.warnings}
             infoImage={infoImage || null}
             allImages={allImages}
             isSaving={state.isSaving}
             extractedAt={state.extractedAt ?? undefined}
+            validationErrors={state.validationErrors}
             onFieldChange={handleFieldChange}
             onSave={saveItem}
             onBack={goBack}

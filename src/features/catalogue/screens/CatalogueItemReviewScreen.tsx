@@ -5,7 +5,7 @@
  * from the catalogue type definition — no per-category form code.
  */
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Sparkles, AlertTriangle } from 'lucide-react'
 import { cn } from '@/lib/utils/cn'
 import { Button, BottomActionBar, Badge } from '@/components/ui'
@@ -51,6 +51,17 @@ export function CatalogueItemReviewScreen({
 }: CatalogueItemReviewScreenProps) {
   const displayImages = allImages || (infoImage ? [infoImage] : [])
   const [heroImage, setHeroImage] = useState<CaptureImage | null>(infoImage)
+
+  // Keep the hero in sync when new extraction results arrive (extraction
+  // completes after capture, so infoImage is set after first render).
+  useEffect(() => {
+    setHeroImage((prev) => {
+      if (infoImage) {return infoImage}
+      if (!prev) {return prev}
+      const stillThere = displayImages.some((img) => img.id === prev.id)
+      return stillThere ? prev : (displayImages[0] ?? null)
+    })
+  }, [infoImage, displayImages])
 
   return (
     <div className={cn('space-y-4', className)}>
@@ -119,7 +130,7 @@ export function CatalogueItemReviewScreen({
 
       <BottomActionBar>
         {onBack && (
-          <Button variant="outline" onClick={onBack} disabled={isSaving} type="button" className="flex-1">
+          <Button variant="outline" onClick={onBack} disabled={isSaving} type="button" className="flex-1 min-h-[44px]">
             Back
           </Button>
         )}
@@ -129,7 +140,7 @@ export function CatalogueItemReviewScreen({
           disabled={isSaving || Object.keys(validationErrors).length > 0}
           loading={isSaving}
           type="button"
-          className="flex-1"
+          className="flex-1 min-h-[44px]"
           radius="pill"
         >
           {isSaving ? 'Saving...' : `Save ${definition.display_name}`}

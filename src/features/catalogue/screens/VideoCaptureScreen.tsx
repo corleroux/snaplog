@@ -8,10 +8,12 @@
 
 import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Video, Loader2, CheckCircle2, AlertTriangle } from 'lucide-react'
+import { Video, CheckCircle2 } from 'lucide-react'
 import { Button, BottomActionBar, AppFrame, AppHeader } from '@/components/ui'
 import { SectionContainer } from '@/components/ui/section-container'
 import { EmptyState } from '@/components/ui/EmptyState'
+import { LoadingState } from '@/components/ui/LoadingState'
+import { ErrorState } from '@/components/ui/ErrorState'
 import { useToast } from '@/components/ui/toast'
 import {
   startVideoJob,
@@ -97,12 +99,9 @@ export function VideoCaptureScreen({ eventId, vendorId, className }: VideoCaptur
           )}
 
           {(phase === 'uploading' || phase === 'polling') && (
-            <div className="flex items-center gap-3 py-4">
-              <Loader2 className="h-5 w-5 animate-spin text-orange-500" />
-              <p className="text-sm text-muted-foreground">
-                {phase === 'uploading' ? 'Uploading video…' : 'Isolating items… this can take a few minutes.'}
-              </p>
-            </div>
+            <LoadingState
+              message={phase === 'uploading' ? 'Uploading video…' : 'Isolating items… this can take a few minutes.'}
+            />
           )}
 
           {phase === 'done' && job && job.items_found > 0 && (
@@ -134,10 +133,11 @@ export function VideoCaptureScreen({ eventId, vendorId, className }: VideoCaptur
           )}
 
           {phase === 'error' && error && (
-            <p className="flex items-start gap-2 text-sm text-destructive pt-2">
-              <AlertTriangle className="h-4 w-4 flex-shrink-0 mt-0.5" />
-              {error}
-            </p>
+            <ErrorState
+              title="Video processing failed"
+              message={error}
+              onRetry={() => fileRef.current?.click()}
+            />
           )}
         </SectionContainer>
 

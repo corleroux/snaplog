@@ -13,6 +13,7 @@ import { createScanSession } from '@/lib/scanSession/scanSessionService'
 import { createLogger } from '@/lib/logger'
 import {
   getCatalogueType,
+  isMissingValue,
   mergeReviewedEdits,
   type CatalogueTypeDefinition,
 } from '../api/catalogueRegistry'
@@ -36,6 +37,10 @@ export interface CatalogueItemFlowState {
   createdItemId: string | null
   isSaving: boolean
   error: string | null
+  /** Extraction warnings shown on the review screen (EXT-06). */
+  warnings: string[]
+  /** Required-field validation errors by schema path — save is blocked. */
+  validationErrors: Record<string, string>
 }
 
 const INITIAL_STATE: CatalogueItemFlowState = {
@@ -49,6 +54,8 @@ const INITIAL_STATE: CatalogueItemFlowState = {
   createdItemId: null,
   isSaving: false,
   error: null,
+  warnings: [],
+  validationErrors: {},
 }
 
 function isLocalFileUri(uri: string): boolean {
@@ -164,9 +171,11 @@ export function useCatalogueItemCaptureFlow(options: {
         throw new Error('Info image was not correctly uploaded')
       }
 
-      // Read the selected definition (set at picker time).
+      // Read the selected definition (set at picker time). The scan type
+      // comes from the registry — the first scan_types key is the default
+      // capture for that catalogue type. No per-category code.
       const slug = activeDefinition.slug
-      const scanType = slug === 'garment' ? 'garment_flat' : 'fabric_card'
+      const scanType = Object.keys(activeDefinition.schema.scan_types ?? {})[0] ?? 'garment_flat'
 
       const scanSessionId = await createScanSession({
         eventId,
@@ -186,6 +195,13 @@ export function useCatalogueItemCaptureFlow(options: {
         catalogueType: slug,
       })
 
+      const confidences = extraction.confidence_scores
+      const warnings = buildExtractionWarnings(
+        extraction.item as Record<string, unknown>,
+        activeDefinition,
+        confidences
+      )
+
       setState((prev) => ({
         ...prev,
         screen: 'review',
@@ -193,7 +209,12 @@ export function useCatalogueItemCaptureFlow(options: {
         // edits always belong to the payload they were made against.
         userEdits: {},
         extractionPayload: extraction.item as Record<string, unknown>,
-        confidences: extraction.confidence_scores,
+        confidences,
+        warnings,
+        validationErrors: validateRequiredFields(
+          extraction.item as Record<string, unknown>,
+          activeDefinition
+        ),
         extractedAt: new Date().toISOString(),
         scanSessionId,
         error: null,
@@ -209,10 +230,19 @@ export function useCatalogueItemCaptureFlow(options: {
   }, [eventId, vendorId])
 
   const handleFieldChange = useCallback((path: string, value: unknown) => {
-    setState((prev) => ({
-      ...prev,
-      userEdits: { ...prev.userEdits, [path]: value },
-    }))
+    setState((prev) => {
+      const userEdits = { ...prev.userEdits, [path]: value }
+      // Re-validate required fields as the reviewer types.
+      const merged = prev.extractionPayload
+        ? mergeReviewedEdits(prev.extractionPayload, userEdits)
+        : null
+      return {
+        ...prev,
+        userEdits,
+        validationErrors:
+          merged && prev.definition ? validateRequiredFields(merged, prev.definition) : prev.validationErrors,
+      }
+    })
   }, [])
 
   const saveItem = useCallback(async () => {
@@ -294,4 +324,47 @@ function readNested(payload: Record<string, unknown>, path: string): unknown {
     }
   }
   return current
+}
+
+/**
+ * Build EXT-06 warnings: missing required fields + low-confidence fields.
+ * Pure — unit-tested alongside the registry helpers.
+ */
+export function buildExtractionWarnings(
+  payload: Record<string, unknown>,
+  definition: CatalogueTypeDefinition,
+  confidences?: Record<string, number>
+): string[] {
+  const warnings: string[] = []
+  for (const field of definition.schema.fields) {
+    if (field.required && isMissing(field.path)) {
+      warnings.push(`${field.label} is required but was not extracted — confirm or fill it.`)
+    }
+    const score = confidences?.[field.path]
+    if (score !== undefined && score < 0.5) {
+      warnings.push(`Low extraction confidence (${Math.round(score * 100)}%) for ${field.label} — verify against the photo.`)
+    }
+  }
+  return warnings
+
+  function isMissing(path: string): boolean {
+    return isMissingValue(readNested(payload, path))
+  }
+}
+
+/**
+ * Required-field validation errors by schema path. Save is blocked while
+ * any required field is missing.
+ */
+export function validateRequiredFields(
+  payload: Record<string, unknown>,
+  definition: CatalogueTypeDefinition
+): Record<string, string> {
+  const errors: Record<string, string> = {}
+  for (const field of definition.schema.fields) {
+    if (field.required && isMissingValue(readNested(payload, field.path))) {
+      errors[field.path] = `${field.label} is required`
+    }
+  }
+  return errors
 }
