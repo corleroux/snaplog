@@ -9,8 +9,9 @@
 import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Video, Loader2, CheckCircle2, AlertTriangle } from 'lucide-react'
-import { Button, AppFrame, AppHeader } from '@/components/ui'
+import { Button, BottomActionBar, AppFrame, AppHeader } from '@/components/ui'
 import { SectionContainer } from '@/components/ui/section-container'
+import { EmptyState } from '@/components/ui/EmptyState'
 import { useToast } from '@/components/ui/toast'
 import {
   startVideoJob,
@@ -35,23 +36,37 @@ export function VideoCaptureScreen({ eventId, vendorId, className }: VideoCaptur
   const [job, setJob] = useState<VideoJob | null>(null)
   const [error, setError] = useState<string | null>(null)
 
+  // Set when the user cancels: the background poll is ignored on settle.
+  const cancelledRef = useRef(false)
+
   const handleFile = async (file: File | undefined) => {
     if (!file) {return}
+    cancelledRef.current = false
     setPhase('uploading')
     setError(null)
 
     try {
       const { jobId } = await startVideoJob({ eventId, vendorId, file })
+      if (cancelledRef.current) {return}
       setPhase('polling')
       const finished = await pollVideoJob(jobId)
+      if (cancelledRef.current) {return}
       setJob(finished)
       setPhase('done')
     } catch (err) {
+      if (cancelledRef.current) {return}
       const message = err instanceof Error ? err.message : 'Video processing failed'
       setError(message)
       setPhase('error')
       showToast({ title: 'Video processing failed', description: message, variant: 'error', duration: 5000 })
     }
+  }
+
+  const handleCancel = () => {
+    cancelledRef.current = true
+    setPhase('idle')
+    setJob(null)
+    setError(null)
   }
 
   return (
@@ -90,7 +105,7 @@ export function VideoCaptureScreen({ eventId, vendorId, className }: VideoCaptur
             </div>
           )}
 
-          {phase === 'done' && job && (
+          {phase === 'done' && job && job.items_found > 0 && (
             <div className="space-y-3 py-2">
               <p className="flex items-center gap-2 text-sm font-medium">
                 <CheckCircle2 className="h-5 w-5 text-emerald-500" />
@@ -108,6 +123,14 @@ export function VideoCaptureScreen({ eventId, vendorId, className }: VideoCaptur
                 Back to Vendor
               </Button>
             </div>
+          )}
+
+          {phase === 'done' && job && job.items_found === 0 && (
+            <EmptyState
+              title="No items isolated"
+              description="Walk the rail closer and slower, keeping garments in frame."
+              action={{ label: 'Retake Video', onClick: handleCancel }}
+            />
           )}
 
           {phase === 'error' && error && (
@@ -130,6 +153,14 @@ export function VideoCaptureScreen({ eventId, vendorId, className }: VideoCaptur
           }}
         />
       </main>
+
+      {(phase === 'uploading' || phase === 'polling') && (
+        <BottomActionBar>
+          <Button variant="outline" type="button" className="flex-1" onClick={handleCancel}>
+            Cancel
+          </Button>
+        </BottomActionBar>
+      )}
     </AppFrame>
   )
 }

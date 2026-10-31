@@ -5,10 +5,12 @@
  * from the catalogue type definition — no per-category form code.
  */
 
-import { Sparkles } from 'lucide-react'
+import { useState } from 'react'
+import { Sparkles, AlertTriangle } from 'lucide-react'
 import { cn } from '@/lib/utils/cn'
 import { Button, BottomActionBar, Badge } from '@/components/ui'
 import { SectionContainer } from '@/components/ui/section-container'
+import { EmptyState } from '@/components/ui/EmptyState'
 import type { CaptureImage } from '@/types/capture'
 import { HeroImage, ThumbnailStrip } from '@/features/styles/components/review/ReviewImageSection'
 import { SchemaReviewForm } from '../components/SchemaReviewForm'
@@ -18,6 +20,7 @@ export interface CatalogueItemReviewScreenProps {
   definition: CatalogueTypeDefinition
   values: Record<string, unknown>
   confidences?: Record<string, number>
+  warnings?: string[]
   infoImage: CaptureImage | null
   allImages?: CaptureImage[]
   isSaving?: boolean
@@ -34,6 +37,7 @@ export function CatalogueItemReviewScreen({
   definition,
   values,
   confidences,
+  warnings = [],
   infoImage,
   allImages,
   isSaving = false,
@@ -46,6 +50,7 @@ export function CatalogueItemReviewScreen({
   className,
 }: CatalogueItemReviewScreenProps) {
   const displayImages = allImages || (infoImage ? [infoImage] : [])
+  const [heroImage, setHeroImage] = useState<CaptureImage | null>(infoImage)
 
   return (
     <div className={cn('space-y-4', className)}>
@@ -72,13 +77,37 @@ export function CatalogueItemReviewScreen({
         </SectionContainer>
       )}
 
-      {infoImage && <HeroImage image={infoImage} isInfoImage />}
+      {heroImage ? (
+        <HeroImage image={heroImage} isInfoImage={heroImage.id === infoImage?.id} />
+      ) : (
+        <EmptyState
+          variant="inline"
+          title="No capture image"
+          description="Retake the photo so you can verify fields against the original."
+        />
+      )}
 
       <ThumbnailStrip
         images={displayImages}
-        selectedImageId={infoImage?.id}
-        onImageSelect={() => {}}
+        selectedImageId={heroImage?.id}
+        onImageSelect={setHeroImage}
       />
+
+      {warnings.length > 0 && (
+        <SectionContainer title="Extraction Warnings" background="muted">
+          <div className="space-y-2">
+            {warnings.map((warning, index) => (
+              <div
+                key={index}
+                className="flex items-start gap-2 p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg"
+              >
+                <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-500 flex-shrink-0 mt-0.5" />
+                <p className="text-sm text-amber-700 dark:text-amber-400">{warning}</p>
+              </div>
+            ))}
+          </div>
+        </SectionContainer>
+      )}
 
       <SchemaReviewForm
         fields={definition.schema.fields}

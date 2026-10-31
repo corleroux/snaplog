@@ -7,11 +7,13 @@
  * rows — adding a category needs no code change here.
  */
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Shirt, Layers, Store, Video, ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/utils/cn'
 import { SectionContainer } from '@/components/ui/section-container'
 import { LoadingState } from '@/components/ui/LoadingState'
+import { ErrorState } from '@/components/ui/ErrorState'
+import { EmptyState } from '@/components/ui/EmptyState'
 import {
   getCatalogueTypes,
   type CatalogueTypeDefinition,
@@ -44,7 +46,9 @@ export function CatalogueTypePicker({ onSelect, className }: CatalogueTypePicker
   const [types, setTypes] = useState<CatalogueTypeDefinition[] | null>(null)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
+  const load = useCallback(() => {
+    setError(null)
+    setTypes(null)
     let cancelled = false
     getCatalogueTypes()
       .then((rows) => {
@@ -58,16 +62,33 @@ export function CatalogueTypePicker({ onSelect, className }: CatalogueTypePicker
     }
   }, [])
 
+  useEffect(() => load(), [load])
+
   if (error) {
     return (
-      <SectionContainer title="What are you cataloguing?" background="muted" className={className}>
-        <p className="text-sm text-destructive">{error}</p>
-      </SectionContainer>
+      <ErrorState
+        title="Couldn't load catalogue types"
+        message={error}
+        onRetry={load}
+        className={className}
+      />
     )
   }
 
   if (!types) {
     return <LoadingState message="Loading catalogue types..." className={className} />
+  }
+
+  const options = types.filter((t) => t.kind === 'catalogue_type' || t.slug === 'vendor')
+
+  if (options.length === 0) {
+    return (
+      <EmptyState
+        title="No catalogue types"
+        description="No active catalogue types are configured yet."
+        className={className}
+      />
+    )
   }
 
   return (
@@ -77,64 +98,64 @@ export function CatalogueTypePicker({ onSelect, className }: CatalogueTypePicker
       background="muted"
       className={className}
     >
-      <div className="space-y-2" role="radiogroup" aria-label="Catalogue type">
-        {types
-          .filter((t) => t.kind === 'catalogue_type' || t.slug === 'vendor')
+      <ul className="space-y-2" aria-label="Catalogue type">
+        {options
           .map((def) => {
             const Icon = ICONS[def.slug] ?? Shirt
             const selection = optionFor(def)
             return (
-              <button
-                key={def.slug}
-                type="button"
-                role="radio"
-                aria-checked="false"
-                aria-label={def.display_name}
-                onClick={() => onSelect(selection)}
-                className={cn(
-                  'w-full flex items-center gap-3 p-4 rounded-xl border border-border',
-                  'bg-card hover:border-orange-500/50 active:scale-[0.99] transition-all',
-                  'min-h-[56px] text-left'
-                )}
-              >
-                <span className="flex items-center justify-center h-10 w-10 rounded-full bg-orange-500/10 flex-shrink-0">
-                  <Icon className="h-5 w-5 text-orange-500" />
-                </span>
-                <span className="flex-1 min-w-0">
-                  <span className="block text-sm font-medium">{def.display_name}</span>
-                  <span className="block text-xs text-muted-foreground truncate">
-                    {def.schema.scan_types
-                      ? Object.values(def.schema.scan_types)[0]
-                      : `${def.kind === 'document' ? 'Document' : 'Item'} capture`}
+              <li key={def.slug}>
+                <button
+                  type="button"
+                  aria-label={def.display_name}
+                  onClick={() => onSelect(selection)}
+                  className={cn(
+                    'w-full flex items-center gap-3 p-4 rounded-xl border border-border',
+                    'bg-card hover:border-orange-500/50 active:scale-[0.99] transition-all',
+                    'min-h-[56px] text-left'
+                  )}
+                >
+                  <span className="flex items-center justify-center h-10 w-10 rounded-full bg-orange-500/10 flex-shrink-0">
+                    <Icon className="h-5 w-5 text-orange-500" />
                   </span>
-                </span>
-                <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-              </button>
+                  <span className="flex-1 min-w-0">
+                    <span className="block text-sm font-medium">{def.display_name}</span>
+                    <span className="block text-xs text-muted-foreground truncate">
+                      {def.schema.scan_types
+                        ? Object.values(def.schema.scan_types)[0]
+                        : `${def.kind === 'document' ? 'Document' : 'Item'} capture`}
+                    </span>
+                  </span>
+                  <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                </button>
+              </li>
             )
           })}
 
-        <button
-          type="button"
-          aria-label="Rack video"
-          onClick={() => onSelect({ kind: 'video' })}
-          className={cn(
-            'w-full flex items-center gap-3 p-4 rounded-xl border border-border',
-            'bg-card hover:border-orange-500/50 active:scale-[0.99] transition-all',
-            'min-h-[56px] text-left'
-          )}
-        >
-          <span className="flex items-center justify-center h-10 w-10 rounded-full bg-orange-500/10 flex-shrink-0">
-            <Video className="h-5 w-5 text-orange-500" />
-          </span>
-          <span className="flex-1 min-w-0">
-            <span className="block text-sm font-medium">Rack video</span>
-            <span className="block text-xs text-muted-foreground truncate">
-              Walk a rail — items are isolated and catalogued individually
+        <li>
+          <button
+            type="button"
+            aria-label="Rack video"
+            onClick={() => onSelect({ kind: 'video' })}
+            className={cn(
+              'w-full flex items-center gap-3 p-4 rounded-xl border border-border',
+              'bg-card hover:border-orange-500/50 active:scale-[0.99] transition-all',
+              'min-h-[56px] text-left'
+            )}
+          >
+            <span className="flex items-center justify-center h-10 w-10 rounded-full bg-orange-500/10 flex-shrink-0">
+              <Video className="h-5 w-5 text-orange-500" />
             </span>
-          </span>
-          <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-        </button>
-      </div>
+            <span className="flex-1 min-w-0">
+              <span className="block text-sm font-medium">Rack video</span>
+              <span className="block text-xs text-muted-foreground truncate">
+                Walk a rail — items are isolated and catalogued individually
+              </span>
+            </span>
+            <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+          </button>
+        </li>
+      </ul>
     </SectionContainer>
   )
 }

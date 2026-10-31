@@ -17,7 +17,7 @@ import { AlertTriangle } from 'lucide-react'
 import { cn } from '@/lib/utils/cn'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Badge } from '@/components/ui/badge'
+import { ConfidenceBadge } from '@/components/ui/ConfidenceBadge'
 import { SectionContainer } from '@/components/ui/section-container'
 import {
   isMissingValue,
@@ -39,19 +39,6 @@ function fullPath(parentPath: string | undefined, field: SchemaField): string {
   // Top-level schema paths already include the output root (e.g. item.name).
   if (!parentPath) {return field.path}
   return `${parentPath}.${field.path}`
-}
-
-function ConfidenceBadge({ score }: { score: number | undefined }) {
-  if (score === undefined || score === null) {return null}
-  const pct = Math.round(score * 100)
-  const tone = score >= 0.8 ? 'text-emerald-600 dark:text-emerald-400' : score >= 0.5
-    ? 'text-amber-600 dark:text-amber-400'
-    : 'text-red-600 dark:text-red-400'
-  return (
-    <span className={cn('text-[11px] font-medium tabular-nums', tone)} title={`Confidence ${pct}%`}>
-      {pct}%
-    </span>
-  )
 }
 
 function MissingFlag({ label }: { label: string }) {
@@ -168,7 +155,7 @@ export function SchemaReviewForm({
                   }
                   className={cn(missing && 'border-amber-500/50')}
                 />
-                <ConfidenceBadge score={confidences?.[path]} />
+                <ConfidenceBadge confidence={confidences?.[path] ?? null} />
               </div>
               {error && <p className="text-xs text-destructive">{error}</p>}
             </FieldWrapper>
@@ -186,7 +173,7 @@ export function SchemaReviewForm({
                   value={typeof raw === 'string' || typeof raw === 'number' ? String(raw) : ''}
                   onChange={(e) => onFieldChange(path, e.target.value === '' ? null : e.target.value)}
                   className={cn(
-                    'flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm',
+                    'flex min-h-[44px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm',
                     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
                     missing && 'border-amber-500/50'
                   )}
@@ -198,7 +185,7 @@ export function SchemaReviewForm({
                     </option>
                   ))}
                 </select>
-                <ConfidenceBadge score={confidences?.[path]} />
+                <ConfidenceBadge confidence={confidences?.[path] ?? null} />
               </div>
               {error && <p className="text-xs text-destructive">{error}</p>}
             </FieldWrapper>
@@ -221,7 +208,7 @@ export function SchemaReviewForm({
                   }
                   className={cn(missing && 'border-amber-500/50')}
                 />
-                <ConfidenceBadge score={confidences?.[path]} />
+                <ConfidenceBadge confidence={confidences?.[path] ?? null} />
               </div>
               {error && <p className="text-xs text-destructive">{error}</p>}
             </FieldWrapper>
@@ -245,7 +232,7 @@ export function SchemaReviewForm({
                 onChange={(e) => onFieldChange(path, e.target.value === '' ? null : e.target.value)}
                 className={cn(missing && 'border-amber-500/50')}
               />
-              <ConfidenceBadge score={confidences?.[path]} />
+              <ConfidenceBadge confidence={confidences?.[path] ?? null} />
             </div>
             {error && <p className="text-xs text-destructive">{error}</p>}
           </FieldWrapper>
@@ -272,12 +259,4 @@ function readPath(values: Record<string, unknown>, path: string): unknown {
     }
   }
   return current
-}
-
-export function SchemaReviewBadge() {
-  return (
-    <Badge variant="accent" className="gap-1 bg-orange-500 text-white text-xs">
-      Schema-driven review
-    </Badge>
-  )
 }

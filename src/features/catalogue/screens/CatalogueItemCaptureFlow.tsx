@@ -9,7 +9,8 @@
 import { useCallback, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { X, Camera, AlertTriangle } from 'lucide-react'
-import { Button, AppFrame, AppHeader } from '@/components/ui'
+import { Button, BottomActionBar, AppFrame, AppHeader } from '@/components/ui'
+import { LoadingState } from '@/components/ui/LoadingState'
 import { useToast } from '@/components/ui/toast'
 import { CaptureSessionPanel } from '@/components/capture/CaptureSessionPanel'
 import { ConfirmationDialog } from '@/components/feedback/ConfirmationDialog'
@@ -108,7 +109,7 @@ export function CatalogueItemCaptureFlow({
       <AppHeader
         title={title}
         rightAction={
-          <Button variant="ghost" size="icon-sm" onClick={handleCancelClick} type="button">
+          <Button variant="ghost" size="icon" aria-label="Discard and close" onClick={handleCancelClick} type="button">
             <X className="h-5 w-5" />
           </Button>
         }
@@ -136,7 +137,7 @@ export function CatalogueItemCaptureFlow({
             />
 
             {canProceed && (
-              <div className="sticky bottom-0 bg-background/95 backdrop-blur-sm border-t border-border pt-4 pb-safe-offset">
+              <BottomActionBar>
                 <Button
                   variant="accent"
                   onClick={() => proceedToProcessing()}
@@ -148,17 +149,19 @@ export function CatalogueItemCaptureFlow({
                   <Camera className="h-5 w-5 mr-2" />
                   Extract Item Info
                 </Button>
-              </div>
+              </BottomActionBar>
             )}
           </div>
         )}
 
         {(state.screen === 'processing' || state.screen === 'error') && (
-          <div className="space-y-4 text-center py-8">
-            {state.screen === 'error' ? (
+          <div className="space-y-4 py-4">
+            {state.screen === 'processing' ? (
+              <LoadingState message="Extracting item details…" />
+            ) : (
               <>
                 <AlertTriangle className="h-10 w-10 text-destructive mx-auto" />
-                <p className="text-sm text-muted-foreground">{state.error || 'An error occurred'}</p>
+                <p className="text-sm text-muted-foreground text-center">{state.error || 'An error occurred'}</p>
                 <div className="flex gap-3 justify-center">
                   <Button variant="outline" onClick={goBack} type="button">
                     Back
@@ -168,8 +171,6 @@ export function CatalogueItemCaptureFlow({
                   </Button>
                 </div>
               </>
-            ) : (
-              <p className="text-sm text-muted-foreground">Extracting item details…</p>
             )}
           </div>
         )}
