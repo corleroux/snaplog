@@ -172,10 +172,17 @@ export function useCatalogueItemCaptureFlow(options: {
       }
 
       // Read the selected definition (set at picker time). The scan type
-      // comes from the registry — the first scan_types key is the default
-      // capture for that catalogue type. No per-category code.
+      // comes from the registry — the first scan_types key is the capture
+      // for that catalogue type. A definition without scan types is a data
+      // error: fail loudly rather than assuming a category.
+      const scanTypes = Object.keys(activeDefinition.schema.scan_types ?? {})
+      if (scanTypes.length === 0) {
+        throw new Error(
+          `Catalogue type "${activeDefinition.slug}" has no scan_types in its schema`
+        )
+      }
       const slug = activeDefinition.slug
-      const scanType = Object.keys(activeDefinition.schema.scan_types ?? {})[0] ?? 'garment_flat'
+      const scanType = scanTypes[0]
 
       const scanSessionId = await createScanSession({
         eventId,

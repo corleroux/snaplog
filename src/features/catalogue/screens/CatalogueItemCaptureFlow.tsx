@@ -163,11 +163,15 @@ export function CatalogueItemCaptureFlow({
               <ErrorState
                 title="Something went wrong"
                 message={state.error || 'An error occurred'}
-                onRetry={retryProcessing}
                 customAction={
-                  <Button variant="outline" onClick={goBack} type="button">
-                    Back
-                  </Button>
+                  <div className="flex gap-3 justify-center">
+                    <Button variant="outline" onClick={goBack} type="button" className="min-h-[44px]">
+                      Back
+                    </Button>
+                    <Button variant="accent" onClick={retryProcessing} type="button" radius="pill" className="min-h-[44px]">
+                      Try Again
+                    </Button>
+                  </div>
                 }
               />
             )}

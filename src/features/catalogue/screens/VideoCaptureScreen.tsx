@@ -116,7 +116,7 @@ export function VideoCaptureScreen({ eventId, vendorId, className }: VideoCaptur
               <Button
                 variant="outline"
                 type="button"
-                className="w-full"
+                className="w-full min-h-[44px]"
                 onClick={() => navigate(`/events/${eventId}/vendors/${vendorId}`)}
               >
                 Back to Vendor
@@ -156,7 +156,7 @@ export function VideoCaptureScreen({ eventId, vendorId, className }: VideoCaptur
 
       {(phase === 'uploading' || phase === 'polling') && (
         <BottomActionBar>
-          <Button variant="outline" type="button" className="flex-1" onClick={handleCancel}>
+          <Button variant="outline" type="button" className="flex-1 min-h-[44px]" onClick={handleCancel}>
             Cancel
           </Button>
         </BottomActionBar>
