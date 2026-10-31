@@ -35,13 +35,23 @@ from pathlib import Path
 
 import modal
 
+import sys
+
+# Local imports work both offline (repo checkout) and remote (Modal mount).
+sys.path.insert(0, "/root/modal")
+sys.path.insert(0, str(Path(__file__).parent))
+
 from sam_parser import group_by_track
+
+MODAL_DIR = Path("/root/modal") if Path("/root/modal/sam_segment.js").exists() else Path(__file__).parent
 
 image = (
     modal.Image.debian_slim(python_version="3.12")
     .apt_install("ffmpeg", "nodejs", "npm")
     .pip_install("supabase", "opencv-python-headless", "numpy", "requests")
     .run_commands("npm install -g openai @meta-sam/parser")
+    # Ship the Modal sources (pipeline, Node helper, parser) into the container.
+    .add_local_dir("modal", remote_path="/root/modal")
 )
 
 app = modal.App("snaplog-video-pipeline")
@@ -65,8 +75,8 @@ def _fail(job_id: str, supabase, message: str) -> dict:
 
 
 @app.function(image=image, secrets=[modal.Secret.from_name("snaplog-video")], timeout=1800)
-@modal.web_endpoint(method="POST")
-def process_video(payload: dict) -> dict:
+def run_pipeline(payload: dict) -> dict:
+    """Long-running worker: spawned by the webhook, never awaited by the edge."""
     model_api_key = os.environ["MODEL_API_KEY"]
     supabase_url = os.environ["SUPABASE_URL"]
     service_key = os.environ["SUPABASE_SERVICE_ROLE_KEY"]
@@ -197,6 +207,20 @@ def process_video(payload: dict) -> dict:
     return {"ok": True, "items": items}
 
 
+@app.function(image=image, secrets=[modal.Secret.from_name("snaplog-video")])
+@modal.web_endpoint(method="POST")
+def process_video(payload: dict) -> dict:
+    """Lightweight webhook: validates, spawns the worker, returns 202-style
+    immediately. The edge function awaits only this fast dispatch."""
+    callback_secret = os.environ["VIDEO_CALLBACK_SECRET"]
+    if payload.get("callback_secret") != callback_secret:
+        return {"ok": False, "error": "unauthorized"}
+    if not payload.get("job_id"):
+        return {"ok": False, "error": "job_id is required"}
+    run_pipeline.spawn(payload)
+    return {"ok": True, "spawned": True}
+
+
 def _download(url: str, dest: Path) -> None:
     req = urllib.request.Request(url, headers={"User-Agent": "snaplog-video/1.0"})
     with urllib.request.urlopen(req, timeout=600) as resp, open(dest, "wb") as f:
@@ -211,7 +235,7 @@ def _run_sam_pass(
     video_path: Path, video_url: str, phrase: str, model_api_key: str, tmpdir: Path
 ) -> list[dict]:
     """Run one SAM streaming pass via the Node helper; return detection records."""
-    helper = Path(__file__).parent / "sam_segment.js"
+    helper = MODAL_DIR / "sam_segment.js"
     out_path = tmpdir / f"records-{phrase}.json"
     proc = subprocess.run(
         ["node", str(helper), video_url, phrase, str(out_path)],

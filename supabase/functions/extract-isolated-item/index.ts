@@ -87,9 +87,10 @@ serve(async (req) => {
 
   const supabaseAdmin = createAdminClient()
 
+  let scanSessionId: string | undefined
   try {
     const body: ExtractIsolatedItemRequest = await req.json()
-    const scanSessionId = body.item_scan_session_id
+    scanSessionId = body.item_scan_session_id
     audit.requestParsed({ scan_session_id: scanSessionId, scan_type: body.scan_type })
 
     if (!body.parent_scan_session_id) throw new Error('parent_scan_session_id is required')
@@ -166,6 +167,16 @@ serve(async (req) => {
     const errorMessage = err instanceof Error ? err.message : 'Unknown error'
     audit.failed({ error: errorMessage })
     captureException(err, { tags: { function: FUNCTION_NAME } })
+
+    // Never leave the item scan session stuck in `processing` — the video job
+    // polls item sessions via review/commit, so record the failure.
+    if (scanSessionId) {
+      try {
+        await markExtractionFailed(supabaseAdmin, scanSessionId, errorMessage)
+      } catch (updateErr) {
+        audit.failedStateUpdateWarning({ error: updateErr instanceof Error ? updateErr.message : 'Unknown error' })
+      }
+    }
 
     return internalError(errorMessage, 'Isolated item extraction failed', req)
   }
