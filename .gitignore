@@ -51,3 +51,7 @@ graphify-out/
 tmp_*.sql
 *.tmp
 .opencode/sessions/__pycache__/
+
+# Python bytecode (Modal pipeline tests)
+__pycache__/
+*.py[cod]
