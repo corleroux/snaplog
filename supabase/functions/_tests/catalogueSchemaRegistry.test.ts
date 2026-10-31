@@ -55,6 +55,26 @@ Deno.test('catalogueSchemaRegistry: fabric schema loads with all expected fields
   assertEquals(variants.type, 'array')
 })
 
+Deno.test('catalogueSchemaRegistry: garment schema loads with expected fields', async () => {
+  clearSchemaCache()
+  const schema = await loadSchema('garment')
+
+  assertEquals(schema.slug, 'garment')
+  assertEquals(schema.kind, 'catalogue_type')
+  assertEquals(schema.display_name, 'Garment')
+  assertEquals(schema.version, 1)
+  assertExists(schema.schema.rules)
+  assertExists(schema.schema.scan_types)
+
+  const garmentType = schema.schema.fields.find((f) => f.path === 'item.garment_type')
+  assertExists(garmentType)
+  assertEquals(garmentType.type, 'string')
+
+  const colourways = schema.schema.fields.find((f) => f.path === 'item.colourways')
+  assertExists(colourways)
+  assertEquals(colourways.type, 'array')
+})
+
 Deno.test('catalogueSchemaRegistry: vendor schema loads with required company_name', async () => {
   clearSchemaCache()
   const schema = await loadSchema('vendor')
