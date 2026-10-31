@@ -28,6 +28,7 @@ EXCLUDE_PATTERNS=(
   "docs/hackathon-status-update.md"
   "*Zone.Identifier"
   "*.DS_Store"
+  "eval/captures*"
 )
 
 # --- helpers ---------------------------------------------------------------
@@ -102,6 +103,10 @@ PREV_SHORT="$(git rev-parse --short "$PREV_COMMIT")"
 MODIFIED_FILES=()
 while IFS= read -r -d '' file; do
   [[ -z "$file" ]] && continue
+  if should_exclude "$file"; then
+    echo "Excluding: $file"
+    continue
+  fi
   if git cat-file -e "$BASELINE_TAG:$file" 2>/dev/null; then
     MODIFIED_FILES+=("$file")
   fi
