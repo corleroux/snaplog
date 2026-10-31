@@ -87,9 +87,10 @@ serve(async (req) => {
 
   const supabaseAdmin = createAdminClient()
 
+  let scanSessionId: string | undefined
   try {
     const body: ExtractIsolatedItemRequest = await req.json()
-    const scanSessionId = body.item_scan_session_id
+    scanSessionId = body.item_scan_session_id
     audit.requestParsed({ scan_session_id: scanSessionId, scan_type: body.scan_type })
 
     if (!body.parent_scan_session_id) throw new Error('parent_scan_session_id is required')

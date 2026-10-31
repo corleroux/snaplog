@@ -32,3 +32,27 @@ export function buildHandoffPayload(args: {
     callback_secret: args.callbackSecret,
   }
 }
+
+export type HandoffJobUpdate =
+  | { status: 'processing' }
+  | { status: 'failed'; error: string }
+
+/**
+ * Pure status-transition logic for the handoff result: success dispatches the
+ * job to `processing`; any dispatch failure marks it `failed` with the cause.
+ * Unit-tested offline in videoHandoff.test.ts.
+ */
+export function decideHandoffJobUpdate(handoff: {
+  ok: boolean
+  status?: number
+  body?: string
+  error?: string
+}): HandoffJobUpdate {
+  if (handoff.ok) {
+    return { status: 'processing' }
+  }
+  const cause =
+    handoff.error ??
+    `Modal handoff failed: ${handoff.status ?? '?'} ${handoff.body ?? ''}`.trim()
+  return { status: 'failed', error: cause }
+}

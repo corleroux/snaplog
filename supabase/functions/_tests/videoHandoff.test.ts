@@ -9,7 +9,7 @@
  */
 
 import { assertEquals } from 'https://deno.land/std@0.208.0/assert/mod.ts'
-import { buildHandoffPayload } from '../_shared/videoHandoff.ts'
+import { buildHandoffPayload, decideHandoffJobUpdate } from '../_shared/videoHandoff.ts'
 
 Deno.test('videoHandoff: builds the exact Modal webhook contract', () => {
   const payload = buildHandoffPayload({
@@ -28,5 +28,23 @@ Deno.test('videoHandoff: builds the exact Modal webhook contract', () => {
     catalogue_type: 'garment',
     callback_base_url: 'https://xyz.supabase.co/functions/v1',
     callback_secret: 'secret',
+  })
+})
+
+Deno.test('videoHandoff: successful dispatch transitions the job to processing', () => {
+  assertEquals(decideHandoffJobUpdate({ ok: true }), { status: 'processing' })
+})
+
+Deno.test('videoHandoff: non-OK dispatch marks the job failed with status and body', () => {
+  assertEquals(decideHandoffJobUpdate({ ok: false, status: 503, body: 'overloaded' }), {
+    status: 'failed',
+    error: 'Modal handoff failed: 503 overloaded',
+  })
+})
+
+Deno.test('videoHandoff: dispatch exception marks the job failed with the cause', () => {
+  assertEquals(decideHandoffJobUpdate({ ok: false, error: 'connection reset' }), {
+    status: 'failed',
+    error: 'connection reset',
   })
 })

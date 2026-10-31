@@ -21,7 +21,7 @@ import { createAdminClient, requireUser } from '../_shared/supabase.ts'
 import { validateUUID } from '../_shared/validation.ts'
 import { validateEnv } from '../_shared/envValidation.ts'
 import { createExtractAudit } from '../_shared/extractAudit.ts'
-import { buildHandoffPayload } from '../_shared/videoHandoff.ts'
+import { buildHandoffPayload, decideHandoffJobUpdate } from '../_shared/videoHandoff.ts'
 import { initEdgePostHog, captureException } from '../_shared/posthogEdge.ts'
 
 initEdgePostHog()
@@ -143,9 +143,11 @@ serve(async (req) => {
     })
 
     // Fire-and-forget: the handoff result is recorded on the job row below.
+    // MODAL_VIDEO_ENDPOINT_URL is the full deployed webhook URL
+    // (https://<workspace>--snaplog-video-pipeline-process-video.modal.run).
     let handoffFailed: string | null = null
     try {
-      const handoff = await fetch(`${modalEndpoint}/process-video`, {
+      const handoff = await fetch(modalEndpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -153,11 +155,20 @@ serve(async (req) => {
         },
         body: JSON.stringify(handoffPayload),
       })
-      if (!handoff.ok) {
-        handoffFailed = `Modal handoff failed: ${handoff.status} ${await handoff.text()}`
+      const update = decideHandoffJobUpdate(
+        handoff.ok
+          ? { ok: true }
+          : { ok: false, status: handoff.status, body: await handoff.text() }
+      )
+      if (update.status === 'failed') {
+        handoffFailed = update.error
       }
     } catch (handoffError) {
-      handoffFailed = handoffError instanceof Error ? handoffError.message : 'Unknown handoff error'
+      const update = decideHandoffJobUpdate({
+        ok: false,
+        error: handoffError instanceof Error ? handoffError.message : 'Unknown handoff error',
+      })
+      handoffFailed = update.status === 'failed' ? update.error : 'Unknown handoff error'
     }
 
     if (handoffFailed) {
