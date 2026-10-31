@@ -1,7 +1,7 @@
 ---
 description: Writes and runs unit, edge-function and Playwright tests for PRD acceptance checks. Edits test files only. Use after a feature lands or to reproduce a bug.
 mode: subagent
-model: opencode-go/minimax-m3
+model: meta/muse-spark-1.3-contributor
 color: secondary
 steps: 40
 permissions:

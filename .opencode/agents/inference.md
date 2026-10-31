@@ -1,7 +1,7 @@
 ---
 description: Specialist for the model layer: provider interface, Gemini/Muse Spark/open-weights providers, Modal endpoints, SAM 3.1 video pipeline and the benchmark runner. Use for FR-MOD, FR-VID and the model side of FR-EXT.
 mode: subagent
-model: opencode-go/glm-5.2
+model: meta/muse-spark-1.3-contributor
 color: accent
 steps: 60
 permissions:

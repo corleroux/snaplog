@@ -1,7 +1,7 @@
 ---
 description: Read-only UI review against DESIGN_SYSTEM.md and mobile-first capture usability. Use after any UI change, especially capture, review and catalogue screens.
 mode: subagent
-model: opencode-go/mimo-v2.5-pro
+model: meta/muse-spark-1.3-contributor
 color: "#ff6b6b"
 steps: 20
 permissions:

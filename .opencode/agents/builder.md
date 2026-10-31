@@ -1,7 +1,7 @@
 ---
 description: Implements one planned task at a time on a task/* branch. Delegates provider, Modal and SAM work to inference, tests to tester, and reviews to reviewer and design-reviewer.
 mode: primary
-model: opencode-go/kimi-k2.7-code
+model: meta/muse-spark-1.3-contributor
 color: "#003366"
 steps: 100
 permissions:
