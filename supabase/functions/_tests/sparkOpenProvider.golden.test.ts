@@ -27,6 +27,7 @@ import { normaliseModelOutput } from '../_shared/providers/extractionNormaliser.
 import {
   buildRequestBody,
   buildResponseSchema,
+  getSparkOpenBaseUrl,
   getSparkOpenModel,
   isStructuredOutputRejection,
   parsePromptedJson,
@@ -133,13 +134,35 @@ Deno.test('sparkOpenProvider: defaults to the Modal shared-endpoint model', () =
   }
 })
 
+Deno.test('sparkOpenProvider: defaults to the Modal regional base URL', () => {
+  const saved = Deno.env.get('SPARK_OPEN_BASE_URL')
+  Deno.env.delete('SPARK_OPEN_BASE_URL')
+  try {
+    assertEquals(getSparkOpenBaseUrl(), 'https://inference.us-west.modal.direct/v1')
+  } finally {
+    restoreEnv({ SPARK_OPEN_BASE_URL: saved })
+  }
+})
+
+Deno.test('sparkOpenProvider: honours a created-endpoint base URL override', () => {
+  const saved = Deno.env.get('SPARK_OPEN_BASE_URL')
+  Deno.env.set('SPARK_OPEN_BASE_URL', 'https://example--spark-open.modal.run/v1/')
+  try {
+    assertEquals(getSparkOpenBaseUrl(), 'https://example--spark-open.modal.run/v1')
+  } finally {
+    restoreEnv({ SPARK_OPEN_BASE_URL: saved })
+  }
+})
+
 Deno.test('sparkOpenProvider.extract: full offline run against the fabric fixture', async () => {
   const savedEnv = {
     token: Deno.env.get('MODAL_PROXY_TOKEN'),
     model: Deno.env.get('SPARK_OPEN_MODEL'),
+    baseUrl: Deno.env.get('SPARK_OPEN_BASE_URL'),
   }
   Deno.env.set('MODAL_PROXY_TOKEN', 'test-proxy-token')
   Deno.env.delete('SPARK_OPEN_MODEL')
+  Deno.env.delete('SPARK_OPEN_BASE_URL')
   const originalFetch = globalThis.fetch
   const calls = stubFetch(() =>
     new Response(JSON.stringify(fabricProductTagFixture), {
@@ -181,7 +204,7 @@ Deno.test('sparkOpenProvider.extract: full offline run against the fabric fixtur
     assertEquals(result.json, geminiNormalised(geminiFabricFixture, fabricSchema))
   } finally {
     globalThis.fetch = originalFetch
-    restoreEnv({ MODAL_PROXY_TOKEN: savedEnv.token, SPARK_OPEN_MODEL: savedEnv.model })
+    restoreEnv({ MODAL_PROXY_TOKEN: savedEnv.token, SPARK_OPEN_MODEL: savedEnv.model, SPARK_OPEN_BASE_URL: savedEnv.baseUrl })
   }
 })
 

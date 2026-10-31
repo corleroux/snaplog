@@ -8,8 +8,13 @@
  * the ExtractionProvider interface in ./types.ts and getProvider(); it never
  * imports this module directly.
  *
- * Endpoint shape (verified Oct 2026 via models.dev Modal provider page):
- * - POST https://inference.us-west.modal.direct/v1/chat/completions.
+ * Endpoint shape (verified Oct 2026 via Modal docs + models.dev):
+ * - Shared inference requires a CREATED endpoint: `modal endpoint create
+ *   --shared --model <id>` (or the dashboard Endpoints tab) prints a
+ *   per-endpoint URL; calls go to `<endpoint-url>/v1/chat/completions`.
+ *   The bare regional host 404s with "unknown inference model" (probe).
+ *   SPARK_OPEN_BASE_URL overrides the default regional base with the
+ *   created endpoint's `<scheme>://<host>/v1` prefix.
  * - Auth: `Authorization: Bearer <MODAL_PROXY_TOKEN>` — a Modal Proxy Token
  *   (wk-<id>.ws-<secret>, Settings → Proxy Auth Tokens). A plain Modal API
  *   key (ak-...) is rejected with 401; verified by probe.
@@ -50,7 +55,19 @@ const PROVIDER_NAME = 'muse-spark-open'
 // experiments only (e.g. a quant variant); the benchmark pins this default.
 const DEFAULT_MODEL = 'meta-models/Muse-Spark-Open-816B-A42B'
 
-const CHAT_COMPLETIONS_URL = 'https://inference.us-west.modal.direct/v1/chat/completions'
+// Modal's regional OpenAI-compatible base. Overridable because shared
+// inference calls go to the per-endpoint URL printed by
+// `modal endpoint create --shared` (or the dashboard Endpoints tab):
+// set SPARK_OPEN_BASE_URL to that URL's <scheme>://<host>/v1 prefix.
+const DEFAULT_BASE_URL = 'https://inference.us-west.modal.direct/v1'
+
+/**
+ * The Modal endpoint base URL (no trailing path). Exported so tests can pin
+ * the request URL and operators can point at a created endpoint.
+ */
+export function getSparkOpenBaseUrl(): string {
+  return (Deno.env.get('SPARK_OPEN_BASE_URL') || DEFAULT_BASE_URL).replace(/\/+$/, '')
+}
 
 // Muse Spark Open is a reasoning model: reasoning tokens and the JSON payload
 // share the completion budget — same 8192 ceiling as muse-spark.
@@ -443,10 +460,11 @@ export const sparkOpenProvider: ExtractionProvider = {
     }
 
     const prompt = buildPrompt(request.schema, request.scanType)
+    const chatCompletionsUrl = `${getSparkOpenBaseUrl()}/chat/completions`
 
     const startedAt = Date.now()
     let response = await callSparkOpenWithRetry(
-      CHAT_COMPLETIONS_URL,
+      chatCompletionsUrl,
       buildRequestBody(prompt, request.images, request.schema),
       proxyToken
     )
@@ -456,7 +474,7 @@ export const sparkOpenProvider: ExtractionProvider = {
       const errorText = await response.text()
       if (isStructuredOutputRejection(response.status, errorText)) {
         response = await callSparkOpenWithRetry(
-          CHAT_COMPLETIONS_URL,
+          chatCompletionsUrl,
           buildRequestBody(prompt, request.images, request.schema, false),
           proxyToken
         )
