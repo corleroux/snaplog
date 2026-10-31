@@ -48,7 +48,7 @@ export interface CaptureImage {
 /**
  * Entity types that can be created through capture sessions
  */
-export type EntityType = 'vendor' | 'fabric_style'
+export type EntityType = 'vendor' | 'fabric_style' | 'catalogue_item'
 
 /**
  * Capture session state
