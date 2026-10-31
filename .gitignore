@@ -50,4 +50,4 @@ graphify-out/
 *.log
 tmp_*.sql
 *.tmp
-.opencode/sessions/
+.opencode/sessions/__pycache__/
