@@ -1,0 +1,331 @@
+{
+  "_note": "Provisional web-sourced garment leg. source=web entries are replaced by the trade-fair shoot. Captures live in eval/captures/ (gitignored, never published). Ground truth mirrors the schema payload shape; null only where truly absent.",
+  "captures": [
+    {
+      "id": "web-garment-01",
+      "file": "captures/garment-01-shirts.jpg",
+      "class": "garment",
+      "source": "web",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Button_down_dress_shirts_for_men.jpg",
+      "schema": "garment",
+      "ground_truth": {
+        "item": {
+          "item_code": null,
+          "name": null,
+          "garment_type": "Shirt",
+          "silhouette": null,
+          "construction": null,
+          "fabric_composition": null,
+          "closure": "Button",
+          "neckline": null,
+          "sleeve": "Long sleeve",
+          "fit": null,
+          "sizing": null,
+          "season": null,
+          "metadata": null,
+          "colourways": [
+            { "colour_code": null, "colour_name": "Blue", "variant_name": null, "sizing": null, "metadata": null },
+            { "colour_code": null, "colour_name": "Brown", "variant_name": null, "sizing": null, "metadata": null },
+            { "colour_code": null, "colour_name": "Red check", "variant_name": null, "sizing": null, "metadata": null }
+          ]
+        }
+      },
+      "languages": [],
+      "failure_tags": ["multi-item", "rack"]
+    },
+    {
+      "id": "web-garment-02",
+      "file": "captures/garment-02-dresses-hanging.jpg",
+      "class": "garment",
+      "source": "web",
+      "source_url": "https://commons.wikimedia.org/wiki/File:White_dressers_on_hangers_(Unsplash).jpg",
+      "schema": "garment",
+      "ground_truth": {
+        "item": {
+          "item_code": null,
+          "name": null,
+          "garment_type": "Dress",
+          "silhouette": null,
+          "construction": null,
+          "fabric_composition": null,
+          "closure": null,
+          "neckline": null,
+          "sleeve": null,
+          "fit": null,
+          "sizing": null,
+          "season": null,
+          "metadata": null,
+          "colourways": [
+            { "colour_code": null, "colour_name": "White", "variant_name": null, "sizing": null, "metadata": null }
+          ]
+        }
+      },
+      "languages": [],
+      "failure_tags": ["multi-item", "backlight", "low-light"]
+    },
+    {
+      "id": "web-garment-03",
+      "file": "captures/garment-03-hangers.jpg",
+      "class": "garment",
+      "source": "web",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Hanger_for_dresses.jpg",
+      "schema": "garment",
+      "ground_truth": {
+        "item": {
+          "item_code": null,
+          "name": null,
+          "garment_type": null,
+          "silhouette": null,
+          "construction": null,
+          "fabric_composition": null,
+          "closure": null,
+          "neckline": null,
+          "sleeve": null,
+          "fit": null,
+          "sizing": null,
+          "season": null,
+          "metadata": null,
+          "colourways": null
+        }
+      },
+      "languages": [],
+      "failure_tags": ["no-garment"]
+    },
+    {
+      "id": "web-garment-04",
+      "file": "captures/garment-04-jean-jacket.jpg",
+      "class": "garment",
+      "source": "web",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Jean_jacket.jpg",
+      "schema": "garment",
+      "ground_truth": {
+        "item": {
+          "item_code": null,
+          "name": null,
+          "garment_type": "Jacket",
+          "silhouette": null,
+          "construction": null,
+          "fabric_composition": "Denim",
+          "closure": "Button",
+          "neckline": "Collar",
+          "sleeve": "Long sleeve",
+          "fit": "Regular",
+          "sizing": null,
+          "season": null,
+          "metadata": null,
+          "colourways": [
+            { "colour_code": null, "colour_name": "Light blue", "variant_name": null, "sizing": null, "metadata": null }
+          ]
+        }
+      },
+      "languages": [],
+      "failure_tags": []
+    },
+    {
+      "id": "web-garment-05",
+      "file": "captures/garment-05-denim-jacket.jpg",
+      "class": "garment",
+      "source": "web",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Denim_Jacket_(51079649933).jpg",
+      "schema": "garment",
+      "ground_truth": {
+        "item": {
+          "item_code": null,
+          "name": null,
+          "garment_type": "Jacket",
+          "silhouette": null,
+          "construction": null,
+          "fabric_composition": "Denim",
+          "closure": "Button",
+          "neckline": "Collar",
+          "sleeve": "Long sleeve",
+          "fit": "Regular",
+          "sizing": "M",
+          "season": null,
+          "metadata": null,
+          "colourways": [
+            { "colour_code": null, "colour_name": "Light blue", "variant_name": null, "sizing": "M", "metadata": null }
+          ]
+        }
+      },
+      "languages": [],
+      "failure_tags": []
+    },
+    {
+      "id": "web-garment-06",
+      "file": "captures/garment-06-folded.jpg",
+      "class": "garment",
+      "source": "web",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Jeans_and_brown_shirt_folded.jpg",
+      "schema": "garment",
+      "ground_truth": {
+        "item": {
+          "item_code": null,
+          "name": null,
+          "garment_type": null,
+          "silhouette": null,
+          "construction": null,
+          "fabric_composition": null,
+          "closure": null,
+          "neckline": null,
+          "sleeve": null,
+          "fit": null,
+          "sizing": null,
+          "season": null,
+          "metadata": null,
+          "colourways": null
+        }
+      },
+      "languages": [],
+      "failure_tags": ["multi-item", "folded"]
+    },
+    {
+      "id": "web-garment-07",
+      "file": "captures/garment-07-gown.jpg",
+      "class": "garment",
+      "source": "web",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Yves_St_Laurent_early_gown_deYoung_Museum_San_Francisco.jpg",
+      "schema": "garment",
+      "ground_truth": {
+        "item": {
+          "item_code": null,
+          "name": null,
+          "garment_type": "Dress",
+          "silhouette": "A-line",
+          "construction": null,
+          "fabric_composition": "Wool",
+          "closure": null,
+          "neckline": "V-neck",
+          "sleeve": "Short sleeve",
+          "fit": null,
+          "sizing": null,
+          "season": null,
+          "metadata": null,
+          "colourways": [
+            { "colour_code": null, "colour_name": "Grey", "variant_name": null, "sizing": null, "metadata": null }
+          ]
+        }
+      },
+      "languages": [],
+      "failure_tags": ["mannequin", "museum"]
+    },
+    {
+      "id": "web-garment-08",
+      "file": "captures/garment-08-rack-scene.jpg",
+      "class": "garment",
+      "source": "web",
+      "source_url": "https://commons.wikimedia.org/wiki/File:DFC_0796_A_woman_browsing_shirts_on_a_crowded_clothing_rack_in_a_busy_store_with_mannequins_and_folded_garments_nearby.jpg",
+      "schema": "garment",
+      "ground_truth": {
+        "item": {
+          "item_code": null,
+          "name": null,
+          "garment_type": "Shirt",
+          "silhouette": null,
+          "construction": null,
+          "fabric_composition": null,
+          "closure": null,
+          "neckline": null,
+          "sleeve": null,
+          "fit": null,
+          "sizing": null,
+          "season": null,
+          "metadata": null,
+          "colourways": null
+        }
+      },
+      "languages": [],
+      "failure_tags": ["multi-item", "clutter", "people", "text-signage", "mannequin"]
+    },
+    {
+      "id": "web-garment-09",
+      "file": "captures/garment-09-worn.jpg",
+      "class": "garment",
+      "source": "web",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Jean_Jacket,_Red_Hair,_and_a_Short_Black_Floral_Romper_(16964185858).jpg",
+      "schema": "garment",
+      "ground_truth": {
+        "item": {
+          "item_code": null,
+          "name": null,
+          "garment_type": "Jacket",
+          "silhouette": null,
+          "construction": null,
+          "fabric_composition": "Denim",
+          "closure": "Button",
+          "neckline": "Collar",
+          "sleeve": "Long sleeve",
+          "fit": null,
+          "sizing": null,
+          "season": null,
+          "metadata": null,
+          "colourways": [
+            { "colour_code": null, "colour_name": "Blue", "variant_name": null, "sizing": null, "metadata": null }
+          ]
+        }
+      },
+      "languages": [],
+      "failure_tags": ["worn", "people", "multi-garment"]
+    },
+    {
+      "id": "web-garment-10",
+      "file": "captures/garment-10-denim-80s.jpg",
+      "class": "garment",
+      "source": "web",
+      "source_url": "https://commons.wikimedia.org/wiki/File:1980s_blue_denim_jacket,_Finland_–_02.jpg",
+      "schema": "garment",
+      "ground_truth": {
+        "item": {
+          "item_code": null,
+          "name": null,
+          "garment_type": "Jacket",
+          "silhouette": null,
+          "construction": null,
+          "fabric_composition": "Denim",
+          "closure": null,
+          "neckline": "Collar",
+          "sleeve": "Long sleeve",
+          "fit": null,
+          "sizing": null,
+          "season": null,
+          "metadata": null,
+          "colourways": [
+            { "colour_code": null, "colour_name": "Light blue", "variant_name": null, "sizing": null, "metadata": null }
+          ]
+        }
+      },
+      "languages": [],
+      "failure_tags": ["back-view", "mannequin"]
+    },
+    {
+      "id": "web-rack-video-01",
+      "file": "captures/rack-video-01-pants.mp4",
+      "class": "rack_video",
+      "source": "web",
+      "source_url": "https://mixkit.co/free-stock-video/shopping-rack-of-black-pants-47447/",
+      "schema": "garment",
+      "ground_truth": {
+        "expected_distinct_items": 5,
+        "expected_items_note": "Multiple pairs of black pants on a rack (14 s clip). Count is an estimate — tune after the first Modal run.",
+        "expected_items_estimated": true
+      },
+      "languages": [],
+      "failure_tags": []
+    },
+    {
+      "id": "web-rack-video-02",
+      "file": "captures/rack-video-02-sweaters.mp4",
+      "class": "rack_video",
+      "source": "web",
+      "source_url": "https://mixkit.co/free-stock-video/sweaters-hanging-on-the-coat-rack-of-a-clothing-store-33167/",
+      "schema": "garment",
+      "ground_truth": {
+        "expected_distinct_items": 6,
+        "expected_items_note": "Several sweaters on a coat rack (10 s clip). Count is an estimate — tune after the first Modal run.",
+        "expected_items_estimated": true
+      },
+      "languages": [],
+      "failure_tags": []
+    }
+  ]
+}

@@ -55,3 +55,6 @@ tmp_*.sql
 # Python bytecode (Modal pipeline tests)
 __pycache__/
 *.py[cod]
+
+# Eval captures stay local (privacy + size) — manifest only is committed.
+eval/captures/

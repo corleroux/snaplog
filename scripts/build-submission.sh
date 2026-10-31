@@ -28,6 +28,7 @@ EXCLUDE_PATTERNS=(
   "docs/hackathon-status-update.md"
   "*Zone.Identifier"
   "*.DS_Store"
+  "eval/captures/*"
 )
 
 # --- helpers ---------------------------------------------------------------
