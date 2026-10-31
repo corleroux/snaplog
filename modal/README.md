@@ -30,6 +30,7 @@ Then set `MODAL_VIDEO_ENDPOINT_URL` to the deployed endpoint URL via
 ## Live probe checklist (owner's explicit go, Standard mode)
 
 1. Confirm `input_video` payload shape (URL vs upload) against Meta docs.
+2. Confirm the web endpoint decorator (`web_endpoint` vs `fastapi_endpoint`) against the installed Modal version at deploy time.
 2. Confirm per-request object/track cap; adjust `SAM_PASSES`.
 3. Confirm `@meta-sam/parser` video record shape; adjust `sam_segment.js` only.
 4. Run on a real 30–60 s rack-walk clip: expect one `catalogue_items` row per
