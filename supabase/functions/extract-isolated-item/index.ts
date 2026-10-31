@@ -167,6 +167,16 @@ serve(async (req) => {
     audit.failed({ error: errorMessage })
     captureException(err, { tags: { function: FUNCTION_NAME } })
 
+    // Never leave the item scan session stuck in `processing` — the video job
+    // polls item sessions via review/commit, so record the failure.
+    if (scanSessionId) {
+      try {
+        await markExtractionFailed(supabaseAdmin, scanSessionId, errorMessage)
+      } catch (updateErr) {
+        audit.failedStateUpdateWarning({ error: updateErr instanceof Error ? updateErr.message : 'Unknown error' })
+      }
+    }
+
     return internalError(errorMessage, 'Isolated item extraction failed', req)
   }
 })

@@ -21,6 +21,7 @@ import { createAdminClient, requireUser } from '../_shared/supabase.ts'
 import { validateUUID } from '../_shared/validation.ts'
 import { validateEnv } from '../_shared/envValidation.ts'
 import { createExtractAudit } from '../_shared/extractAudit.ts'
+import { buildHandoffPayload } from '../_shared/videoHandoff.ts'
 import { initEdgePostHog, captureException } from '../_shared/posthogEdge.ts'
 
 initEdgePostHog()
@@ -130,10 +131,18 @@ serve(async (req) => {
     }
 
     // Hand off to Modal and return immediately — never block on video.
-    const callbackBaseUrl = Deno.env.get('SUPABASE_URL') + '/functions/v1'
+    // The webhook validates, spawns the worker, and returns fast; the heavy
+    // processing happens after this POST resolves. Await only the dispatch.
+    const handoffPayload = buildHandoffPayload({
+      jobId: job.id,
+      scanSessionId,
+      signedVideoUrl: signedData.signedUrl,
+      catalogueType: body.catalogue_type,
+      supabaseUrl: Deno.env.get('SUPABASE_URL')!,
+      callbackSecret,
+    })
 
     // Fire-and-forget: the handoff result is recorded on the job row below.
-    // Await only the POST dispatch itself (fast), never the processing.
     let handoffFailed: string | null = null
     try {
       const handoff = await fetch(`${modalEndpoint}/process-video`, {
@@ -142,14 +151,7 @@ serve(async (req) => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${callbackSecret}`,
         },
-        body: JSON.stringify({
-          job_id: job.id,
-          scan_session_id: scanSessionId,
-          video_url: signedData.signedUrl,
-          catalogue_type: body.catalogue_type,
-          callback_base_url: callbackBaseUrl,
-          callback_secret: callbackSecret,
-        }),
+        body: JSON.stringify(handoffPayload),
       })
       if (!handoff.ok) {
         handoffFailed = `Modal handoff failed: ${handoff.status} ${await handoff.text()}`

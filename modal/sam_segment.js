@@ -62,10 +62,19 @@ function extractRecords(parsed) {
 }
 
 let records = [];
+const seen = new Set();
 for await (const event of stream) {
   const parsed = parseImageStream(event);
   if (!parsed) continue;
-  records = extractRecords(parsed);
+  // Accumulate across stream events — never overwrite. Dedupe identical
+  // (track, frame) records in case events repeat cumulative state.
+  for (const r of extractRecords(parsed)) {
+    const key = `${r.track_id}:${r.frame_index}`;
+    if (!seen.has(key)) {
+      seen.add(key);
+      records.push(r);
+    }
+  }
 }
 
 // Touch decodeMaskToRaster so mask decoding stays wired for the probe;
