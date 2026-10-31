@@ -48,8 +48,8 @@ export function validateEnv(): EdgeFunctionEnv {
     errors.push('SUPABASE_SERVICE_ROLE_KEY is required')
   }
 
-  // Provider-specific API keys
-  const provider = env.EXTRACTION_PROVIDER || 'muse-spark'
+  // Provider-specific API keys (normalised the same way as getProvider).
+  const provider = (env.EXTRACTION_PROVIDER || 'muse-spark').trim().toLowerCase()
 
   if (provider === 'gemini') {
     if (!env.GEMINI_API_KEY || typeof env.GEMINI_API_KEY !== 'string' || env.GEMINI_API_KEY.trim() === '') {

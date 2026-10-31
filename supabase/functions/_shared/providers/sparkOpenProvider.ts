@@ -411,13 +411,18 @@ async function callSparkOpenWithRetry(
 }
 
 /**
- * The endpoint rejects `response_format` with 400 when structured output is
- * unavailable — retry once as prompted JSON. Any other status is surfaced.
+ * The endpoint rejects `response_format` with 400 (or 422) when structured
+ * output is unavailable — retry once as prompted JSON. Any other status is
+ * surfaced. Message matching covers the known phrasings; unknown 4xx shapes
+ * surface as errors rather than guessing a retry.
  */
 export function isStructuredOutputRejection(status: number, bodyText: string): boolean {
-  if (status !== 400) return false
+  if (status !== 400 && status !== 422) return false
   const lowered = bodyText.toLowerCase()
-  return lowered.includes('response_format') || lowered.includes('json_schema')
+  return lowered.includes('response_format') ||
+    lowered.includes('json_schema') ||
+    lowered.includes('structured') ||
+    lowered.includes('unprocessable')
 }
 
 // ============================================================================

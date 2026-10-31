@@ -301,9 +301,11 @@ Deno.test('sparkOpenProvider.extract: throws on an empty model response', async 
 // PURE HELPERS
 // ============================================================================
 
-Deno.test('isStructuredOutputRejection: only 400s mentioning the format qualify', () => {
+Deno.test('isStructuredOutputRejection: 400s and 422s mentioning the format qualify', () => {
   assertEquals(isStructuredOutputRejection(400, 'response_format json_schema not supported'), true)
   assertEquals(isStructuredOutputRejection(400, 'JSON_SCHEMA validation failed'), true)
+  assertEquals(isStructuredOutputRejection(422, 'structured output unavailable for this model'), true)
+  assertEquals(isStructuredOutputRejection(422, 'Unprocessable Entity: response_format'), true)
   assertEquals(isStructuredOutputRejection(400, 'rate limit exceeded'), false)
   assertEquals(isStructuredOutputRejection(503, 'response_format unavailable'), false)
 })
