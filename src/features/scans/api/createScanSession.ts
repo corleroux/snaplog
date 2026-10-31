@@ -27,9 +27,14 @@ export type FabricScanType =
   | 'multi_variant_sheet'
 
 /**
+ * Video scan types for the scan_session table (FR-VID).
+ */
+export type VideoScanType = 'rack_video'
+
+/**
  * All supported scan types.
  */
-export type ScanType = VendorScanType | FabricScanType
+export type ScanType = VendorScanType | FabricScanType | VideoScanType
 
 export interface CreateScanSessionParams {
   eventId: string
