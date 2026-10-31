@@ -20,7 +20,7 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { handleCors, requireMethod, conflict, internalError } from '../_shared/http.ts'
 import { createLogger } from '../_shared/logger.ts'
 import { createAdminClient, requireUser } from '../_shared/supabase.ts'
-import { validateUUID, requireObject, requireNonEmptyString } from '../_shared/validation.ts'
+import { validateUUID, requireObject } from '../_shared/validation.ts'
 import { verifyOwnedScanSession } from '../_shared/scanSessionVerification.ts'
 import { getExistingCommittedResourceId } from '../_shared/idempotency.ts'
 import { attemptNonFatal } from '../_shared/nonFatal.ts'
@@ -52,7 +52,6 @@ interface CommitCatalogueItemRequest {
 
 function validateReviewedDocument(doc: ReviewedCatalogueItemDocument): void {
   requireObject(doc.item, 'item')
-  requireNonEmptyString(doc.item.item_code as string | undefined | null, 'item.item_code')
 }
 
 /** Read a dotted schema path out of the reviewed item payload. */
@@ -126,28 +125,28 @@ serve(async (req) => {
 
     // Validate required fields against the registry schema for this run's
     // catalogue type — never hardcode per-category requirements here.
+    // Schema paths carry the output-root prefix (e.g. item.item_code) while
+    // reviewed fields live flat under reviewed_document.item, so strip the
+    // root before lookup.
     if (scanSession.schema_type) {
-      try {
-        const schema = await loadSchema(scanSession.schema_type)
-        const missing = (schema.schema.fields ?? [])
-          .filter((f) => f.required)
-          .map((f) => f.path)
-          .filter((path) => {
-            const value = readReviewedPath(body.reviewed_document.item, path)
-            return value === null || value === undefined ||
-              (typeof value === 'string' && value.trim() === '')
-          })
-        if (missing.length > 0) {
-          throw new Error(`Missing required fields: ${missing.join(', ')}`)
-        }
-      } catch (schemaError) {
-        // Fail closed on validation errors, but don't mask a missing schema
-        // row as a field error — surface it distinctly.
-        if (schemaError instanceof Error && schemaError.message.startsWith('Missing required fields')) {
-          throw schemaError
-        }
-        log.warn('Schema validation skipped', { error: schemaError instanceof Error ? schemaError.message : 'Unknown error' })
+      const schema = await loadSchema(scanSession.schema_type)
+      const outputRoot = schema.schema.output_root ?? 'item'
+      const missing = (schema.schema.fields ?? [])
+        .filter((f) => f.required)
+        .map((f) => f.path)
+        .filter((path) => {
+          const relative = path.startsWith(`${outputRoot}.`)
+            ? path.slice(outputRoot.length + 1)
+            : path
+          const value = readReviewedPath(body.reviewed_document.item, relative)
+          return value === null || value === undefined ||
+            (typeof value === 'string' && value.trim() === '')
+        })
+      if (missing.length > 0) {
+        throw new Error(`Missing required fields: ${missing.join(', ')}`)
       }
+    } else {
+      throw new Error('Scan session has no schema provenance; run extraction first')
     }
 
     const idempotency = getExistingCommittedResourceId(scanSession.item_id)
