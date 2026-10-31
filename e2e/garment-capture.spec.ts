@@ -1,27 +1,36 @@
 /**
  * E2E: Garment Capture Flow (FR-SCH-05)
  *
- * Verifies the schema-driven garment path:
+ * Verifies the schema-driven garment path with edge functions mocked at the
+ * function boundary (no live model APIs — see helpers/catalogue-mock-helper):
  * - Open the schema-driven item capture
  * - Pick the garment catalogue type
- * - Upload a test image
- * - Wait for extraction to complete (mocked at the function boundary)
+ * - Upload a test image (in-memory buffer — no fixture asset needed)
  * - Review shows schema-rendered fields with missing-field flags
  * - Commit produces a catalogue item
  */
 
 import { test, expect } from '@playwright/test'
 import { login, createTestEvent } from './fixtures/test-data'
-import { existsSync } from 'node:fs'
-import path from 'path'
+import {
+  mockCatalogueItemExtraction,
+  mockCatalogueItemCommit,
+  clearCatalogueMocks,
+} from './helpers/catalogue-mock-helper'
 
-const fixturePath = path.join(__dirname, 'fixtures', 'assets', 'sample-garment.jpg')
-
-// Garment fixtures come from the Saturday shoot (FR-MOD-04 eval set).
-// Skip until the real capture asset lands.
-test.skip(!existsSync(fixturePath), 'sample-garment.jpg not captured yet')
+// Minimal valid JPEG (SOI + EOI). Storage accepts the bytes; extraction is mocked.
+const TEST_JPEG = Buffer.from([0xff, 0xd8, 0xff, 0xd9])
 
 test.describe('Garment Capture Flow @core', () => {
+  test.beforeEach(async ({ page }) => {
+    await mockCatalogueItemExtraction(page)
+    await mockCatalogueItemCommit(page)
+  })
+
+  test.afterEach(async ({ page }) => {
+    await clearCatalogueMocks(page)
+  })
+
   test('capture garment end-to-end', async ({ page }) => {
     // Step 1: Login
     await login(page)
@@ -36,7 +45,6 @@ test.describe('Garment Capture Flow @core', () => {
     }
 
     // Step 3: Open schema-driven item capture
-    // (linked from the vendor detail; falls back to direct navigation)
     const newItemButton = page.getByRole('button', { name: /new item|catalogue.*item|add.*item/i })
     if (await newItemButton.isVisible()) {
       await newItemButton.click()
@@ -45,19 +53,23 @@ test.describe('Garment Capture Flow @core', () => {
     }
 
     // Step 4: Pick the garment catalogue type
-    const garmentOption = page.getByRole('radio', { name: /garment/i })
+    const garmentOption = page.getByRole('button', { name: /garment/i })
     await expect(garmentOption).toBeVisible({ timeout: 15_000 })
     await garmentOption.click()
 
-    // Step 5: Upload a test image
+    // Step 5: Upload a test image (in-memory — extraction is mocked)
     const fileInput = page.locator('input[type="file"]')
-    await fileInput.setInputFiles(fixturePath)
+    await fileInput.setInputFiles({
+      name: 'garment.jpg',
+      mimeType: 'image/jpeg',
+      buffer: TEST_JPEG,
+    })
 
     // Step 6: Start extraction
     await page.getByRole('button', { name: /extract.*info/i }).click()
 
-    // Step 7: Review — schema-rendered fields appear
-    await expect(page.getByLabel(/garment.*type|silhouette/i).first()).toBeVisible({ timeout: 45_000 })
+    // Step 7: Review — schema-rendered fields appear (mocked extraction)
+    await expect(page.getByLabel(/garment.*type/i).first()).toBeVisible({ timeout: 45_000 })
 
     // Step 8: Save the item
     await page.getByRole('button', { name: /save garment/i }).click()

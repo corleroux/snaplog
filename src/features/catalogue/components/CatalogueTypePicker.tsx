@@ -16,6 +16,7 @@ import { ErrorState } from '@/components/ui/ErrorState'
 import { EmptyState } from '@/components/ui/EmptyState'
 import {
   getCatalogueTypes,
+  PICKER_ORDER,
   type CatalogueTypeDefinition,
 } from '../api/catalogueRegistry'
 
@@ -79,7 +80,15 @@ export function CatalogueTypePicker({ onSelect, className }: CatalogueTypePicker
     return <LoadingState message="Loading catalogue types..." className={className} />
   }
 
-  const options = types.filter((t) => t.kind === 'catalogue_type' || t.slug === 'vendor')
+  const options = types
+    .filter((t) => t.kind === 'catalogue_type' || t.slug === 'vendor')
+    .sort((a, b) => {
+      const order = (slug: string) => {
+        const index = PICKER_ORDER.indexOf(slug as (typeof PICKER_ORDER)[number])
+        return index === -1 ? PICKER_ORDER.length : index
+      }
+      return order(a.slug) - order(b.slug)
+    })
 
   if (options.length === 0) {
     return (

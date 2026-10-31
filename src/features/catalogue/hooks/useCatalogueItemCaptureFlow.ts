@@ -87,7 +87,7 @@ export function useCatalogueItemCaptureFlow(options: {
     return mergeReviewedEdits(state.extractionPayload, state.userEdits)
   }, [state.extractionPayload, state.userEdits])
 
-  const selectGarmentType = useCallback(async (slug: string) => {
+  const selectCatalogueType = useCallback(async (slug: string) => {
     try {
       const definition = await getCatalogueType(slug)
       definitionRef.current = definition
@@ -203,29 +203,30 @@ export function useCatalogueItemCaptureFlow(options: {
       })
 
       const confidences = extraction.confidence_scores
-      const warnings = buildExtractionWarnings(
-        extraction.item as Record<string, unknown>,
-        activeDefinition,
-        confidences
-      )
+      // The edge returns fields flat under `response.item`; re-envelope them
+      // under the schema output root so schema paths (e.g. item.fit) resolve.
+      const root = activeDefinition.schema.output_root ?? 'item'
+      const newPayload = { [root]: extraction.item } as Record<string, unknown>
+      const warnings = buildExtractionWarnings(newPayload, activeDefinition, confidences)
 
-      setState((prev) => ({
-        ...prev,
-        screen: 'review',
-        // A fresh extraction resets reviewer edits for the new payload —
-        // edits always belong to the payload they were made against.
-        userEdits: {},
-        extractionPayload: extraction.item as Record<string, unknown>,
-        confidences,
-        warnings,
-        validationErrors: validateRequiredFields(
-          extraction.item as Record<string, unknown>,
-          activeDefinition
-        ),
-        extractedAt: new Date().toISOString(),
-        scanSessionId,
-        error: null,
-      }))
+      setState((prev) => {
+        // Validate the merged document (new payload + carried-forward edits),
+        // since reviewer corrections may already satisfy required fields.
+        const merged = mergeReviewedEdits(newPayload, prev.userEdits)
+        return {
+          ...prev,
+          screen: 'review',
+          // Reviewer edits survive re-extraction: they are re-applied over the
+          // new payload, so corrections are never silently discarded.
+          extractionPayload: newPayload,
+          confidences,
+          warnings,
+          validationErrors: validateRequiredFields(merged, activeDefinition),
+          extractedAt: new Date().toISOString(),
+          scanSessionId,
+          error: null,
+        }
+      })
     } catch (err) {
       logger.error('Catalogue item extraction failed', { error: String(err) })
       setState((prev) => ({
@@ -258,7 +259,11 @@ export function useCatalogueItemCaptureFlow(options: {
 
     try {
       const root = state.definition?.schema.output_root ?? 'item'
-      const item = (reviewedValues[root] ?? reviewedValues) as Record<string, unknown>
+      // reviewedValues carries the output-root envelope; the item fields
+      // live under it. Fall back to the whole document for legacy payloads.
+      const item = (
+        (reviewedValues[root] as Record<string, unknown> | undefined) ?? reviewedValues
+      ) as Record<string, unknown>
       // Colourway rows live under the schema array field; pass them through.
       const arrayField = state.definition?.schema.fields.find((f) => f.type === 'array')
       const colourways = arrayField
@@ -304,7 +309,7 @@ export function useCatalogueItemCaptureFlow(options: {
     state,
     reviewedValues,
     captureSession,
-    selectGarmentType,
+    selectCatalogueType,
     proceedToProcessing,
     handleFieldChange,
     saveItem,

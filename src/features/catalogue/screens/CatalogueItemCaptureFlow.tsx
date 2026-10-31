@@ -43,7 +43,7 @@ export function CatalogueItemCaptureFlow({
     state,
     reviewedValues,
     captureSession,
-    selectGarmentType,
+    selectCatalogueType,
     proceedToProcessing,
     handleFieldChange,
     saveItem,
@@ -93,10 +93,10 @@ export function CatalogueItemCaptureFlow({
       } else if (selection.kind === 'video') {
         navigate(`/events/${eventId}/vendors/${vendorId}/items/video`)
       } else if (selection.kind === 'catalogue') {
-        void selectGarmentType(selection.definition.slug)
+        void selectCatalogueType(selection.definition.slug)
       }
     },
-    [navigate, eventId, vendorId, selectGarmentType]
+    [navigate, eventId, vendorId, selectCatalogueType]
   )
 
   const infoImage = useMemo(() => captureSession.getInfoImage(), [captureSession])
