@@ -17,7 +17,7 @@
  */
 
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-import { handleCors, requireMethod, json, conflict, internalError } from '../_shared/http.ts'
+import { handleCors, requireMethod, conflict, internalError } from '../_shared/http.ts'
 import { createLogger } from '../_shared/logger.ts'
 import { createAdminClient, requireUser } from '../_shared/supabase.ts'
 import { validateUUID, requireObject, requireNonEmptyString } from '../_shared/validation.ts'
