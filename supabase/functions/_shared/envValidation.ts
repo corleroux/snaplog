@@ -12,6 +12,8 @@ interface EdgeFunctionEnv {
   GEMINI_API_KEY?: string
   MODEL_API_KEY?: string
   MUSE_SPARK_MODEL?: string
+  MODAL_PROXY_TOKEN?: string
+  SPARK_OPEN_MODEL?: string
 }
 
 /**
@@ -61,6 +63,12 @@ export function validateEnv(): EdgeFunctionEnv {
     }
   }
 
+  if (provider === 'muse-spark-open') {
+    if (!env.MODAL_PROXY_TOKEN || typeof env.MODAL_PROXY_TOKEN !== 'string' || env.MODAL_PROXY_TOKEN.trim() === '') {
+      errors.push('MODAL_PROXY_TOKEN is required when EXTRACTION_PROVIDER=muse-spark-open')
+    }
+  }
+
   if (errors.length > 0) {
     throw new Error(`Environment validation failed:\n  - ${errors.join('\n  - ')}`)
   }
@@ -72,6 +80,8 @@ export function validateEnv(): EdgeFunctionEnv {
     GEMINI_API_KEY: env.GEMINI_API_KEY,
     MODEL_API_KEY: env.MODEL_API_KEY,
     MUSE_SPARK_MODEL: env.MUSE_SPARK_MODEL,
+    MODAL_PROXY_TOKEN: env.MODAL_PROXY_TOKEN,
+    SPARK_OPEN_MODEL: env.SPARK_OPEN_MODEL,
   }
 }
 

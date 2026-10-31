@@ -63,6 +63,8 @@ Deno.test('getProvider: is case- and whitespace-insensitive', () => {
     assertEquals(getProvider().name, 'gemini')
     Deno.env.set('EXTRACTION_PROVIDER', '  Muse-Spark ')
     assertEquals(getProvider().name, 'muse-spark')
+    Deno.env.set('EXTRACTION_PROVIDER', '  Muse-Spark-Open ')
+    assertEquals(getProvider().name, 'muse-spark-open')
   } finally {
     restoreEnv({ EXTRACTION_PROVIDER: saved })
   }
@@ -75,7 +77,7 @@ Deno.test('getProvider: unknown provider fails loudly with the available list', 
     assertThrows(
       () => getProvider(),
       Error,
-      'Unknown EXTRACTION_PROVIDER "openai". Available providers: gemini, muse-spark'
+      'Unknown EXTRACTION_PROVIDER "openai". Available providers: gemini, muse-spark, muse-spark-open'
     )
   } finally {
     restoreEnv({ EXTRACTION_PROVIDER: saved })
@@ -139,6 +141,28 @@ Deno.test('buildExtractionRunInfo: maps a muse-spark run onto the same columns',
       schema_version: 1,
       provider: 'muse-spark',
       model: 'muse-spark-1.3',
+      latency_ms: 1234,
+      usage: { input_tokens: 1512, output_tokens: 284 },
+      cost_usd: null,
+    }
+  )
+})
+
+Deno.test('buildExtractionRunInfo: maps a muse-spark-open run onto the same columns', () => {
+  assertEquals(
+    buildExtractionRunInfo(
+      providerResult({
+        provider: 'muse-spark-open',
+        model: 'meta-models/Muse-Spark-Open-816B-A42B',
+        usage: { inputTokens: 1512, outputTokens: 284 },
+      }),
+      { slug: 'garment', version: 1 }
+    ),
+    {
+      schema_type: 'garment',
+      schema_version: 1,
+      provider: 'muse-spark-open',
+      model: 'meta-models/Muse-Spark-Open-816B-A42B',
       latency_ms: 1234,
       usage: { input_tokens: 1512, output_tokens: 284 },
       cost_usd: null,
