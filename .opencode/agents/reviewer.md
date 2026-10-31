@@ -1,7 +1,7 @@
 ---
 description: Independent read-only review of a change against docs/PRD.md and the AGENTS.md architecture rules. Returns PASS or BLOCK with findings. Use before finishing any P0 task.
 mode: subagent
-model: opencode-go/deepseek-v4-pro
+model: meta/muse-spark-1.3-contributor
 color: warning
 steps: 25
 permissions:
