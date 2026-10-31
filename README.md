@@ -19,7 +19,10 @@ The goal for the ten-day build is to prove the pipeline generalises: **a catalog
 | Garments as a second category, config only | Hackathon |
 | Video capture: item isolation with SAM 3.1 on Modal | Hackathon |
 | Model benchmark: Gemini vs Muse Spark vs Meta open weights | Hackathon |
+| Muse Spark Open extraction via Modal shared endpoint | Hackathon |
 | Visual search ("find something like this") | Stretch |
+
+Built with **Muse Spark Open** and Meta's model stack.
 
 ## How it works
 
