@@ -1,7 +1,7 @@
 ---
 description: Plans work against docs/PRD.md and breaks it into small, verifiable tasks. Read-only except plan files. Use for planning, trade-off decisions and scope checks.
 mode: primary
-model: opencode-go/glm-5.2
+model: meta/muse-spark-1.3-contributor
 color: info
 steps: 60
 permissions:
