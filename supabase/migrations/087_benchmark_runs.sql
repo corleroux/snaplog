@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS public.benchmark_runs (
     provider        TEXT NOT NULL,
     model           TEXT NOT NULL,
     mode            TEXT NOT NULL DEFAULT 'standard'
-                        CHECK (mode IN ('standard', 'contributor')),
+                        CHECK (mode = 'standard'),
 
     field_scores    JSONB NOT NULL DEFAULT '{}'::jsonb,
     accuracy        NUMERIC,

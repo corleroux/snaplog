@@ -132,7 +132,8 @@ export function costUsd(
 ): number | null {
   const rate = PRICE_TABLE[provider]
   if (!rate || inputTokens == null || outputTokens == null) return null
-  return Math.round((inputTokens / 1e6) * rate.in + (outputTokens / 1e6) * rate.out * 1e6) / 1e6
+  const dollars = (inputTokens / 1e6) * rate.in + (outputTokens / 1e6) * rate.out
+  return Math.round(dollars * 1e6) / 1e6
 }
 
 // ============================================================================
@@ -142,7 +143,12 @@ export function costUsd(
 export function assertStandardModels(models: { spark: string; sparkOpen: string }): void {
   if (models.spark !== 'muse-spark-1.3') {
     throw new Error(
-      `Benchmark refuses non-Standard Muse Spark model: ${models.spark} (must be muse-spark-1.3)`
+      `Refusing benchmark: Muse Spark model is not Standard (got ${models.spark}, want muse-spark-1.3)`
+    )
+  }
+  if (models.sparkOpen !== 'meta-models/Muse-Spark-Open-816B-A42B') {
+    throw new Error(
+      `Refusing benchmark: Spark Open model is not the pinned Standard endpoint model (got ${models.sparkOpen})`
     )
   }
 }
@@ -156,10 +162,10 @@ interface DryRunCase {
   captureClass: string
   schema: CatalogueSchema
   groundTruth: Record<string, unknown>
-  recorded: Record<string, { rawText: string; usage: { inputTokens: number; outputTokens: number } | null }>
+  recorded: Record<string, { rawText: string; model: string | null; usage: { inputTokens: number; outputTokens: number } | null }>
 }
 
-function recordedOf(fixture: { choices: Array<{ message: { content: string } }>; usage?: { prompt_tokens?: number; completion_tokens?: number } }) {
+function recordedOf(fixture: { model?: string; choices: Array<{ message: { content: string } }>; usage?: { prompt_tokens?: number; completion_tokens?: number } }) {
   const rawText = fixture.choices[0].message.content
   const usage = fixture.usage
     ? {
@@ -167,7 +173,7 @@ function recordedOf(fixture: { choices: Array<{ message: { content: string } }>;
       outputTokens: fixture.usage.completion_tokens ?? 0,
     }
     : null
-  return { rawText, usage }
+  return { rawText, model: fixture.model ?? null, usage }
 }
 
 function dryRunCases(): DryRunCase[] {
@@ -244,8 +250,15 @@ function scoreRecorded(
   groundTruth: Record<string, unknown>,
   provider: string,
   model: string,
-  recorded: { rawText: string; usage: { inputTokens: number; outputTokens: number } | null }
+  recorded: { rawText: string; model: string | null; usage: { inputTokens: number; outputTokens: number } | null }
 ): ScoredRow {
+  // Recorded fixtures must name the expected model — a swapped fixture would
+  // silently score the wrong provider.
+  if (recorded.model !== null && recorded.model !== model) {
+    throw new Error(
+      `Fixture model mismatch for ${captureId} / ${provider}: recorded ${recorded.model}, expected ${model}`
+    )
+  }
   const parsed: unknown = JSON.parse(recorded.rawText)
   const normalised = normaliseModelOutput(parsed, schema) as Record<string, unknown>
   const fieldScores = scoreFields(groundTruth, normalised)
@@ -310,28 +323,176 @@ function renderReport(rows: ScoredRow[], live: boolean): string {
     '|---|---|---|---|---|---|',
   ]
   for (const [provider, prow] of byProvider) {
-    const acc = prow.reduce((s, r) => s + r.accuracy, 0) / prow.length
+    const totalMatched = prow.reduce((s, r) => s + r.fields_matched, 0)
+    const totalScored = prow.reduce((s, r) => s + r.fields_scored, 0)
+    const acc = totalScored > 0 ? totalMatched / totalScored : 0
     const lat = prow.filter((r) => r.latency_ms != null)
     const meanLat = lat.length > 0 ? Math.round(lat.reduce((s, r) => s + (r.latency_ms ?? 0), 0) / lat.length) : null
     const costs = prow.map((r) => r.cost_usd).filter((c): c is number => c != null)
     const meanCost = costs.length > 0 ? Math.round((costs.reduce((s, c) => s + c, 0) / costs.length) * 1e6) / 1e6 : null
-    lines.push(`| ${provider} | ${prow[0].model} | ${prow.length} | ${(acc * 100).toFixed(1)}% | ${meanLat ?? 'n/a'} | ${meanCost ?? 'n/a'} |`)
+    lines.push(`| ${provider} | ${prow[0].model} | ${prow.length} (${totalMatched}/${totalScored}) | ${(acc * 100).toFixed(1)}% | ${meanLat ?? 'n/a (recorded)'} | ${meanCost != null ? '$' + meanCost.toFixed(4) + ' avg' : 'n/a'} |`)
   }
-  lines.push('', '## Failure patterns', '')
-  const guesses = rows.flatMap((r) => r.field_scores.filter((s) => s.outcome === 'guess').map((s) => `- ${r.capture_id} / ${r.provider}: guessed ${s.path} = ${JSON.stringify(s.actual)}`))
-  lines.push(...(guesses.length > 0 ? guesses : ['- None in this run.']), '')
+  lines.push('', '## Method', '')
+  lines.push('Same captures × each provider, scored field-by-field against hand-labelled ground truth with the real schema normaliser (`extractionNormaliser.ts`): normalised string/number match counts; null-vs-value counted both ways (missing expected value, or guessed value where null was correct — the never-guess rule rewards abstention). Cost = usage × hard-coded Standard price table (Muse Spark $1.25 in / $4.25 out per Mtok; same for Spark Open).', '')
+  lines.push('Exact string match is a **lower bound**: a semantically correct but wordier extraction (e.g. "Denim Trucker Jacket" vs ground truth "Jacket") scores as a mismatch. Translation quality and semantic equivalence are spot-checked manually per PRD §8.4 on the live run.', '')
+  lines.push('## Failure patterns', '')
+  const problems = rows.flatMap((r) =>
+    r.field_scores
+      .filter((s) => s.outcome === 'guess' || s.outcome === 'mismatch' || s.outcome === 'missing')
+      .map((s) => `- ${r.capture_id} / ${r.provider}: ${s.outcome} ${s.path} (expected ${JSON.stringify(s.expected)}, got ${JSON.stringify(s.actual)})`)
+  )
+  lines.push(...(problems.length > 0 ? problems : ['- None in this run.']), '')
   lines.push('## Notes', '')
   lines.push('- Gemini rows are legacy-baseline context (fixtures/write-up); Gemini is never called live and is not a scored demo provider.')
   lines.push('- Muse Spark ran in Standard mode (hard-pinned; contributor output can never appear here).')
-  lines.push('- Translation quality is spot-checked manually per PRD §8.4 on the live run.')
+  lines.push('- Garment leg provisional on web captures until the shoot; video rows need the Modal endpoint + live runs.')
+  lines.push('- Rack-video entries are not scored by this runner (item isolation is the video pipeline\'s job); expected counts tune after the first Modal run.')
+  lines.push('- `N/A` / `UNKNOWN` strings instead of null (`item.item_code`, `item.name` on garment-05) — prompt hardening for the benchmark: "use null, never write N/A or UNKNOWN".')
   return lines.join('\n') + '\n'
 }
 
 // ============================================================================
-// MAIN
+// LIVE RUN — real providers over the eval photo captures. Owner's explicit
+// go only (BENCHMARK_LIVE_CONFIRM=1). Writes benchmark_runs rows via the
+// service role and the final docs/benchmark-results.md.
 // ============================================================================
 
-const isLive = Deno.args.includes('--live')
+async function runLive(): Promise<never> {
+  if (Deno.env.get('BENCHMARK_LIVE_CONFIRM') !== '1') {
+    console.error('Refusing live run: set BENCHMARK_LIVE_CONFIRM=1 with the owner\'s explicit go (planned Tue).')
+    Deno.exit(2)
+  }
+
+  const { loadSchema } = await import('../supabase/functions/_shared/catalogueSchemaRegistry.ts')
+  const { museSparkProvider, getMuseSparkModel } = await import('../supabase/functions/_shared/providers/museSparkProvider.ts')
+  const { sparkOpenProvider, getSparkOpenModel } = await import('../supabase/functions/_shared/providers/sparkOpenProvider.ts')
+  const { createClient } = await import('https://esm.sh/@supabase/supabase-js@2.49.4')
+
+  // Hard rule: Standard models only, verified before any extraction.
+  assertStandardModels({ spark: getMuseSparkModel(), sparkOpen: getSparkOpenModel() })
+
+  const supabaseUrl = Deno.env.get('SUPABASE_URL')
+  const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
+  if (!supabaseUrl || !serviceKey) {
+    console.error('Live run needs SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY in the environment.')
+    Deno.exit(2)
+  }
+  const supabase = createClient(supabaseUrl, serviceKey)
+
+  const manifest = JSON.parse(
+    await Deno.readTextFile(new URL('../eval/manifest.json', import.meta.url))
+  ) as {
+    captures: Array<{
+      id: string
+      file: string
+      class: string
+      source: string
+      schema: string
+      ground_truth: unknown
+      failure_tags?: string[]
+    }>
+  }
+
+  const providers: Array<{ name: string; model: string; run: (typeof museSparkProvider) }> = [
+    { name: 'muse-spark', model: getMuseSparkModel(), run: museSparkProvider },
+  ]
+  if (Deno.env.get('MODAL_PROXY_TOKEN')) {
+    providers.push({ name: 'muse-spark-open', model: getSparkOpenModel(), run: sparkOpenProvider })
+  } else {
+    console.log('Skipping muse-spark-open leg: MODAL_PROXY_TOKEN not set (endpoint pending).')
+  }
+  // Gemini stays fixtures-only: legacy baseline context, never called live.
+
+  const evalSet = `eval-live-${new Date().toISOString().slice(0, 10)}`
+  const rows: ScoredRow[] = []
+
+  for (const capture of manifest.captures) {
+    if (capture.class === 'rack_video') {
+      console.log(`Skipping ${capture.id}: rack videos score in the video pipeline, not here.`)
+      continue
+    }
+    const gt = (capture.ground_truth ?? {}) as Record<string, unknown>
+    if (typeof gt.item !== 'object' || gt.item === null) {
+      console.log(`Skipping ${capture.id}: no item ground truth.`)
+      continue
+    }
+    let imageBytes: Uint8Array
+    try {
+      imageBytes = await Deno.readFile(new URL(`../eval/${capture.file}`, import.meta.url))
+    } catch {
+      console.log(`Skipping ${capture.id}: capture file not present locally.`)
+      continue
+    }
+    const mimeType = capture.file.endsWith('.png') ? 'image/png' : 'image/jpeg'
+    const schema = await loadSchema(capture.schema)
+    const scanType = Object.keys(schema.schema.scan_types ?? {})[0]
+
+    for (const p of providers) {
+      try {
+        const result = await p.run.extract({
+          images: [{ base64: b64encode(imageBytes), mimeType }],
+          schema,
+          scanType,
+        })
+        const fieldScores = scoreFields(gt, result.json as Record<string, unknown>)
+        const matched = fieldScores.filter((s) => s.outcome === 'match' || s.outcome === 'correct-null').length
+        const row: ScoredRow = {
+          eval_set: evalSet,
+          capture_id: capture.id,
+          capture_class: capture.class,
+          provider: p.name,
+          model: result.model,
+          mode: 'standard',
+          field_scores: fieldScores,
+          accuracy: fieldScores.length > 0 ? Math.round((matched / fieldScores.length) * 1000) / 1000 : 0,
+          fields_scored: fieldScores.length,
+          fields_matched: matched,
+          latency_ms: result.latencyMs,
+          input_tokens: result.usage?.inputTokens ?? null,
+          output_tokens: result.usage?.outputTokens ?? null,
+          cost_usd: costUsd(p.name, result.usage?.inputTokens ?? null, result.usage?.outputTokens ?? null),
+          failure_tags: capture.failure_tags ?? [],
+          notes: 'live run',
+        }
+        rows.push(row)
+        const { error } = await supabase.from('benchmark_runs').insert({
+          eval_set: row.eval_set,
+          capture_id: row.capture_id,
+          capture_class: row.capture_class,
+          provider: row.provider,
+          model: row.model,
+          mode: row.mode,
+          field_scores: row.field_scores,
+          accuracy: row.accuracy,
+          fields_scored: row.fields_scored,
+          fields_matched: row.fields_matched,
+          latency_ms: row.latency_ms,
+          input_tokens: row.input_tokens,
+          output_tokens: row.output_tokens,
+          cost_usd: row.cost_usd,
+          failure_tags: row.failure_tags,
+          notes: row.notes,
+        })
+        if (error) console.error(`benchmark_runs insert failed for ${capture.id}/${p.name}: ${error.message}`)
+        console.log(`Scored ${capture.id} x ${p.name}: accuracy ${row.accuracy} latency ${row.latency_ms}ms`)
+      } catch (err) {
+        console.error(`Extraction failed for ${capture.id} x ${p.name}: ${err instanceof Error ? err.message : err}`)
+      }
+    }
+  }
+
+  const report = renderReport(rows, true)
+  await Deno.writeTextFile(new URL('../docs/benchmark-results.md', import.meta.url), report)
+  console.log(report)
+  console.log(`Live run complete: ${rows.length} scored rows in benchmark_runs (eval set ${evalSet}).`)
+  Deno.exit(0)
+}
+
+function b64encode(bytes: Uint8Array): string {
+  let binary = ''
+  for (const byte of bytes) binary += String.fromCharCode(byte)
+  return btoa(binary)
+}
 
 if (!isLive) {
   const rows = runDryRun()
@@ -340,13 +501,12 @@ if (!isLive) {
     new URL('../docs/benchmark-results.md', import.meta.url),
     report
   )
+  await Deno.writeTextFile(
+    new URL('../eval/results-dryrun.json', import.meta.url),
+    JSON.stringify({ mode: 'dry-run', generated_at: new Date().toISOString(), rows }, null, 2) + '\n'
+  )
   console.log(report)
-  console.log(`Dry run complete: ${rows.length} scored rows (fixtures only, no network).`)
+  console.log(`Dry run complete: ${rows.length} scored rows (fixtures only, no network). Rows also in eval/results-dryrun.json.`)
 } else {
-  if (Deno.env.get('BENCHMARK_LIVE_CONFIRM') !== '1') {
-    console.error('Refusing live run: set BENCHMARK_LIVE_CONFIRM=1 with the owner\'s explicit go (planned Tue).')
-    Deno.exit(2)
-  }
-  console.error('Live mode is scaffolded; the full eval-set run lands with the owner-approved Tue session (needs Docker + eval captures + live providers).')
-  Deno.exit(3)
+  await runLive()
 }
