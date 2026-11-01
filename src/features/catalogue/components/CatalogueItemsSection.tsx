@@ -58,6 +58,7 @@ export function CatalogueItemsSection({ vendorId, className }: CatalogueItemsSec
       .from('catalogue_items')
       .select('id, item_code, name, schema_type, schema_version, extracted_fields, created_at')
       .eq('vendor_id', vendorId)
+      .eq('status', 'active')
       .order('created_at', { ascending: false })
       .then(({ data, error: fetchError }) => {
         if (cancelled) {return}

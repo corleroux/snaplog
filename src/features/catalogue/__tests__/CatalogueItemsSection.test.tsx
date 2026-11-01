@@ -21,12 +21,18 @@ vi.mock('@/lib/logger', () => ({
 
 import { supabase } from '@/lib/supabase/client'
 
+const calls: { eq: Array<[string, unknown]> } = { eq: [] }
+
 function mockItems(rows: unknown[] | null, error: { message: string } | null = null) {
-  vi.mocked(supabase.from).mockReturnValue({
-    select: vi.fn().mockReturnThis(),
-    eq: vi.fn().mockReturnThis(),
+  calls.eq = []
+  const query = {
+    select: vi.fn(),
+    eq: vi.fn(),
     order: vi.fn().mockResolvedValue({ data: rows, error }),
-  } as never)
+  }
+  query.select.mockReturnValue(query)
+  query.eq.mockImplementation(((...args: [string, unknown]) => { calls.eq.push(args); return query }) as never)
+  vi.mocked(supabase.from).mockReturnValue(query as never)
 }
 
 describe('missingRatio', () => {
@@ -76,6 +82,8 @@ describe('CatalogueItemsSection', () => {
       expect(screen.getByText('G-001')).toBeInTheDocument()
     })
     expect(screen.getByText('Review')).toBeInTheDocument()
+    // Only active items are queried.
+    expect(calls.eq).toContainEqual(['status', 'active'])
   })
 
   it('renders the AI Extracted badge for complete items', async () => {
