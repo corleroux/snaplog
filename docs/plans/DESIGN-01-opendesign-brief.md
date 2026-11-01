@@ -1,47 +1,41 @@
-# DESIGN-01 — OpenDesign prompt pack (brief, not FR plan)
+# DESIGN-01 — OpenDesign prompt pack (task ⑨a)
 
-**RACI:** architect authors (this file) → owner runs the session → design-reviewer vets output → builder implements in task ⑨ (FR-SCH-05-EXT-06). Approved output is adopted as `DESIGN_SYSTEM.md` (closes handover ⓪b-A).
-**Format:** tool-agnostic structured input. No OpenDesign input format verified yet — owner confirms what the session expects (URL, screenshots, text brief, or mix). This pack covers all three: paste §1–§5 as text, attach §6 screenshots, or point at repo URL.
+**Author:** architect · **Status:** ready for the owner to run · **Effort:** brief ~2h (done here), output review 1h (design-reviewer), implementation 2–4h (builder, Wave 5/6)
+**Feeds:** ⑨ (schema review UI builds in the approved language), SUB-02 (logo in video opener, social creatives for submission page + X post), `DESIGN_SYSTEM.md` (approved output replaces the stub).
 
-## Purpose line (paste verbatim)
+**Session order (value-per-risk): Stream A → B → C.** Stop after any stream if the clock bites — each stream ships independently.
 
-Startup track, "Build for Your World" — a trade-fair buyer points their phone at anything (fabric roll, garment on a rail) and gets a structured, searchable catalogue. Demo story: capture → extract → review → commit.
+## Running the session (owner)
 
-## 1. Buyer context
+Feed each stream as one prompt unit plus the attached inputs. Confirmed OpenDesign input format at session time (URL / screenshots / text brief / mix) and reshape — prompts below are tool-agnostic. Attach: 3–5 screenshots of the current app (capture, review, catalogue list, vendor page), the buyer context line, and the hard constraints. Do NOT attach vendor PII captures — use garments/swatches only.
 
-- User: wholesale buyer walking a crowded, noisy trade fair. One-handed phone use, gloves/stalls/coffee in the other hand.
-- Environment: harsh overhead light, glare, shaky close-ups of fabric texture and garment labels; intermittent connectivity.
-- So: huge touch targets (≥48px), bottom-anchored primary actions, high-contrast text, offline-tolerant states, zero tiny toggles, zero hover-dependent affordances.
+## Stream A — Brand kit (first, zero code risk)
 
-## 2. Hard stack constraints (non-negotiable — reject anything unimplementable here)
+> Design a brand kit for "Snaplog — Snap it. Catalogued.", a mobile-first trade-fair cataloguing app for fashion buyers. Deliver: (1) primary app logo + monochrome variant (legible at 48px app-icon size and as a 2cm fair-badge sticker); (2) Capacitor app icon set + splash screen (iOS 1024px, Android adaptive foreground/background); (3) social avatar (circle-cropped, readable at 98px); (4) wordmark lockup with tagline. Style: confident, craft-adjacent (fabric, markets), high contrast for sunlight legibility. No gradients that band on cheap screens; must work in single colour for swing-ticket printing.
 
-- React 19 + Vite + Tailwind CSS + **shadcn/ui `new-york` style** (see `components.json`; primitives in `src/components/ui/`). Reuse: `Button`, `Card`, `Badge`, `Input`, `Skeleton`, `LoadingState`/`EmptyState`/`ErrorState`, `ConfidenceBadge`, bottom-action-bar pattern.
-- Capacitor mobile clients — web-first responsive layout, no native-only patterns (no native nav bars, no HIG/Material-only gestures).
-- No new design tokens outside Tailwind + shadcn theme; no custom component library; icons via existing set only.
+Acceptance: SVG + PNG exports at all sizes; single-colour version exists.
 
-## 3. Screens to design (5, mobile-first 390px)
+## Stream B — Social creatives (second, zero code risk)
 
-1. **Capture** — big shutter button, thumbnail strip, category pre-select (fabric/garment), works one-handed.
-2. **Schema-driven review** — field list driven by schema config; low-confidence/missing fields flagged with `ConfidenceBadge`, never auto-filled; explicit Commit button in bottom action bar.
-3. **Catalogue list + search** — dense cards (photo, key fields, confidence dots), search bar, works with 100s of items.
-4. **Video-job progress** — async job card: queued → processing → done/failed, with disabled/unavailable state when backend unconfigured; non-blocking (user can keep capturing).
-5. **Fabric/garment switch** — one obvious segmented control, visible on capture + catalogue; must read clearly on camera.
+> Using the Stream A brand kit, deliver: (1) Facebook + LinkedIn cover images (current recommended dimensions, safe-area aware); (2) one Instagram grid post template + one story template announcing the hackathon build ("We turned trade-fair chaos into a searchable catalogue — built with Meta's AI stack"); (3) a 3-second logo sting / video bumper for the demo-video opener. Keep all text in safe areas; supply editable sources, not flattened images.
 
-## 4. Demo-legibility (graded on video)
+Acceptance: covers + templates + bumper, editable sources included.
 
-- Readable at 720p inside a 3-minute video: ≥16px body, high-contrast badges, key actions visible without zoom.
-- Fabric/garment switch and confidence flags must be distinguishable in a screen recording viewed on a laptop.
+## Stream C — App redesign (third, gated — see fallback)
 
-## 5. Out of scope (scope guard applies to design too)
+Keep: the bottom navigation with the central `+` capture action and its logic (tap = capture entry, context-aware: vendor page → pre-filled vendor, elsewhere → capture first, assign at review per R-01 direction).
 
-No accounts, billing, ordering, checkout, extra categories, or native-app chrome. Two categories only: fabric, garment.
+> Redesign Snaplog as a mobile-first app (web is secondary — this must feel like a distributed native app, built in React + Vite + Tailwind + shadcn/ui new-york + Capacitor; no native-only patterns, no custom gesture libs). Screens: (1) capture (one-handed, thumb-reachable, sun-readable); (2) schema-driven review with confidence flags and assign-or-create vendor; (3) catalogue list + text search; (4) vendor page; (5) video-job progress. Every screen needs loading, empty, error and low-confidence states. Fabric/garment switch must be obvious on camera at 720p. Out of scope: accounts, billing, ordering, extra categories, desktop layouts.
 
-## 6. Owner checklist
+Acceptance (implementability gate — design-reviewer enforces): every screen maps to shadcn primitives + Tailwind tokens (no bespoke component that needs building from scratch); colour/type/spacing emitted as tokens, not pictures.
 
-- **Confirm session format:** what does the session accept — repo URL, screenshots, text brief, or mix? What output format returns (tokens, CSS, component specs)?
-- **Bring:** repo URL (`snaplog`), 3–5 screenshots (current capture + review + list), this brief pasted as text, `components.json` + `src/styles/globals.css` for theme grounding.
-- **5-min reshape rule:** if session needs different input shape, ping architect — do not improvise constraints away.
+## Hard constraints (all streams)
 
-## 7. Acceptance before task ⑨ builds
+- Stack-locked: React + Vite + Tailwind + shadcn new-york + Capacitor. Nothing that can't ship in that stack.
+- Scope guard: no accounts, billing, ordering, extra categories — including in mockup flows.
+- Narrative-neutral: the redesign must not imply features that don't exist (no vendor-optional UI unless R-01 is built; no visual-search entry point — FR-CAT-03 is cut).
+- Demo-legibility: contrast and tap targets that survive phone-camera capture at 720p.
 
-design-reviewer vets output against: stack constraints (§2), one-handed mobile use (§1), demo-legibility (§4), scope guard (§5). Only approved output becomes `DESIGN_SYSTEM.md`.
+## Fallback (if Stream C can't be fully built before Tue EOD)
+
+Tokens-only reskin: apply the new brand (logo, colours, type) onto the existing screens + Capacitor icon/splash swap, and build ⑨ in the current layout. Full Stream C screens become `DESIGN_SYSTEM.md` content and write-up "what's next" — no shame in it, and the demo still opens with the new brand.

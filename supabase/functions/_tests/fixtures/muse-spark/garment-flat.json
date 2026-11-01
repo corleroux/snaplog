@@ -1,0 +1,28 @@
+{
+  "id": "chatcmpl-recorded-garment-05",
+  "object": "chat.completion",
+  "created": 1762100000,
+  "model": "muse-spark-1.3",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "{\"item\": {\"closure\": \"Center front metal button closure\", \"colourways\": [{\"colour_code\": null, \"colour_name\": \"Light Blue Wash\", \"metadata\": {\"wash\": \"Light blue stonewash\"}, \"sizing\": \"M\", \"variant_name\": \"Light Wash Denim\"}], \"construction\": \"Point collar, chest yoke seam, two button-flap chest pockets, two lower side welt pockets, vertical front seaming, long sleeves with button cuffs, button-adjustable hem band, contrast topstitching\", \"fabric_composition\": \"Light wash cotton denim\", \"fit\": \"Regular fit\", \"garment_type\": \"Denim Trucker Jacket\", \"item_code\": \"UNKNOWN\", \"metadata\": {\"brand\": \"Levi Strauss & Co.\", \"size_on_label\": \"M\"}, \"name\": \"Levi's Light Wash Denim Trucker Jacket\", \"neckline\": \"Point shirt collar with V-opening\", \"season\": null, \"silhouette\": \"Type III trucker silhouette with cropped straight hem\", \"sizing\": \"M\", \"sleeve\": \"Long set-in sleeve with button cuff\"}}"
+      },
+      "logprobs": null,
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "completion_tokens": 1838,
+    "prompt_tokens": 1843,
+    "total_tokens": 3681,
+    "completion_tokens_details": {
+      "reasoning_tokens": 1592
+    },
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    }
+  }
+}

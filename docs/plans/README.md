@@ -83,7 +83,7 @@ E. "Ten-day build" (line 5) is stale — deadline is Wed Nov 4 9PM ET. Line 34 b
 | 3 (Sun) | ⑥ Garment schema + item storage | `FR-SCH-03-garment-schema.md` | 8h | FR-SCH-01 |
 | 4 (Sun/Mon) | ⑦ Muse Spark Open on Modal | `FR-MOD-02b-spark-open-modal.md` | 4h | FR-MOD-01, Modal token |
 | 4 (Mon) | ⑧ Video pipeline (critical path) | `FR-VID-video-pipeline.md` | 12h | FR-MOD-02a, FR-SCH-03 |
-| 2–4 (window) | ⑨a OpenDesign prompt pack + output review (feeds ⑨) | `DESIGN-01-opendesign-brief.md` *(architect-authored; naming exception — brief, not FR plan)* | brief ~2h + review 1h | ⓪/⓪b (stub); feeds ⑨ |
+| 2–4 (window) | ⑨a OpenDesign prompt pack + output review (feeds ⑨) | `DESIGN-01-opendesign-brief.md` *(architect-authored; naming exception — brief, not FR plan)* | brief done; session (owner) + review 1h | ⓪/⓪b (stub); feeds ⑨ |
 | 5 (Mon/Tue) | ⑨ Schema-driven review UI | `FR-SCH-05-EXT-06-schema-review-ui.md` | 8h | FR-SCH-03 |
 | 5 (Mon/Tue) | ⑩ Benchmark runner | `FR-MOD-04-benchmark-runner.md` | 6h | FR-MOD-02a, eval set |
 | 6 (Tue/Wed) | ⑪ Demo video + write-up + submit | `SUB-02-demo-writeup-submission.md` | 4h + recording | everything |
