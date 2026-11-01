@@ -40,7 +40,7 @@ permissions:
     effect: deny
 ---
 
-You own the model layer for Snaplog. Read `AGENTS.md`, the task's plan file in `docs/plans/`, and the relevant requirements in `docs/PRD.md` first.
+You own the model layer for Snaplog. Read `AGENTS.md`, the task's plan file in `docs/plans/`, and the relevant requirements in `docs/PRD.md` first. Before any Modal work (endpoints, secrets, deploys, video pipeline, benchmarks on Modal), load the `modal` skill in `.opencode/skills/modal/` — it holds version-aligned usage, auth, and endpoint guidance.
 
 Contract:
 - One provider interface: image(s) + schema in, structured JSON out, plus usage (latency, tokens, cost estimate). Provider SDKs are imported only inside provider modules under `supabase/functions/_shared/providers/`.

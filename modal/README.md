@@ -6,6 +6,35 @@ pipeline downloads the video, isolates items with SAM 3.1 via the Meta Model
 API, and calls back into `extract-isolated-item` per item. Per-item
 extraction stays in the TS edge layer — Modal never re-implements it.
 
+## Environment (uv-managed)
+
+This directory is a uv project (`pyproject.toml`, `uv.lock`). The Modal CLI
+is installed via `uv tool install modal` (no project needed).
+
+```bash
+cd modal
+uv sync                  # create .venv + install deps (first time / after edits)
+uv run python -m unittest test_sam_parser -v   # offline parser tests
+```
+
+Before any Modal work (endpoints, secrets, deploys, video pipeline), the
+`inference` agent loads the `modal` skill (`.opencode/skills/modal/`) —
+version-aligned usage, auth, and endpoint guidance. Keep the skill updated:
+
+```bash
+modal skills update
+```
+
+Owner-only setup (browser auth, consumes credits — never run unasked):
+
+```bash
+modal setup && modal token info
+```
+
+Note: one upstream example token in the vendored skill docs was redacted
+(`existing-images.md`) to satisfy push protection — it was Modal's own
+placeholder, not a real secret. Re-check after every `modal skills update`.
+
 ## Files
 
 - `video_pipeline.py` — the Modal app (`snaplog-video-pipeline`, web endpoint `POST /process-video`). Multi-pass SAM prompts (`garment`, then `dress`/`jacket` on miss), grouping by stable track identity, best-frame crops, `video_jobs` updates.
