@@ -494,6 +494,12 @@ function b64encode(bytes: Uint8Array): string {
   return btoa(binary)
 }
 
+// ============================================================================
+// MAIN
+// ============================================================================
+
+const isLive = Deno.args.includes('--live')
+
 if (!isLive) {
   const rows = runDryRun()
   const report = renderReport(rows, false)
