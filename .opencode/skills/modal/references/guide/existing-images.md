@@ -69,7 +69,7 @@ username to create a Modal [Secret](/docs/guide/secrets).
 
 ```
 REGISTRY_USERNAME=my-dockerhub-username
-REGISTRY_PASSWORD=dckr_pat_EXAMPLE_TOKEN_REDACTED
+REGISTRY_PASSWORD=EXAMPLE_TOKEN_REDACTED
 ```
 
 Use this Secret with the
