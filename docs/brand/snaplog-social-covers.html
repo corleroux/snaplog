@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Snaplog — Social Covers (Editable Masters)</title>
+<style>
+:root{--bg:oklch(98% .004 240);--surface:oklch(100% 0 0);--fg:oklch(15% .02 100);--muted:oklch(40% .02 100);--border:oklch(15% .02 100);--accent:#E34A0B;--paper:#FAFAF7;--ink:#16150F;--font-display:'Times New Roman',Georgia,serif;--font-body:ui-monospace,'IBM Plex Mono',Menlo,monospace}
+*{box-sizing:border-box}html{background:var(--bg)}body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:15px;line-height:1.55}
+.topbar{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:2px solid var(--border);display:flex;align-items:center;gap:14px;padding:10px 18px}
+.topbar b{font-family:var(--font-display);font-size:20px}.topbar .tag{font-size:11px;letter-spacing:.14em;text-transform:uppercase;border:1.5px solid var(--border);padding:3px 8px;background:#fff}
+.wrap{max-width:1120px;margin:0 auto;padding:0 18px 80px}
+.hero{border:2px solid var(--border);background:var(--surface);margin:22px 0 18px;padding:30px}
+.hero h1{font-family:var(--font-display);font-weight:900;font-size:clamp(40px,6vw,72px);line-height:1;margin:8px 0;letter-spacing:-.02em}
+.kicker{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+section.card{border:2px solid var(--border);background:var(--surface);margin:18px 0}
+.sec-head{padding:16px 20px;border-bottom:2px solid var(--border);background:#fff;display:flex;gap:12px;align-items:baseline;flex-wrap:wrap}
+.sec-head h2{font-family:var(--font-display);font-size:30px;margin:0;letter-spacing:-.01em}
+.sec-head p{margin:0 0 0 auto;font-size:12px;color:var(--muted);max-width:44ch;text-align:right}
+.sec-body{padding:20px;display:grid;gap:14px}
+.stage{border:2px solid var(--border);background:var(--paper);padding:24px;overflow-x:auto}
+svg.master{width:100%;height:auto;display:block;border:2px solid var(--border);background:#fff}
+.px{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.btn{appearance:none;border:2px solid var(--ink);background:#fff;color:var(--ink);font:inherit;font-size:12px;letter-spacing:.08em;text-transform:uppercase;padding:12px 14px;cursor:pointer;min-height:44px;font-weight:700}
+.btn:hover{background:var(--ink);color:var(--paper)}
+.btn.primary{background:var(--accent);border-color:var(--ink);color:var(--ink)}
+.btn.primary:hover{background:var(--ink);color:var(--paper)}
+.btn:focus-visible,.btn-row a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap}
+.codebox{border:2px solid var(--ink);background:#0F0E0A;color:#F5F2E8;padding:12px;font-size:12px;overflow:auto;white-space:pre}
+footer{margin-top:22px;border:2px solid var(--ink);background:var(--ink);color:#fff;padding:16px 20px}
+@media(max-width:700px){.sec-head p{display:none}}
+</style>
+</head>
+<body>
+<div class="topbar" data-od-id="topbar"><b>SNAPLOG</b><span class="tag">Stream B · Social covers v1.0</span></div>
+<div class="wrap">
+<header class="hero" data-od-id="hero">
+  <div class="kicker">Stream A kit → Stream B · editable SVG masters, safe-area aware</div>
+  <h1>Covers that survive the crop.</h1>
+  <p style="max-width:62ch">Facebook and LinkedIn masters at current upload dimensions, with safe-zone guides baked in as toggleable layers. Export PNGs below, or download the SVGs and edit text directly — no flattened files.</p>
+</header>
+
+<section class="card" id="s-fb" data-od-id="facebook-cover">
+  <div class="sec-head"><h2>Facebook Page cover — 851 × 315</h2><p>Meta upload spec · displays 820×312 desktop / 640×360 mobile · dashed = mobile-safe centre</p></div>
+  <div class="sec-body">
+    <div class="stage">
+      <svg class="master" id="svgFb" width="851" height="315" viewBox="0 0 851 315" role="img" aria-label="Snaplog Facebook cover">
+        <rect width="851" height="315" fill="#16150F"/>
+        <g transform="translate(48,42) scale(0.9)">
+          <path d="M58 52 H170 L204 86 V204 H58 Z" fill="#FAFAF7"/>
+          <circle cx="164" cy="96" r="13" fill="#16150F"/>
+          <g stroke="#16150F" stroke-width="13" fill="none" stroke-linecap="square"><path d="M84 118 h22 v22"/><path d="M150 118 h22 v22"/><path d="M84 162 v22 h22"/><path d="M150 162 v22 h22"/></g>
+          <circle cx="128" cy="151" r="20" fill="#E34A0B" stroke="#16150F" stroke-width="7"/>
+        </g>
+        <text x="268" y="140" font-family="Georgia,'Times New Roman',serif" font-weight="900" font-size="72" letter-spacing="-1" fill="#FAFAF7">SNAPLOG</text>
+        <text x="270" y="182" font-family="Menlo,monospace" font-size="17" letter-spacing="4.5" fill="#FAFAF7">SNAP IT. CATALOGUED.</text>
+        <line x1="270" y1="206" x2="790" y2="206" stroke="#FAFAF7" stroke-width="3" stroke-dasharray="10 8"/>
+        <text x="270" y="240" font-family="Menlo,monospace" font-size="15" letter-spacing="2" fill="#E34A0B">TRADE-FAIR CATALOGUING FOR FASHION BUYERS</text>
+        <rect x="105" y="6" width="641" height="303" fill="none" stroke="#E34A0B" stroke-width="2" stroke-dasharray="8 6"/>
+        <text x="112" y="28" font-family="Menlo,monospace" font-size="12" letter-spacing="2" fill="#E34A0B">MOBILE-SAFE 640</text>
+      </svg>
+    </div>
+    <p class="px">Guides: orange dashed rect = 640px mobile-safe centre · profile photo overlaps bottom-left (~170px) — no text there · upload sRGB JPG &lt;100KB (PNG keeps the mono type crisp)</p>
+    <div class="btn-row"><button class="btn primary" data-dl="svgFb">Download SVG (editable)</button><button class="btn" data-png="svgFb" data-size="851x315">PNG 851×315</button><button class="btn" data-png="svgFb" data-size="1702x630">PNG 2× 1702×630</button></div>
+  </div>
+</section>
+
+<section class="card" id="s-li" data-od-id="linkedin-cover">
+  <div class="sec-head"><h2>LinkedIn Page cover — 1512 × 256</h2><p>Official LinkedIn Page spec · ultra-wide 6:1 · logo overlaps bottom-left · keep text clear of edges</p></div>
+  <div class="sec-body">
+    <div class="stage">
+      <svg class="master" id="svgLi" width="1512" height="256" viewBox="0 0 1512 256" role="img" aria-label="Snaplog LinkedIn cover">
+        <rect width="1512" height="256" fill="#16150F"/>
+        <g transform="translate(120,40) scale(0.68)">
+          <path d="M58 52 H170 L204 86 V204 H58 Z" fill="#FAFAF7"/>
+          <circle cx="164" cy="96" r="13" fill="#16150F"/>
+          <g stroke="#16150F" stroke-width="13" fill="none" stroke-linecap="square"><path d="M84 118 h22 v22"/><path d="M150 118 h22 v22"/><path d="M84 162 v22 h22"/><path d="M150 162 v22 h22"/></g>
+          <circle cx="128" cy="151" r="20" fill="#E34A0B" stroke="#16150F" stroke-width="7"/>
+        </g>
+        <text x="300" y="122" font-family="Georgia,'Times New Roman',serif" font-weight="900" font-size="76" letter-spacing="-1" fill="#FAFAF7">SNAPLOG</text>
+        <text x="302" y="168" font-family="Menlo,monospace" font-size="19" letter-spacing="5" fill="#FAFAF7">SNAP IT. CATALOGUED.</text>
+        <line x1="1050" y1="60" x2="1050" y2="196" stroke="#E34A0B" stroke-width="4"/>
+        <text x="1080" y="112" font-family="Menlo,monospace" font-size="19" letter-spacing="2" fill="#FAFAF7">TRADE-FAIR CATALOGUING</text>
+        <text x="1080" y="148" font-family="Menlo,monospace" font-size="19" letter-spacing="2" fill="#FAFAF7">FOR FASHION BUYERS</text>
+        <rect x="380" y="14" width="752" height="228" fill="none" stroke="#E34A0B" stroke-width="2" stroke-dasharray="8 6"/>
+        <text x="388" y="38" font-family="Menlo,monospace" font-size="13" letter-spacing="2" fill="#E34A0B">TEXT SAFE ZONE</text>
+      </svg>
+    </div>
+    <p class="px">Guides: dashed = text safe zone (clear of logo overlap bottom-left and trims) · max 3MB PNG/JPEG · limited text per LinkedIn guidance</p>
+    <div class="btn-row"><button class="btn primary" data-dl="svgLi">Download SVG (editable)</button><button class="btn" data-png="svgLi" data-size="1512x256">PNG 1512×256</button></div>
+  </div>
+</section>
+
+<section class="card" data-od-id="upload-notes">
+  <div class="sec-head"><h2>Upload notes</h2><p>Verified Nov 2026 · Meta + LinkedIn help</p></div>
+  <div class="sec-body">
+    <div class="codebox">FACEBOOK Page cover — upload 851 x 315 sRGB JPG &lt;100KB (PNG if text-heavy)
+LINKEDIN Page cover — 1512 x 256 PNG/JPEG, max 3MB, key text centred
+Both: test on mobile before publishing; re-crop trims sides first</div>
+  </div>
+</section>
+
+<footer data-od-id="footer"><b style="font-family:var(--font-display)">SNAPLOG</b> — Stream B · covers · solid inks only · guides are layers, delete before final export if desired</footer>
+</div>
+<script>
+function standaloneSVG(id){const el=document.getElementById(id);const c=el.cloneNode(true);c.setAttribute('xmlns','http://www.w3.org/2000/svg');return '<?xml version="1.0" encoding="UTF-8"?>\n'+new XMLSerializer().serializeToString(c);}
+function save(name,blob){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},400);}
+document.querySelectorAll('[data-dl]').forEach(b=>b.addEventListener('click',()=>{save(b.getAttribute('data-dl')+'.svg',new Blob([standaloneSVG(b.getAttribute('data-dl'))],{type:'image/svg+xml'}));}));
+document.querySelectorAll('[data-png]').forEach(b=>b.addEventListener('click',()=>{
+  const id=b.getAttribute('data-png'),wh=b.getAttribute('data-size').split('x').map(Number);
+  const svg=standaloneSVG(id);const img=new Image();
+  const url=URL.createObjectURL(new Blob([svg],{type:'image/svg+xml'}));
+  img.onload=()=>{const cv=document.createElement('canvas');cv.width=wh[0];cv.height=wh[1];const cx=cv.getContext('2d');cx.drawImage(img,0,0,wh[0],wh[1]);URL.revokeObjectURL(url);cv.toBlob(bl=>save(id+'-'+wh[0]+'x'+wh[1]+'.png',bl));};
+  img.src=url;
+}));
+</script>
+</body>
+</html>

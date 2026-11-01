@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Snaplog — App Redesign (Stream C)</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: { extend: {
+    colors: { ink:'#16150F', paper:'#FAFAF7', accent:'#E34A0B', kraft:'#E8D5AC', mist:'#E0E5E8', slate2:'#6B675C',
+      danger:'#B42318', dangerbg:'#FDE8E8', fieldwarn:'#FFF7ED' },
+    fontFamily: { display:['Georgia','Times New Roman','serif'], body:['ui-sans-serif','system-ui','sans-serif'], mono:['"IBM Plex Mono"','ui-monospace','Menlo','monospace'] },
+  } }
+}
+</script>
+<style>
+:root{--ink:#16150F;--paper:#FAFAF7;--accent:#E34A0B;--mist:#E0E5E8;--slate:#6B675C;--kraft:#E8D5AC;--radius:14px;--danger:#B42318;--danger-bg:#FDE8E8;--field-warn:#FFF7ED}
+*{-webkit-tap-highlight-color:transparent}
+body{background:#EDEAE2}
+.phone{width:390px;max-width:100%;height:820px;background:var(--paper);border:3px solid var(--ink);border-radius:28px;overflow:hidden;display:flex;flex-direction:column;position:relative}
+.scr{flex:1;overflow-y:auto;scrollbar-width:thin}
+.tabbtn{min-height:44px}
+.navbtn{min-height:56px;min-width:56px}
+.plusbtn{width:72px;height:72px;margin-top:-34px;border:3px solid var(--paper);box-shadow:0 4px 0 var(--ink)}
+.stitch{border-top:3px dashed var(--ink)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.seg-on{background:var(--ink)!important;color:var(--paper)!important}
+.conf-low{background:#FDE8E8!important;color:#B42318!important;border-color:#B42318!important}
+.vf-corner{position:absolute;width:34px;height:34px;border:4px solid var(--paper)}
+.toast{position:absolute;left:12px;right:12px;bottom:110px;z-index:50}
+.skel{background:linear-gradient(90deg,var(--mist) 25%,#f2efe8 50%,var(--mist) 75%);background-size:200% 100%;animation:sk 1.2s infinite linear}
+@keyframes sk{to{background-position:-200% 0}}
+@media(prefers-reduced-motion:reduce){.skel{animation:none}.toast{transition:none}}
+.jbar{transition:width .6s ease}
+.modebtn{min-height:68px}
+</style>
+</head>
+<body class="font-body text-ink">
+<div class="max-w-6xl mx-auto px-4 pb-16">
+  <header class="pt-6 pb-2" data-od-id="header">
+    <p class="font-mono text-xs tracking-[0.18em] uppercase text-slate2">Stream C · App redesign · React + Vite + Tailwind + shadcn new-york + Capacitor</p>
+    <h1 class="font-display font-black text-4xl md:text-5xl tracking-tight">Snaplog, rebuilt for the aisle.</h1>
+    <p class="mt-2 max-w-2xl text-[15px]">One-handed capture, schema review with confidence flags, text search, vendor pages, job progress — every screen ships loading, empty, error and low-confidence states. Tokens below map 1:1 to Tailwind + shadcn primitives. No new components to build.</p>
+  </header>
+
+  <div class="mt-4 flex flex-col lg:flex-row gap-6 items-start">
+    <nav class="w-full lg:w-60 shrink-0 bg-paper border-2 border-ink rounded-2xl p-3 space-y-1" aria-label="Screens" data-od-id="screen-nav">
+      <p class="font-mono text-[11px] tracking-[0.14em] uppercase text-slate2 px-2 pt-1">Screens</p>
+      <div id="screenTabs" class="grid gap-1"></div>
+      <div class="stitch my-2"></div>
+      <p class="font-mono text-[11px] tracking-[0.14em] uppercase text-slate2 px-2">Screen state</p>
+      <div id="stateTabs" class="grid grid-cols-2 gap-1"></div>
+      <div class="stitch my-2"></div>
+      <p class="font-mono text-[11px] tracking-[0.14em] uppercase text-slate2 px-2">+ capture entry</p>
+      <p class="px-2 text-[13px] leading-snug">Tap <b>+</b> any time — vendor context rides along from the vendor page and locks through save.</p>
+    </nav>
+
+    <div class="phone shadow-xl" data-od-id="phone">
+      <div class="flex items-center justify-between px-4 pt-3 pb-1 font-mono text-xs" aria-hidden="true"><span>9:41</span><span>SNAPLOG · 5G ▮▮▮</span></div>
+      <div id="appbar"></div>
+      <div id="screen" class="scr"></div>
+      <div id="navbar"></div>
+      <div id="toastWrap"></div>
+    </div>
+
+    <aside class="w-full lg:w-80 shrink-0 space-y-4" data-od-id="side-panel">
+      <div class="bg-paper border-2 border-ink rounded-2xl p-4">
+        <p class="font-mono text-[11px] tracking-[0.14em] uppercase text-slate2">Why this redesign</p>
+        <ul class="mt-2 text-[14px] space-y-2 list-disc pl-5">
+          <li><b>Thumb zone:</b> primary actions sit in the bottom 240px; destructive/secondary up top.</li>
+          <li><b>Sun-readable:</b> Ink on Paper 15.8:1, Ink-on-Orange primaries, 16px minimum type, 48px targets.</li>
+          <li><b>Honest states:</b> skeletons, empties with next action, errors with retry, low-confidence flags — never silent.</li>
+          <li><b>Scoped:</b> no accounts, billing, ordering, or extra categories anywhere in the flow.</li>
+        </ul>
+      </div>
+      <div class="bg-ink text-paper border-2 border-ink rounded-2xl p-4">
+        <p class="font-mono text-[11px] tracking-[0.14em] uppercase opacity-80">Demo script (720p)</p>
+        <ol class="mt-2 text-[14px] space-y-2 list-decimal pl-5">
+          <li>Vendors → Fashion Textile → tap <b>+</b> (notice the locked vendor).</li>
+          <li>Pick Fabric/Garment — watch review render that schema's fields.</li>
+          <li>Toggle state to Low-conf → confirm flags → Save (vendor locked).</li>
+          <li>Search “cotton” → open job tab → show export progress.</li>
+        </ol>
+      </div>
+    </aside>
+  </div>
+
+  <section class="mt-8 bg-paper border-2 border-ink rounded-2xl p-5" data-od-id="tokens">
+    <h2 class="font-display font-black text-2xl">Tokens → Tailwind v4 @theme</h2>
+    <p class="text-[14px] mt-1 max-w-3xl">Single source of truth for React + Vite + Tailwind v4 + shadcn new-york. Paste into <span class="font-mono">app.css</span> after <span class="font-mono">@import "tailwindcss"</span>. Body = system stack; <span class="font-mono">IBM Plex Mono</span> via <span class="font-mono">@fontsource/ibm-plex-mono</span> (bundled npm package — never a network link) for labels, numbers and prices only; Georgia/Times for headings.</p>
+    <div class="grid md:grid-cols-2 gap-4 mt-4">
+      <div>
+        <p class="font-mono text-[11px] tracking-[0.14em] uppercase text-slate2 mb-2">app.css — @theme</p>
+        <pre class="bg-ink text-paper text-[12px] p-3 rounded-xl overflow-auto">@import "tailwindcss";
+/* npm i @fontsource/ibm-plex-mono +
+   @font-face via @fontsource (bundled) */
+@theme {
+  --color-ink: #16150F; --color-paper: #FAFAF7;
+  --color-accent: #E34A0B; --color-kraft: #E8D5AC;
+  --color-mist: #E0E5E8; --color-slate: #6B675C;
+  --color-danger: #B42318; --color-danger-bg: #FDE8E8;
+  --color-field-warn: #FFF7ED;
+  --font-display: Georgia, 'Times New Roman', serif;
+  --font-body: ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace,
+    Menlo, monospace;
+  --radius-app: 14px; --radius-pill: 999px;
+}
+/* Alert destructive → bg-danger-bg/border-danger.
+   Low-confidence field → border-danger/bg-field-warn. */</pre>
+      </div>
+      <div>
+        <p class="font-mono text-[11px] tracking-[0.14em] uppercase text-slate2 mb-2">shadcn primitive per screen</p>
+        <table class="w-full text-[13px] border-2 border-ink rounded-xl overflow-hidden">
+          <tr class="bg-ink text-paper font-mono text-[11px] uppercase tracking-wider"><th class="text-left p-2">Screen</th><th class="text-left p-2">Primitives</th></tr>
+          <tr class="border-t-2 border-ink"><td class="p-2 font-bold">Capture</td><td class="p-2 font-mono">Button, Sheet, Badge, ToggleGroup, Alert</td></tr>
+          <tr class="border-t border-mist"><td class="p-2 font-bold">Review</td><td class="p-2 font-mono">Card, Input, Badge, Alert, Separator</td></tr>
+          <tr class="border-t border-mist"><td class="p-2 font-bold">Catalogue</td><td class="p-2 font-mono">Input, Card, Badge, Skeleton, Tabs, Alert</td></tr>
+          <tr class="border-t border-mist"><td class="p-2 font-bold">Vendor</td><td class="p-2 font-mono">Avatar, Card, Button, Separator</td></tr>
+          <tr class="border-t border-mist"><td class="p-2 font-bold">Jobs</td><td class="p-2 font-mono">Progress, Card, Alert, Button, Badge</td></tr>
+        </table>
+        <p class="font-mono text-[12px] mt-3 leading-relaxed">REVIEW FIELDS render from the active catalogue schema (fabric v3 / garment v3) — never hardcoded. Vendor is pre-selected before capture and never a form field; review shows a display-only line.</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+const VENDORS = [
+  {id:'v1', name:'Fashion Textile', booth:'Hall B · 042', styles:15},
+  {id:'v2', name:'Mei Ya Lace', booth:'Hall A · 123', styles:1},
+  {id:'v3', name:'Blue Textile Co.', booth:'Hall C · 401', styles:4},
+];
+const STYLES = [
+  {id:'A025-44', name:'A025-44', fabric:'100% Cotton', mode:'fabric', img:'garment-04-jean-jacket.jpg', conf:'high', vendor:'Fashion Textile', time:'Just now'},
+  {id:'D80-12', name:'D80-12', fabric:'Denim 12oz', mode:'garment', img:'garment-10-denim-80s.jpg', conf:'low', vendor:'Fashion Textile', time:'12 min ago'},
+  {id:'G07-03', name:'G07-03', fabric:'Silk blend', mode:'garment', img:'garment-07-gown.jpg', conf:'high', vendor:'Mei Ya Lace', time:'1 h ago'},
+];
+const SCREENS = [ ['capture','① Capture'], ['review','② Review'], ['catalogue','③ Catalogue'], ['vendor','④ Vendor'], ['jobs','⑤ Jobs'] ];
+const STATES = [ ['default','Default'], ['loading','Loading'], ['empty','Empty'], ['error','Error'], ['lowconf','Low-conf'], ['unconfig','Unconfig.'] ];
+const S = { screen:'capture', variant:'default', mode:'fabric', shots:[], vendor:VENDORS[0], query:'', filter:'all', jobPct:35, review:{name:'A025-44', fabric:'100% Cotton', color:'Dusty rose', price:'', weave:'', gtype:'', sizes:'', comp:''} };
+
+const $ = id => document.getElementById(id);
+function toast(msg){ $('toastWrap').innerHTML = `<div class="toast"><div class="bg-ink text-paper font-mono text-[13px] px-4 py-3 rounded-xl border-2 border-ink shadow-lg" role="status">${msg}</div></div>`; clearTimeout(window._t); window._t=setTimeout(()=>$('toastWrap').innerHTML='',2600); }
+function go(screen, opts={}){ S.screen=screen; if(opts.keepVariant!==true) S.variant='default'; render(); }
+function pressPlus(){
+  go('capture'); toast('+ → vendor context carried: <b>'+S.vendor.name+'</b>. Locked through save.');
+}
+
+/* ---------- chrome ---------- */
+function renderTabs(){
+  $('screenTabs').innerHTML = SCREENS.map(([k,l])=>`<button data-go="${k}" class="tabbtn text-left px-3 py-2 rounded-xl border-2 font-bold text-[15px] ${S.screen===k?'bg-ink text-paper border-ink':'bg-white border-ink hover:bg-mist'}">${l}</button>`).join('');
+  $('stateTabs').innerHTML = STATES.map(([k,l])=>`<button data-v="${k}" class="tabbtn px-2 py-2 rounded-xl border-2 font-mono text-[12px] ${S.variant===k?'bg-accent text-ink border-ink':'bg-white border-ink hover:bg-mist'}">${l}</button>`).join('');
+  document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>go(b.dataset.go));
+  document.querySelectorAll('[data-v]').forEach(b=>b.onclick=()=>{S.variant=b.dataset.v;render();});
+}
+function renderNav(){
+  const items=[['catalogue','Catalogue','⌂'],['vendor','Vendors','▦'],['search','Search','○'],['jobs','Jobs','▣']];
+  $('navbar').innerHTML = `<nav class="bg-ink text-paper px-2 pt-1 pb-4" aria-label="Primary">
+    <div class="flex items-end justify-around">
+      <button data-n="catalogue" class="navbtn flex flex-col items-center gap-1 text-[12px] font-mono ${S.screen==='catalogue'?'text-accent':'opacity-80'}"><span class="text-xl">⌂</span>Home</button>
+      <button data-n="vendor" class="navbtn flex flex-col items-center gap-1 text-[12px] font-mono ${S.screen==='vendor'?'text-accent':'opacity-80'}"><span class="text-xl">▦</span>Vendors</button>
+      <button data-n="plus" aria-label="Capture" class="plusbtn rounded-full bg-accent text-ink font-black text-4xl leading-none">+</button>
+      <button data-n="search" class="navbtn flex flex-col items-center gap-1 text-[12px] font-mono ${S.screen==='search'?'text-accent':'opacity-80'}"><span class="text-xl">○</span>Search</button>
+      <button data-n="jobs" class="navbtn flex flex-col items-center gap-1 text-[12px] font-mono ${S.screen==='jobs'?'text-accent':'opacity-80'}"><span class="text-xl">▣</span>Jobs</button>
+    </div></nav>`;
+  document.querySelectorAll('[data-n]').forEach(b=>b.onclick=()=>{ const n=b.dataset.n; if(n==='plus')pressPlus(); else if(n==='search'){go('catalogue');setTimeout(()=>{const i=$('q');if(i)i.focus();},50);} else go(n); });
+}
+function appbar(title, sub, back){
+  $('appbar').innerHTML = `<div class="flex items-center gap-2 px-3 py-2 border-b-2 border-ink bg-paper">
+    ${back?`<button data-back class="navbtn font-black text-xl" aria-label="Back">‹</button>`:''}
+    <div class="min-w-0"><h2 class="font-display font-black text-[22px] leading-none truncate">${title}</h2><p class="font-mono text-[11px] text-slate2 truncate">${sub}</p></div></div>`;
+  const b=document.querySelector('[data-back]'); if(b)b.onclick=()=>go('catalogue');
+}
+
+/* ---------- screens ---------- */
+function modeSwitch(){
+  const m = S.mode;
+  return `<div class="grid grid-cols-2 gap-2" role="group" aria-label="Capture mode">
+    <button data-mode="fabric" class="modebtn rounded-2xl border-[3px] font-black text-[18px] flex items-center justify-center gap-2 ${m==='fabric'?'seg-on border-ink':'bg-white border-ink'}">◧ FABRIC ${m==='fabric'?'✓':''}</button>
+    <button data-mode="garment" class="modebtn rounded-2xl border-[3px] font-black text-[18px] flex items-center justify-center gap-2 ${m==='garment'?'seg-on border-ink':'bg-white border-ink'}">⛁ GARMENT ${m==='garment'?'✓':''}</button>
+  </div>`;
+}
+function vCapture(){
+  if(S.variant==='loading') return `<div class="p-4 space-y-3"><div class="rounded-2xl border-2 border-ink bg-mist h-64 skel"></div><div class="rounded-xl border-2 border-ink bg-white h-16 skel"></div><p class="font-mono text-sm text-center">Opening camera…</p></div>`;
+  if(S.variant==='error') return `<div class="p-5 space-y-4"><div class="rounded-2xl border-[3px] border-[#B42318] bg-[#FDE8E8] p-4"><p class="font-black text-[17px]">Camera blocked</p><p class="text-[14px] mt-1">Snaplog needs camera access for capture. Nothing was lost.</p><button data-r="capture" class="mt-3 min-h-[48px] px-5 rounded-xl bg-ink text-paper font-bold">Retry camera</button></div></div>`;
+  return `<div class="p-3 space-y-3">
+    <div class="rounded-xl border-2 border-ink bg-kraft px-3 py-2 font-mono text-[13px]" aria-label="Vendor context">VENDOR · <b>${S.vendor.name}</b> · ${S.vendor.booth}</div>
+    <div class="relative rounded-2xl overflow-hidden border-[3px] border-ink bg-ink" style="height:300px">
+      <img src="garment-04-jean-jacket.jpg" alt="Camera preview: denim jacket on stall table" class="w-full h-full object-cover opacity-90">
+      <span class="vf-corner" style="top:12px;left:12px;border-right:0;border-bottom:0"></span>
+      <span class="vf-corner" style="top:12px;right:12px;border-left:0;border-bottom:0"></span>
+      <span class="vf-corner" style="bottom:12px;left:12px;border-right:0;border-top:0"></span>
+      <span class="vf-corner" style="bottom:12px;right:12px;border-left:0;border-top:0"></span>
+      ${S.variant==='lowconf'?`<div class="absolute top-3 left-1/2 -translate-x-1/2 bg-accent text-ink font-mono text-[12px] font-bold px-3 py-2 rounded-full border-2 border-ink whitespace-nowrap">⚠ DIM LIGHT · MOVE CLOSER</div>`:''}
+      <div class="absolute bottom-2 left-1/2 -translate-x-1/2 bg-ink text-paper font-mono text-[12px] px-3 py-1 rounded-full">INFO FRAME · FILL THE TICKET</div>
+    </div>
+    ${modeSwitch()}
+    ${S.variant==='empty'
+      ? `<div class="rounded-2xl border-2 border-ink bg-white p-5 text-center"><p class="font-display font-black text-[20px]">No shots yet</p><p class="text-[14px] text-slate2 mt-1">Hold steady, fill the frame, tap Capture. One-handed: everything lives below this line.</p></div>`
+      : `<div class="flex gap-2">${['garment-04-jean-jacket.jpg','garment-10-denim-80s.jpg'].map((im,i)=>`<div class="relative w-20 h-20 rounded-xl overflow-hidden border-2 ${i===0?'border-accent':'border-ink'}"><img src="${im}" alt="Shot ${i+1}${i===0?' marked Info':''}" class="w-full h-full object-cover">${i===0?'<span class="absolute top-0 left-0 bg-accent text-ink font-mono text-[10px] font-bold px-1">INFO</span>':''}</div>`).join('')}<div class="w-20 h-20 rounded-xl border-2 border-dashed border-slate2 grid place-items-center font-mono text-[11px] text-slate2">+2</div></div>`}
+    <button data-cap class="w-full min-h-[64px] rounded-full bg-accent text-ink font-black text-[20px] border-[3px] border-ink">◉ CAPTURE</button>
+  </div>`;
+}
+function confBadge(c){ return c==='high' ? `<span class="font-mono text-[11px] font-bold px-2 py-1 rounded-full border-2 border-ink bg-paper">AI · 92% ✓</span>` : `<span class="font-mono text-[11px] font-bold px-2 py-1 rounded-full border-2 conf-low">AI · 41% ⚠ CHECK</span>`; }
+function vReview(){
+  if(S.variant==='loading') return `<div class="p-4 space-y-3"><div class="h-44 rounded-2xl skel border-2 border-ink"></div><div class="h-12 rounded-xl skel border-2 border-ink"></div><div class="h-12 rounded-xl skel border-2 border-ink"></div><p class="font-mono text-sm text-center">Saving style…</p></div>`;
+  if(S.variant==='empty') return `<div class="p-5 space-y-4 text-center"><p class="font-display font-black text-[22px]">Nothing extracted</p><p class="text-[14px] text-slate2">The Info frame was unreadable. Retake with the ticket flat and lit.</p><button data-r="capture" class="min-h-[52px] px-6 rounded-full bg-accent text-ink font-black border-[3px] border-ink">RETAKE PHOTO</button></div>`;
+  if(S.variant==='error') return `<div class="p-5 space-y-4"><div class="rounded-2xl border-[3px] border-[#B42318] bg-[#FDE8E8] p-4"><p class="font-black text-[17px]">Save failed — offline?</p><p class="text-[14px] mt-1">Your edits are kept. Reconnect and retry.</p><button data-r="review" class="mt-3 min-h-[48px] px-5 rounded-xl bg-ink text-paper font-bold">Retry save</button></div></div>`;
+  const low = S.variant==='lowconf';
+  const SCHEMAS = {
+    fabric: { vsn:'fabric schema v3', fields:[
+      {key:'name', label:'Style name', conf:'high', ph:'e.g. A025-44'},
+      {key:'fabric', label:'Fabric', conf:'high', ph:'e.g. 100% Cotton'},
+      {key:'weave', label:'Weave / knit', conf:'low', ph:'e.g. Twill 3/1'},
+      {key:'color', label:'Colour', conf:'high', ph:'e.g. Dusty rose'},
+      {key:'price', label:'Price / metre', conf:'low', ph:'Ask at stall — optional'} ]},
+    garment: { vsn:'garment schema v3', fields:[
+      {key:'name', label:'Style name', conf:'high', ph:'e.g. D80-12'},
+      {key:'gtype', label:'Garment type', conf:'high', ph:'e.g. Trucker jacket'},
+      {key:'sizes', label:'Size range', conf:'low', ph:'e.g. XS–XL'},
+      {key:'color', label:'Colour', conf:'high', ph:'e.g. Washed indigo'},
+      {key:'comp', label:'Composition', conf:'low', ph:'e.g. 98% cotton, 2% elastane'},
+      {key:'price', label:'Wholesale price', conf:'low', ph:'Ask at stall — optional'} ]}
+  };
+  const sch = SCHEMAS[S.mode];
+  const field = f => { const val = S.review[f.key] ?? ''; const lc = low && f.conf==='low';
+    return `<label class="block"><span class="flex items-center justify-between mb-1"><span class="font-mono font-bold text-[13px] tracking-wide">${f.label.toUpperCase()} ${f.conf==='low'?'<span class="text-[#B42318]">· NEEDS CHECK</span>':''}</span>${confBadge(f.conf)}</span>
+    <input data-f="${f.key}" value="${val}" placeholder="${f.ph}" class="w-full min-h-[52px] rounded-xl border-[3px] ${lc?'border-[#B42318] bg-[#FFF7ED]':'border-ink'} bg-white px-3 text-[16px]"></label>`; };
+  return `<div class="p-3 space-y-3">
+    ${low?`<div class="rounded-xl border-[3px] border-[#B42318] bg-[#FDE8E8] px-3 py-2 text-[14px] font-bold">⚠ ${sch.fields.filter(f=>f.conf==='low').length} LOW-CONFIDENCE FIELDS — confirm before saving</div>`:''}
+    <div class="relative rounded-2xl overflow-hidden border-[3px] border-ink"><img src="garment-04-jean-jacket.jpg" alt="Info frame under review" class="w-full h-44 object-cover"><span class="absolute top-2 right-2 flex gap-1"><span class="bg-accent text-ink font-mono text-[11px] font-bold px-2 py-1 rounded-full border-2 border-ink">✦ Info</span><span class="bg-ink text-paper font-mono text-[11px] px-2 py-1 rounded-full">Primary</span></span></div>
+    <p class="font-mono text-[12px] text-slate2">Saving as <b>${S.vendor.name}</b> · vendor display only — populated server-side, not submitted.</p>
+    ${sch.fields.map(field).join('')}
+    <p class="font-mono text-[11px] text-slate2">Fields render from the active catalogue schema (${sch.vsn}) — never hardcoded.</p>
+    <div class="flex gap-2 pt-1"><button data-r="capture" class="flex-1 min-h-[56px] rounded-full border-[3px] border-ink bg-white font-black text-[17px]">Back</button>
+    <button data-save class="flex-[2] min-h-[56px] rounded-full bg-accent text-ink font-black text-[17px] border-[3px] border-ink ${!S.review.name?'opacity-40':''}">Save style ✓</button></div>
+  </div>`;
+}
+function vCatalogue(){
+  if(S.variant==='loading') return `<div class="p-3 space-y-3"><div class="h-12 rounded-full skel border-2 border-ink"></div><div class="h-56 rounded-2xl skel border-2 border-ink"></div><div class="h-56 rounded-2xl skel border-2 border-ink"></div></div>`;
+  if(S.variant==='error') return `<div class="p-5"><div class="rounded-2xl border-[3px] border-[#B42318] bg-[#FDE8E8] p-5 text-center"><p class="font-black text-[18px]">Catalogue didn’t load</p><button data-r="catalogue" class="mt-3 min-h-[52px] px-6 rounded-full bg-ink text-paper font-bold">Retry</button></div></div>`;
+  const q = S.query.toLowerCase();
+  const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  let items = STYLES.filter(s => (S.filter==='all'||s.mode===S.filter) && (!q || (s.name+s.fabric+s.vendor).toLowerCase().includes(q)));
+  const lowItems = STYLES.filter(s=>s.conf==='low');
+  let body = '';
+  if(S.variant==='empty' || items.length===0) body = `<div class="rounded-2xl border-2 border-ink bg-white p-6 text-center"><p class="font-display font-black text-[22px]">${q?`No matches for “${esc(S.query)}”`:'Catalogue is empty'}</p><p class="text-[14px] text-slate2 mt-1">${q?'Try a style code, fabric or vendor.':'Capture your first style to start the fair book.'}</p><button data-r="capture" class="mt-4 min-h-[52px] px-6 rounded-full bg-accent text-ink font-black border-[3px] border-ink">+ Capture style</button></div>`;
+  else body = items.map(s=>`<article data-od-id="style-card-${s.id}" class="rounded-2xl border-2 border-ink bg-white overflow-hidden">
+      <div class="relative"><img src="${s.img}" alt="${s.name} — ${s.fabric}" class="w-full h-44 object-cover"><span class="absolute top-2 left-2 bg-accent text-ink font-mono text-[11px] font-bold px-2 py-1 rounded-full border-2 border-ink">${s.fabric.split(' ')[0].toUpperCase()}</span>${s.conf==='low'?'<span class="absolute top-2 right-2 bg-[#B42318] text-white font-mono text-[11px] font-bold px-2 py-1 rounded-full">REVIEW ⚠</span>':''}</div>
+      <div class="p-3"><p class="font-display font-black text-[20px] leading-none">${s.name}</p><p class="text-[14px] text-slate2 mt-1">${s.fabric} · ${s.vendor}</p><p class="font-mono text-[11px] text-slate2 mt-1">${s.time}</p></div></article>`).join('');
+  return `<div class="p-3 space-y-3">
+    <label class="flex items-center gap-2 min-h-[52px] rounded-full border-[3px] border-ink bg-white px-4"><span aria-hidden="true">○</span><input id="q" value="${esc(S.query)}" placeholder="Search code, fabric, vendor…" class="flex-1 bg-transparent outline-none text-[16px]" aria-label="Text search catalogue"></label>
+    <div class="flex gap-2" role="group" aria-label="Type filter">${['all','fabric','garment'].map(f=>`<button data-flt="${f}" class="flex-1 min-h-[48px] rounded-full border-2 font-bold text-[14px] ${S.filter===f?'seg-on border-ink':'bg-white border-ink'}">${f.toUpperCase()}</button>`).join('')}</div>
+    ${S.variant==='lowconf'?`<div class="rounded-xl border-[3px] border-[#B42318] bg-[#FDE8E8] px-3 py-2 text-[14px]"><b>${lowItems.length} NEED REVIEW</b> — low-confidence extractions waiting for confirm.</div>`:''}
+    ${body}</div>`;
+}
+function vVendor(){
+  const v = VENDORS[0];
+  if(S.variant==='loading') return `<div class="p-4 space-y-3"><div class="h-24 rounded-2xl skel border-2 border-ink"></div><div class="h-14 rounded-full skel border-2 border-ink"></div><div class="h-14 rounded-full skel border-2 border-ink"></div></div>`;
+  if(S.variant==='error') return `<div class="p-5"><div class="rounded-2xl border-[3px] border-[#B42318] bg-[#FDE8E8] p-5 text-center"><p class="font-black text-[18px]">Vendor didn’t load</p><button data-r="vendor" class="mt-3 min-h-[52px] px-6 rounded-full bg-ink text-paper font-bold">Retry</button></div></div>`;
+  const styles = STYLES.filter(s=>s.vendor===v.name);
+  return `<div class="p-3 space-y-3">
+    <div class="rounded-2xl border-2 border-ink bg-white p-4 flex items-center gap-3">
+      <div class="w-14 h-14 rounded-full bg-kraft border-2 border-ink grid place-items-center font-display font-black text-[22px]" aria-hidden="true">F</div>
+      <div class="min-w-0"><p class="font-display font-black text-[21px] leading-tight truncate">${v.name}</p><p class="font-mono text-[12px] text-slate2">${v.booth} · ${styles.length} styles</p></div></div>
+    ${S.variant==='lowconf'?`<div class="rounded-xl border-2 border-accent bg-white px-3 py-2 text-[14px]"><b>⚠ Unverified booth</b> — location not confirmed at this fair yet.</div>`:''}
+    <button data-r="catalogue" class="w-full min-h-[56px] rounded-full bg-accent text-ink font-black text-[17px] border-[3px] border-ink">▦ View vendor styles</button>
+    <div class="grid grid-cols-2 gap-2"><button class="min-h-[52px] rounded-2xl border-2 border-ink bg-white font-bold" data-t>Edit details</button><button class="min-h-[52px] rounded-2xl border-2 border-ink bg-white font-bold" data-t>QR code</button></div>
+    ${S.variant==='empty'||styles.length===0
+      ? `<div class="rounded-2xl border-2 border-dashed border-slate2 p-5 text-center"><p class="font-black text-[17px]">No styles yet</p><p class="text-[14px] text-slate2">Capture at this booth — the vendor comes pre-filled.</p><button data-pv class="mt-3 min-h-[52px] px-6 rounded-full bg-ink text-paper font-bold">+ Capture for ${v.name}</button></div>`
+      : `<div class="grid grid-cols-2 gap-2">${styles.map(s=>`<div class="rounded-xl border-2 border-ink overflow-hidden bg-white"><img src="${s.img}" alt="${s.name}" class="w-full h-24 object-cover"><p class="font-bold text-[14px] px-2 py-1">${s.name}</p></div>`).join('')}</div>`}
+  </div>`;
+}
+function vJobs(){
+  if(S.variant==='loading') return `<div class="p-4 space-y-3"><div class="h-28 rounded-2xl skel border-2 border-ink"></div><p class="font-mono text-sm text-center">Checking job queue…</p></div>`;
+  if(S.variant==='empty') return `<div class="p-5 text-center space-y-3"><p class="font-display font-black text-[22px]">No video jobs</p><p class="text-[14px] text-slate2">Exports you render appear here with live progress.</p><button data-r="capture" class="min-h-[52px] px-6 rounded-full bg-accent text-ink font-black border-[3px] border-ink">+ Capture first</button></div>`;
+  if(S.variant==='error') return `<div class="p-5"><div class="rounded-2xl border-[3px] border-[#B42318] bg-[#FDE8E8] p-5"><p class="font-black text-[18px]">Job failed at 68%</p><p class="text-[14px] mt-1">Render ran out of memory. Your catalogue is untouched.</p><div class="flex gap-2 mt-3"><button data-r="jobs" class="flex-1 min-h-[52px] rounded-full bg-ink text-paper font-bold">Retry job</button><button class="flex-1 min-h-[52px] rounded-full border-[3px] border-ink bg-white font-bold" data-t>Dismiss</button></div></div></div>`;
+  if(S.variant==='unconfig') return `<div class="p-5 space-y-3"><div class="rounded-2xl border-2 border-ink bg-white p-5"><p class="font-mono font-bold text-[13px] tracking-wide text-[#B42318]">EXPORT PIPELINE · UNCONFIGURED</p><p class="font-display font-black text-[22px] mt-1 leading-tight">Exports are switched off</p><p class="text-[14px] mt-2">Reason: no export target connected — ask the fair organiser for the shared-drive link, then configure it in the web console.</p><button disabled aria-disabled="true" class="mt-4 w-full min-h-[56px] rounded-full bg-mist text-slate2 font-black text-[17px] border-[3px] border-slate2">Export disabled</button></div><p class="font-mono text-[12px] text-slate2 text-center">Queued jobs are kept and will run once the pipeline is configured.</p></div>`;
+  if(S.variant==='lowconf') return `<div class="p-3 space-y-3"><div class="rounded-2xl border-2 border-ink bg-white p-4"><p class="font-black text-[17px]">Fair-week recap ✓ with warnings</p><div class="rounded-xl border-2 border-[#B42318] bg-[#FDE8E8] p-3 mt-2 text-[14px]"><b>2 clips used low-confidence stills:</b><br>· D80-12 (fabric 41%)<br>· G07-03 (price missing)</div><div class="flex gap-2 mt-3"><button class="flex-1 min-h-[52px] rounded-full bg-accent text-ink font-black border-[3px] border-ink" data-t>Review stills</button><button class="flex-1 min-h-[52px] rounded-full border-[3px] border-ink bg-white font-bold" data-t>Export anyway</button></div></div></div>`;
+  return `<div class="p-3 space-y-3">
+    <div class="rounded-2xl border-2 border-ink bg-white p-4"><div class="flex justify-between items-baseline"><p class="font-black text-[17px]">Fair-week recap 🎬</p><p class="font-mono text-[13px]" id="jobPct">${S.jobPct}%</p></div>
+      <div class="h-4 rounded-full border-2 border-ink bg-mist mt-2 overflow-hidden" role="progressbar" aria-valuenow="${S.jobPct}" aria-valuemin="0" aria-valuemax="100" aria-label="Export progress"><div id="jobbar" class="jbar h-full bg-accent" style="width:${S.jobPct}%"></div></div>
+      <ol class="mt-3 space-y-1 text-[14px]"><li>✓ Stills collected (3)</li><li>✓ Captions generated</li><li><b>● Rendering 1080p…</b></li><li class="text-slate2">○ Ready to share</li></ol>
+      <button data-cancel class="mt-3 w-full min-h-[52px] rounded-full border-[3px] border-ink bg-white font-bold">Cancel job</button></div>
+    <div class="rounded-2xl border-2 border-ink bg-white p-4"><p class="font-black text-[15px]">Queued</p><p class="font-mono text-[12px] text-slate2">Booth-poster PDF · starts after recap</p></div>
+  </div>`;
+}
+
+/* ---------- render ---------- */
+const TITLES = { capture:['Capture','Step 1 of 3 · thumb zone'], review:['Review','Step 3 of 3 · confirm to save'], catalogue:['Catalogue','Texfair 2025 · text search'], vendor:['Fashion Textile','Hall B · 042 · vendor page'], jobs:['Video jobs','Exports & renders'] };
+function render(){
+  renderTabs(); renderNav();
+  const [t,s] = TITLES[S.screen];
+  appbar(t, S.variant==='default'?s:('STATE · '+S.variant.toUpperCase()+' — '+s), S.screen==='review');
+  const fn = {capture:vCapture,review:vReview,catalogue:vCatalogue,vendor:vVendor,jobs:vJobs}[S.screen];
+  const showNote = S.variant==='unconfig' && S.screen!=='jobs';
+  if(showNote) S.variant='default';
+  $('screen').innerHTML = fn();
+  if(showNote){ S.variant='unconfig'; $('screen').insertAdjacentHTML('afterbegin','<div class="m-3 rounded-xl border-2 border-dashed border-slate2 bg-white px-3 py-2 font-mono text-[12px] text-slate2">“Unconfigured” is a Jobs state — showing this screen’s default.</div>'); }
+  $('screen').scrollTop = 0;
+  document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{S.mode=b.dataset.mode;render();toast('Mode: <b>'+S.mode.toUpperCase()+'</b> — framing guide updated.');});
+  document.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>go(b.dataset.r));
+  document.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>toast('Demo build — that action is stubbed.'));
+  document.querySelectorAll('[data-pv]').forEach(b=>b.onclick=()=>pressPlus());
+  document.querySelectorAll('[data-flt]').forEach(b=>b.onclick=()=>{S.filter=b.dataset.flt;render();});
+  document.querySelectorAll('[data-cap]').forEach(b=>b.onclick=()=>{ toast('Captured as <b>'+S.mode+'</b> for <b>'+S.vendor.name+'</b> → extracting…'); setTimeout(()=>{S.variant='default';go('review');},900); });
+  document.querySelectorAll('[data-save]').forEach(b=>b.onclick=()=>{ if(!S.review.name){toast('Style name required before save.');return;} S.variant='loading'; render(); setTimeout(()=>{S.variant='default';go('catalogue');toast('Style saved ✓ under <b>'+S.vendor.name+'</b>.');},1100); });
+  document.querySelectorAll('[data-f]').forEach(el=>el.onchange=()=>{S.review[el.dataset.f]=el.value;render();});
+  document.querySelectorAll('[data-cancel]').forEach(b=>b.onclick=()=>{S.variant='empty';render();});
+  const q=$('q'); if(q){ q.oninput=()=>{S.query=q.value;const pos=q.selectionStart;render();const nq=$('q');if(nq){nq.focus();nq.setSelectionRange(pos,pos);}}; }
+  if(S.screen==='jobs'&&S.variant==='default'){ clearInterval(window._j); window._j=setInterval(()=>{ if(S.screen!=='jobs'){clearInterval(window._j);return;} S.jobPct=Math.min(99,S.jobPct+3); const bar=$('jobbar'),p=$('jobPct'); if(bar){bar.style.width=S.jobPct+'%';bar.parentElement.setAttribute('aria-valuenow',S.jobPct);p.textContent=S.jobPct+'%';} },1400); }
+  else clearInterval(window._j);
+}
+render();
+</script>
+</body>
+</html>
