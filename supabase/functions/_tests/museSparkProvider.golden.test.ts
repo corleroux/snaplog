@@ -22,7 +22,7 @@
  * --allow-net --allow-env --no-check this file).
  */
 
-import { assertEquals, assertRejects } from 'https://deno.land/std@0.208.0/assert/mod.ts'
+import { assertEquals, assertExists, assertRejects } from 'https://deno.land/std@0.208.0/assert/mod.ts'
 import { buildPrompt } from '../_shared/providers/extractionPrompt.ts'
 import { normaliseModelOutput } from '../_shared/providers/extractionNormaliser.ts'
 import {
@@ -33,10 +33,11 @@ import {
   parseMuseSparkResponse,
 } from '../_shared/providers/museSparkProvider.ts'
 import fabricProductTagFixture from './fixtures/muse-spark/fabric-product-tag.json' with { type: 'json' }
+import garmentFlatFixture from './fixtures/muse-spark/garment-flat.json' with { type: 'json' }
 import vendorCardFixture from './fixtures/muse-spark/vendor-card.json' with { type: 'json' }
 import geminiFabricFixture from './fixtures/gemini/fabric-product-tag.json' with { type: 'json' }
 import geminiVendorFixture from './fixtures/gemini/vendor-card.json' with { type: 'json' }
-import { fabricSchema, vendorSchema, expectedFabricJson, expectedVendorJson, geminiNormalised, chatCompletionsNormalised } from './fixtures/schemas.ts'
+import { fabricSchema, garmentSchema, vendorSchema, expectedFabricJson, expectedVendorJson, geminiNormalised, chatCompletionsNormalised } from './fixtures/schemas.ts'
 
 
 // ============================================================================
@@ -58,6 +59,23 @@ Deno.test('museSparkProvider: vendor fixture parses and normalises to the Gemini
 
   const json = normaliseModelOutput(JSON.parse(rawText), vendorSchema)
   assertEquals(json, expectedVendorJson)
+})
+
+Deno.test('museSparkProvider: recorded garment photo normalises to a schema-valid payload', () => {
+  // Supervised live recording (Standard muse-spark-1.3, web garment-05).
+  // No Gemini garment fixture exists, so this pins shape + honesty instead
+  // of cross-provider parity: all keys present, season correctly nulled.
+  const { rawText, usage } = parseMuseSparkResponse(garmentFlatFixture)
+  assertEquals(usage.inputTokens! > 0, true)
+  assertEquals(usage.outputTokens! > 0, true)
+
+  const json = normaliseModelOutput(JSON.parse(rawText), garmentSchema)
+  const item = (json as { item: Record<string, unknown> }).item
+  assertExists(item)
+  assertEquals(item.garment_type, 'Denim Trucker Jacket')
+  assertEquals(item.fit, 'Regular fit')
+  assertEquals(item.season, null)
+  assertEquals(Array.isArray(item.colourways), true)
 })
 
 Deno.test('museSparkProvider: identical normalised payload as the Gemini provider for the same capture', () => {

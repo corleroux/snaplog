@@ -138,6 +138,63 @@ export const vendorSchema: CatalogueSchema = {
   },
 }
 
+export const garmentSchema: CatalogueSchema = {
+  slug: 'garment',
+  kind: 'catalogue_type',
+  display_name: 'Garment',
+  version: 1,
+  schema: {
+    translate_to_english: true,
+    rules: [
+      'All numeric fields should be numbers, not strings.',
+      'If information is not visible, use null.',
+      'Extract silhouette, garment type, construction, fabric/composition, closure, neckline, sleeve, fit and sizing.',
+      'For colourways, extract all visible colour variants.',
+      'Return ONLY valid JSON, no markdown formatting.',
+      'TRANSLATE ALL CHINESE TEXT TO ENGLISH before including in the JSON response.',
+    ],
+    scan_types: {
+      garment_flat: 'This is a flat-lay garment photo. Extract silhouette, construction, fabric, closure, neckline, sleeve, fit and sizing.',
+      garment_hanging: 'This is a garment on a hanger. Focus on overall silhouette, garment type, neckline, sleeve and visible details.',
+      garment_worn: 'This is a garment being worn. Extract fit, silhouette, length and styling cues.',
+      garment_label: 'This is a garment label or tag. Extract composition, care instructions, size and country of origin.',
+    },
+    output_root: 'item',
+    fields: [
+      { path: 'item.item_code', type: 'string', label: 'Item code', hint: 'style/product code', required: true },
+      { path: 'item.name', type: 'string', label: 'Name', hint: 'style or product name', required: false },
+      { path: 'item.garment_type', type: 'string', label: 'Garment type', hint: 'e.g., Dress, Shirt, Jacket', required: false },
+      { path: 'item.silhouette', type: 'string', label: 'Silhouette', hint: 'e.g., A-line, Slim, Boxy', required: false },
+      { path: 'item.construction', type: 'string', label: 'Construction', hint: 'e.g., Tailored, Knitted', required: false },
+      { path: 'item.fabric_composition', type: 'string', label: 'Fabric / Composition', hint: 'fiber content', required: false },
+      { path: 'item.closure', type: 'string', label: 'Closure', hint: 'e.g., Button, Zip', required: false },
+      { path: 'item.neckline', type: 'string', label: 'Neckline', hint: 'e.g., V-neck, Collar', required: false },
+      { path: 'item.sleeve', type: 'string', label: 'Sleeve', hint: 'e.g., Long sleeve, Sleeveless', required: false },
+      { path: 'item.fit', type: 'string', label: 'Fit', hint: 'e.g., Slim, Regular', required: false },
+      { path: 'item.sizing', type: 'string', label: 'Sizing', hint: 'sizes or size range', required: false },
+      { path: 'item.season', type: 'string', label: 'Season', hint: 'season code like SS25, FW25', required: false },
+      { path: 'item.metadata', type: 'object', label: 'Metadata', hint: 'any additional info as object', required: false },
+      {
+        path: 'item.colourways',
+        type: 'array',
+        label: 'Colourways',
+        hint: 'visible colour variants',
+        required: false,
+        items: {
+          type: 'group',
+          fields: [
+            { path: 'colour_code', type: 'string', label: 'Colour code', hint: 'colour code', required: false },
+            { path: 'colour_name', type: 'string', label: 'Colour name', hint: 'colour name', required: false },
+            { path: 'variant_name', type: 'string', label: 'Variant name', hint: 'custom variant description', required: false },
+            { path: 'sizing', type: 'string', label: 'Sizing', hint: 'size-specific availability', required: false },
+            { path: 'metadata', type: 'object', label: 'Metadata', hint: 'any additional info as object', required: false },
+          ],
+        },
+      },
+    ],
+  },
+}
+
 // ============================================================================
 // EXPECTED NORMALISED OUTPUT — the Gemini golden shape (FR-MOD-01). The
 // Muse Spark fixtures must normalise to exactly this payload.
