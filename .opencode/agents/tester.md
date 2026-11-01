@@ -26,6 +26,21 @@ permissions:
   - action: edit
     resource: "eval/fixtures/**"
     effect: allow
+  - action: edit
+    resource: "supabase/functions/_tests/fixtures/**"
+    effect: allow
+  - action: edit
+    resource: "modal/test_*.py"
+    effect: allow
+  - action: shell
+    resource: "pnpm test:run*"
+    effect: allow
+  - action: shell
+    resource: "pnpm test:edge*"
+    effect: allow
+  - action: shell
+    resource: "pnpm test:rls*"
+    effect: allow
   - action: shell
     resource: "pnpm test:e2e*"
     effect: ask

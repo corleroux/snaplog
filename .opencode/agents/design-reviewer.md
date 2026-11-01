@@ -28,5 +28,7 @@ Check:
 - Forms and review screens render from the active catalogue schema, with no fabric-only assumptions.
 - Original captures are visible next to extracted fields so the buyer can verify them.
 - Accessibility basics: contrast, tap target size, labels.
+- Video/pipeline entry points show a clear disabled/unavailable state when unconfigured (no Modal endpoint, no secrets) — never a dead button.
+- The fabric/garment switch must be obvious on camera (demo legibility at 720p inside a 3-minute video).
 
 Output findings in severity order with `file:line` and a one-line fix, or `NO ISSUES`.
