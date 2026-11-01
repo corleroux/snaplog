@@ -6,7 +6,7 @@
  * Tests cover:
  * - Successful health check → returns 200 with status
  * - Database unreachable → degraded status
- * - Gemini API unreachable → degraded status
+ * - Extraction provider unreachable → degraded status
  * - Response structure validation
  * - CORS handling
  * - Method validation (GET only)
@@ -72,7 +72,7 @@ Deno.test('health-check: returns valid response structure', async () => {
       status: string
       checks: {
         database: { ok: boolean; latency_ms?: number }
-        gemini_api: { ok: boolean; latency_ms?: number }
+        extraction_api: { ok: boolean; provider: string; latency_ms?: number }
       }
       timestamp: string
       version: string
@@ -81,7 +81,7 @@ Deno.test('health-check: returns valid response structure', async () => {
     assertExists(data.status)
     assertExists(['healthy', 'degraded'].includes(data.status))
     assertExists(data.checks.database)
-    assertExists(data.checks.gemini_api)
+    assertExists(data.checks.extraction_api)
     assertExists(data.timestamp)
     assertExists(data.version)
   }
@@ -96,12 +96,29 @@ Deno.test('health-check: includes database check', async () => {
   }
 })
 
-Deno.test('health-check: includes gemini_api check', async () => {
+Deno.test('health-check: includes extraction_api check with the active provider', async () => {
   const response = await callFunction('health-check')
 
   if (response.status === 200 || response.status === 503) {
-    const data = response.data as { checks: { gemini_api: unknown } }
-    assertExists(data.checks.gemini_api)
+    const data = response.data as { checks: { extraction_api: { provider: string } } }
+    assertExists(data.checks.extraction_api)
+    // Default provider is muse-spark since FR-MOD-02a (all-Meta runtime).
+    assertEquals(data.checks.extraction_api.provider, 'muse-spark')
+  }
+})
+
+Deno.test('health-check: defaults to muse-spark with no GEMINI_API_KEY set', async () => {
+  // Regression test for FR-MOD-02c: health must not require the Gemini key.
+  // The served function reads its own env; this test pins the contract that
+  // the reported provider is the all-Meta default.
+  const response = await callFunction('health-check')
+
+  if (response.status === 200 || response.status === 503) {
+    const data = response.data as {
+      checks: { extraction_api: { provider: string; error?: string } }
+    }
+    assertEquals(data.checks.extraction_api.provider, 'muse-spark')
+    assertEquals((data.checks.extraction_api.error ?? '').includes('GEMINI_API_KEY'), false)
   }
 })
 
@@ -140,10 +157,10 @@ Deno.test('health-check: returns 503 when database is down', async () => {
   assertEquals([200, 503].includes(response.status), true)
 })
 
-Deno.test('health-check: returns 503 when gemini api is down', async () => {
+Deno.test('health-check: returns 503 when the extraction provider is down', async () => {
   const response = await callFunction('health-check')
 
-  // If Gemini is down, should return 503
+  // If the provider is down, should return 503
   // If all is up, may return 200
   assertEquals([200, 503].includes(response.status), true)
 })
@@ -249,21 +266,21 @@ Deno.test('health-check: includes database latency', async () => {
   }
 })
 
-Deno.test('health-check: includes gemini_api latency', async () => {
+Deno.test('health-check: includes extraction_api latency', async () => {
   const response = await callFunction('health-check')
 
   if (response.status === 200 || response.status === 503) {
     const data = response.data as {
       checks: {
-        gemini_api: { latency_ms?: number }
+        extraction_api: { latency_ms?: number }
       }
     }
 
     // Latency should be a number if present
-    if (data.checks.gemini_api.latency_ms !== undefined) {
-      assertEquals(typeof data.checks.gemini_api.latency_ms, 'number')
+    if (data.checks.extraction_api.latency_ms !== undefined) {
+      assertEquals(typeof data.checks.extraction_api.latency_ms, 'number')
       // Latency should be reasonable (0-10 seconds)
-      assertEquals(data.checks.gemini_api.latency_ms >= 0 && data.checks.gemini_api.latency_ms <= 10000, true)
+      assertEquals(data.checks.extraction_api.latency_ms >= 0 && data.checks.extraction_api.latency_ms <= 10000, true)
     }
   }
 })
