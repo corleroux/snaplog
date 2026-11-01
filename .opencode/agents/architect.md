@@ -11,6 +11,9 @@ permissions:
   - action: edit
     resource: "docs/plans/**"
     effect: allow
+  - action: edit
+    resource: "docs/roadmap/**"
+    effect: allow
   - action: shell
     resource: "*"
     effect: deny
