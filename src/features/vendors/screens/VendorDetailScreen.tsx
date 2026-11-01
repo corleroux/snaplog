@@ -12,7 +12,7 @@
  * - Edit Vendor and Return to Styles CTAs
  */
 
-import { type ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import { Building2, Mail, Phone, Globe, MapPin, User, AlertTriangle, Edit2, Archive } from 'lucide-react'
 import { cn } from '@/lib/utils/cn'
 import { Button } from '@/components/ui'
@@ -28,6 +28,7 @@ import type { VendorRecord } from '@/types/vendor'
 import { CommentThread } from '@/components/comments/CommentThread'
 import { AssignmentSheet } from '@/features/assignments'
 import { VendorPriceComparisonSection } from '../components/VendorPriceComparisonSection'
+import { CatalogueItemsSection } from '@/features/catalogue/components/CatalogueItemsSection'
 
 export interface VendorDetailScreenProps {
   /** The vendor record to display */
@@ -62,9 +63,9 @@ function getRelativeTime(timestamp: string): string {
   const hours = Math.floor(diffMs / 3600000)
   const days = Math.floor(diffMs / 86400000)
 
-  if (minutes < 1) return 'Just now'
-  if (minutes < 60) return `${minutes}m ago`
-  if (hours < 24) return `${hours}h ago`
+  if (minutes < 1) {return 'Just now'}
+  if (minutes < 60) {return `${minutes}m ago`}
+  if (hours < 24) {return `${hours}h ago`}
   return `${days}d ago`
 }
 
@@ -211,6 +212,11 @@ export function VendorDetailScreen({
                </Button>
              )}
            </div>
+
+           {/* Schema-driven catalogue items (FR-SCH-05b) — garments and
+               video-isolated items. Renders nothing when the vendor has
+               none, so legacy pages are visually untouched. */}
+           <CatalogueItemsSection vendorId={vendor.id} />
 
            {/* Extraction warning banner */}
            {vendor.extractionMeta?.warnings && vendor.extractionMeta.warnings.length > 0 && (

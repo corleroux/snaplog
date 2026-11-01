@@ -69,7 +69,10 @@ export function StyleListFromRouteWithProvider() {
       vendorName={vendorName}
       eventId={eventId}
       onBack={() => navigate(`/events/${eventId}/vendors`)}
-      onAddStyle={canEdit ? () => navigate(`/events/${eventId}/vendors/${vendorId}/styles/new/capture`) : undefined}
+      // Picker hub first (schema-driven entry; fabric hands back to legacy).
+      onAddStyle={canEdit ? () => navigate(`/events/${eventId}/vendors/${vendorId}/items/new/capture`) : undefined}
+      // FAB keeps the fast legacy fabric path (FR-SCH-05b).
+      onFabPress={canEdit ? () => navigate(`/events/${eventId}/vendors/${vendorId}/styles/new/capture`) : undefined}
       onStyleClick={(style) => navigate(`/events/${eventId}/vendors/${vendorId}/styles/${style.id}`)}
       onVendorInfo={() => navigate(`/events/${eventId}/vendors/${vendorId}`)}
       searchQuery={searchQuery}
@@ -116,7 +119,7 @@ export function StyleDetailFromRouteWithProvider() {
 
   useEffect(() => {
     const fetchApprovalStatus = async () => {
-      if (!styleId) return
+      if (!styleId) {return}
       try {
         const { getLatestApprovalStatus } = await import('@/features/approvals')
         getLatestApprovalStatus('style', styleId).then(setApprovalStatus).catch(() => {})
