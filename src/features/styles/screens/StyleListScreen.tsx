@@ -50,6 +50,10 @@ export interface StyleListScreenProps {
   onBack?: () => void
   /** Callback when Add Style is clicked */
   onAddStyle?: () => void
+  /** Callback for the bottom-nav FAB. Defaults to onAddStyle. Kept separate
+   * so the FAB can stay on the fast legacy path while Add buttons route
+   * through the schema-driven picker hub (FR-SCH-05b). */
+  onFabPress?: () => void
   /** Callback when a style is clicked */
   onStyleClick?: (style: StyleRecord) => void
   /** Callback when vendor info icon is clicked */
@@ -99,6 +103,7 @@ export function StyleListScreen({
   eventId: _eventId,
   onBack,
   onAddStyle,
+  onFabPress,
   onStyleClick,
   onVendorInfo,
   searchQuery = '',
@@ -321,7 +326,7 @@ export function StyleListScreen({
       </main>
 
       {/* Bottom navigation */}
-      <BottomNavigation onAddPress={onAddStyle} />
+      <BottomNavigation onAddPress={onFabPress ?? onAddStyle} />
 
       {/* Export Modal */}
       <BatchExportModal
