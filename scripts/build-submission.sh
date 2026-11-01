@@ -95,6 +95,16 @@ fi
 
 PREV_SHORT="$(git rev-parse --short "$PREV_COMMIT")"
 
+# Guard against duplicate commits on re-runs: if the previous submission
+# already points at the current source (e.g. a prior run committed but the
+# push failed), there is nothing new to publish. Without this, a re-run
+# generates a degenerate manifest (previous == source, no patch) that still
+# differs from HEAD and gets committed as a duplicate.
+if [[ "$PREV_COMMIT" == "$SOURCE_COMMIT" ]]; then
+  echo "Submission is already up to date with snaplog@${SOURCE_SHORT} — nothing new to publish."
+  exit 0
+fi
+
 # --- classify files ---------------------------------------------------------
 
 # Files modified/deleted/renamed/type-changed between PREV_COMMIT and HEAD
