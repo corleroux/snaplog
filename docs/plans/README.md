@@ -67,6 +67,7 @@ E. "Ten-day build" (line 5) is stale — deadline is Wed Nov 4 9PM ET. Line 34 b
 - **All-Meta runtime:** every model the demo calls at runtime must be Meta (event rule). Gemini is legacy baseline only — code, fixtures, write-up; never demo runtime. Default provider becomes `muse-spark` in FR-MOD-02a.
 - **Contributor-mode guardrail:** `muse-spark-*-contributor` is fine for dev on non-PII images (garments, swatches, fixtures). Vendor-card PII, the benchmark, and the demo run **Standard mode only**. The benchmark runner hard-pins Standard in code.
 - **Credits:** Meta $150 available. Modal event tokens never arrived — operating **lean on ~$1 Modal credit**: no benchmark-scale Modal spend; one video deploy + 1–2 rack-walk runs + a handful of Spark Open extractions only, then freeze. If $30 lands Mon afternoon it funds benchmark write-up numbers, never the video critical path (video must already be recorded by then).
+- **Design quarantine:** all design work lives on `task/design-rework` ONLY — brand assets, tokens, screens, exports. **Never merge to `staging` until the owner explicitly signs off** (owner replies "merge design-rework"; builder merges via PR). No partial merges, no exceptions.
 - **Migration numbering:** parallel branches are running — always check the latest migration number at branch time; the numbers in plans are indicative.
 
 ## Execution order
@@ -85,6 +86,11 @@ E. "Ten-day build" (line 5) is stale — deadline is Wed Nov 4 9PM ET. Line 34 b
 | 4 (Mon) | ⑧ Video pipeline (critical path) | `FR-VID-video-pipeline.md` | 12h | FR-MOD-02a, FR-SCH-03 |
 | 2–4 (window) | ⑨a OpenDesign prompt pack + output review (feeds ⑨) | `DESIGN-01-opendesign-brief.md` *(architect-authored; naming exception — brief, not FR plan)* | brief done; session (owner) + review 1h | ⓪/⓪b (stub); feeds ⑨ |
 | 5 (Mon/Tue) | ⑨ Schema-driven review UI | `FR-SCH-05-EXT-06-schema-review-ui.md` | 8h | FR-SCH-03 |
+| 4–5 (Mon) | D-A Brand asset integration | `DESIGN-02A-brand-assets.md` | 1h | Stream A PASS (have it) |
+| 4–5 (Mon) | D-B Social exports + sting recording | `DESIGN-02B-social-sting.md` | 1–2h | Stream B PASS; must exist by Mon EOD |
+| 4–5 (Mon) | D-C1 Tokens reskin (fallback UI) | `DESIGN-02C1-tokens-reskin.md` | 1–2h | DES-02A; DONE before Tue 12:00 |
+| 5 (Tue, gated) | D-C2 Stream C screens port (visual-only) | `DESIGN-02C2-screens-port.md` | 10–12h | D-C1 DONE; Tue 12:00 gate decides |
+| 4 (Mon EOD) | M-J Modal endpoint check (owner) | `FR-VID-modal-jobs-check.md` | 30 min | — ; decides Jobs live vs unconfigured |
 | 5 (Mon/Tue) | ⑩ Benchmark runner | `FR-MOD-04-benchmark-runner.md` | 6h | FR-MOD-02a, eval set |
 | 6 (Tue/Wed) | ⑪ Demo video + write-up + submit | `SUB-02-demo-writeup-submission.md` | 4h + recording | everything |
 
@@ -96,6 +102,8 @@ Waves 1 and 3+ run as parallel tracks (builder ∥ inference agent). **Critical 
 - **⑤b needs no frontend work.** The old `gemini_api` health field has no client consumers (verified by grep — only `supabase/functions/_tests/health-check.test.ts` references it), so renaming it to `extraction_api` is a backend + edge-test change only.
 - **Narrative consistency is a graded artifact.** The migration sentence — *"extraction used to run on Gemini; this week we moved it behind a provider interface onto Muse Spark"* — must appear verbatim in the submission README (SUB-01b), the demo-video opener (SUB-02), and the write-up (SUB-02). Before = fabric catalogue on Gemini at `hackathon-baseline`; this week = registry, provider interface, garment-as-config, video, benchmark. Never imply Gemini runs in the demo.
 - **OpenDesign RACI (task ⑨a): the architect writes the prompt pack, the owner runs the session, `design-reviewer` vets the output, the builder implements it in ⑨.** Prompts are planning artifacts, and only the architect holds the full constraint set (rubric weights, demo story, scope guard, stack limits) — hence architect-authorship. The pack is tool-agnostic structured input (no OpenDesign format verified yet — owner confirms what the session expects: URL, screenshots, text brief, or a mix; architect reshapes on a 5-min turn): buyer context (trade-fair, one-handed, noisy/crowded), hard stack constraints (React + Vite + Tailwind + shadcn new-york + Capacitor — output must be implementable in these, no native-only patterns), screens (capture, schema-driven review with confidence flags, catalogue list/search, video-job progress, fabric/garment switch), demo-legibility (readable on camera at 720p inside a 3-minute video), and out-of-scope (accounts, billing, ordering — scope guard applies to design too). `design-reviewer` approves the output against constraints + mobile/demo-legibility *before* ⑨ builds it; the approved output is adopted as `DESIGN_SYSTEM.md` (closing ⓪b-A).
+- **Design implementation is VISUAL-ONLY — functionality is frozen.** Every handler, route, validation rule, and conditional UI element that exists today must survive the port behaviour-identical; where prototype and code disagree, code wins. Canonical example: the capture-page thumbnail overlay (info-image vs normal upload) is absent from the prototype and non-negotiable in the port — DES-02C2 mandates an interaction inventory before any screen is touched. The review screen's functional core (schema binding + `schemaVersion` stamping) rides with ⑨, never with the design branch; prototype `SCHEMAS` literals must be deleted, never shipped.
+- **Tue 12:00 fallback trigger (owner decision, no debate):** if Stream C is not substantially complete by Tue 12:00, the submission UI is tokens-reskin + current layout, full stop. DES-02C1 must therefore be DONE (not started) before the trigger. Partial Stream C work stays on the unmerged design branch.
 
 ## Non-negotiables (from AGENTS.md — enforced)
 
@@ -123,6 +131,8 @@ FR-CAT-03, FR-CAT-04, FR-MOD-03, FR-CAT-02, FR-MOD-05 in-app view (the write-up 
 - Secrets audit decision before making `snaplog` public.
 - Explicit asks: benchmark live run (Tue), video pipeline live test.
 - Garment shoot + rack-walk video (Saturday) — feeds eval set and demo.
+- **Mon EOD — Modal endpoint check (YOU, owner):** post one line, "Jobs: LIVE" or "Jobs: UNCONFIGURED" (`FR-VID-modal-jobs-check.md` — 30 min, you hold the account/secrets). Silence defaults to UNCONFIGURED on Tue 09:00. This decides whether Jobs polls live or ships the disabled state — the builder cannot resolve it without you.
+- **Tue 12:00 — fallback trigger (YOU, owner):** Stream C substantially complete? If no, tokens-reskin + current layout ships, no debate. Decide on the hour, not at midnight.
 - **Architect framing review:** builder pings architect with the write-up draft before recording (SUB-02) — architect checks the migration narrative against the SUB-01b standard. 5 min, blocks recording, not the draft itself.
 
 ## When in doubt

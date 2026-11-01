@@ -248,3 +248,11 @@ with:
 - Jobs unconfig: `snaplog-app-redesign.html:141,280,298-301`
 - Remaining stubs: `snaplog-app-redesign.html:270,279,281,305`
 - Routing reality: `src/app/App.tsx:313,323`, `src/app/catalogueRouteWrappers.tsx:8,25`, `src/features/catalogue/hooks/useCatalogueItemCaptureFlow.ts:70-76,187-203,273-278`, `src/features/catalogue/screens/CatalogueItemCaptureFlow.tsx:23-29,87-100,120`, `src/features/catalogue/screens/CatalogueItemReviewScreen.tsx:126-132`, `src/features/catalogue/components/CatalogueTypePicker.tsx:23-26,39-44`
+
+
+Now, the sting + social producer discussion
+My proposal, for you to react to:
+- Sting recording — you, Monday evening. You're already at the machine with the browser session; it's a screen-record + trim to exactly 3.0s, and the page has its own ruler + instructions. Builder verifies duration/resolution Tuesday morning (5 minutes, mechanical).
+- Social PNGs — builder, Monday. Pure in-page export clicks + pixel verification; no judgment required, no reason to spend your evening on it.
+- Slot: both landed by Mon EOD, because SUB-02 recording starts Tue and the video opener can't be edited around a missing sting.
+The one question back to you: do you have screen-recording + a media probe (or trim tool) available Monday evening, or should the builder own the whole chain and hand you finished files to approve?

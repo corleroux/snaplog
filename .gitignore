@@ -60,3 +60,6 @@ __pycache__/
 
 # Eval captures stay local (privacy + size) — manifest only is committed.
 eval/captures/
+
+# Local reviewer/owner feedback notes — never committed, never submitted.
+docs/feedback/
