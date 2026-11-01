@@ -2,7 +2,7 @@
 
 ## Mission
 
-Snaplog turns phone photos and video into structured, searchable catalogues. We are in a ten-day hackathon build (Meta × Cerebral Valley) to prove one pipeline can catalogue more than one category: **fabric (exists) and garments (new)**, driven by schema configuration, not new code.
+Snaplog turns phone photos and video into structured, searchable catalogues. We are in a hackathon build (Meta × Cerebral Valley, deadline Wed Nov 4 9PM ET) to prove one pipeline can catalogue more than one category: **fabric (exists) and garments (new)**, driven by schema configuration, not new code.
 
 Requirements live in `docs/PRD.md`. Reference requirement IDs (`FR-SCH-*`, `FR-EXT-*`, `FR-VID-*`, `FR-MOD-*`, `FR-CAT-*`) in task titles, branch names and PR descriptions.
 
@@ -14,10 +14,11 @@ Requirements live in `docs/PRD.md`. Reference requirement IDs (`FR-SCH-*`, `FR-E
 
 - Workflow is capture → extract → review → explicit commit. Keep AI extraction separate from committing reviewed data, and preserve the `raw_payload` → `normalised_payload` → `reviewed_payload` audit chain.
 - **Schema registry:** catalogue types (fabric, garment) are versioned schema definitions in config. Adding a category must not require application code changes (`FR-SCH-03`). Record the schema version on every extracted record.
-- **Provider interface:** all extraction goes through one interface, image(s) + schema in, structured JSON + usage out. Providers: Gemini (baseline), Muse Spark via Meta Model API, a Meta open-weights model on Modal. Import provider SDKs only inside the provider modules, never in feature code.
+- **Provider interface:** all extraction goes through one interface, image(s) + schema in, structured JSON + usage out. Providers: Gemini (legacy baseline — code, fixtures, write-up only; never called live), Muse Spark via Meta Model API (default), Muse Spark Open via Modal *Shared Endpoint* (never self-hosted). Import provider SDKs only inside the provider modules, never in feature code.
+- **All-Meta runtime (event rule):** every model the demo calls at runtime must be Meta. Default extraction provider is `muse-spark`; Gemini is baseline-only (fixtures/write-up) and is never called live — no `GEMINI_API_KEY` requirement on the default path.
 - **Extraction runs:** record provider, model, schema version, raw output, latency and cost for every run.
 - **Never guess.** Low-confidence or missing fields are flagged for review, not filled in (`FR-EXT-06`). Never overwrite a user's correction with a re-extraction.
-- **Video is asynchronous.** Edge functions hand video jobs to Modal and return; Modal writes results back to Supabase. Never block an edge function on video processing.
+- **Video is asynchronous.** Edge functions hand video jobs to Modal and return; Modal orchestrates while SAM 3.1 is called via the Meta Model API — Modal never hosts the model — and writes results back to Supabase. Never block an edge function on video processing.
 - AI calls are backend-only. No model keys in the client bundle.
 - Prefer additive migrations. Do not rename or drop existing fabric tables to introduce the generalised model.
 
@@ -31,7 +32,7 @@ Requirements live in `docs/PRD.md`. Reference requirement IDs (`FR-SCH-*`, `FR-E
 
 - Before finishing any task run `pnpm lint`, `pnpm check`, `pnpm test:run`. Run `pnpm build` when types or routing changed. One Vitest file: `pnpm test:run -- src/path/to/file.test.tsx`.
 - Vitest runs in jsdom with `src/test/setup.ts`; Capacitor APIs are mocked. RLS tests: `pnpm test:rls`. Edge tests need `supabase start` first, then `pnpm test:edge`.
-- Provider tests use recorded fixtures. Unit tests never call live model APIs. Only the benchmark runner (`FR-MOD-04`) calls live models, and only when explicitly asked.
+- Provider tests use recorded fixtures. Unit tests never call live model APIs. Only the benchmark runner (`FR-MOD-04`) calls live models, and only when explicitly asked. The benchmark runs Standard-mode models only and never calls Gemini live.
 - Playwright does not start the app: run `pnpm dev` separately (`BASE_URL` defaults to `http://localhost:5173`). Focus a spec with `pnpm test:e2e -- e2e/path/to/spec.ts`.
 - CI workflows are disabled (`on: []`). Run relevant checks locally.
 
@@ -59,4 +60,4 @@ Flow: architect plans → builder implements, delegating model-layer work to `in
 
 - Branch from `staging` on `task/*` branches and integrate by PR. Never push directly to `main`.
 - One plan in `docs/plans/` per task, one task per branch. Name branches after the requirement ID, for example `task/fr-sch-03-garment-schema`.
-- Done means: the PRD requirement is met, checks pass, the demo flow still works, and any new environment variable is added to the relevant `.example` file.
+- Done means: the PRD requirement is met, checks pass, the demo flow still works, any new environment variable is added to the relevant `.example` file, and the submission repo is synced via `build-submission.sh` + push.
