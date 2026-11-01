@@ -12,7 +12,7 @@
 spreadsheet you build by hand. Snap it. Catalogued."
 
 [SUB-01b migration sentence — verbatim, do not paraphrase:]
-"Our extraction used to run on Gemini; this week we moved it behind a
+"extraction used to run on Gemini; this week we moved it behind a
 provider interface onto Muse Spark."
 
 Before: a fabric catalogue at `snaplog@hackathon-baseline`. This week:

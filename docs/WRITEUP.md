@@ -18,7 +18,7 @@ colour). Garment is another (silhouette, construction, fabric used, sizing).
 The structure stays the same: Event → Vendor → Item → Variant. The model
 reads whatever the buyer captures against the schema that applies.
 
-Our extraction used to run on Gemini; this week we moved it behind a
+extraction used to run on Gemini; this week we moved it behind a
 provider interface onto Muse Spark.
 
 ## Architecture
