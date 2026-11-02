@@ -156,7 +156,7 @@ export function SyncProgressIndicator({
           </div>
           {status.totalQueued > 0 && (
             <div className="flex items-center gap-1.5">
-              <AlertCircle className="w-4 h-4 text-amber-600" />
+              <AlertCircle className="w-4 h-4 text-danger" />
               <span>{status.totalQueued} pending</span>
             </div>
           )}
@@ -225,7 +225,7 @@ export function SyncProgressIndicator({
                   'flex items-center justify-between py-1 px-2 rounded',
                   item.status === 'synced' && 'bg-green-50 text-green-700',
                   item.status === 'failed' && 'bg-red-50 text-red-700',
-                  item.status === 'queued' && 'bg-amber-50 text-amber-700',
+                  item.status === 'queued' && 'bg-field-warn text-danger',
                   item.status === 'uploading' && 'bg-blue-50 text-blue-700'
                 )}
               >

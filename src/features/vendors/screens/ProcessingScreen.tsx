@@ -4,7 +4,7 @@
  * Displays the AI extraction processing state for vendor creation.
  *
  * DESIGN ALIGNED:
- * - Premium dark surfaces with warm orange accent
+ * - Paper/Ink surfaces with Stall accent
  * - Clear visual hierarchy with progress indication
  * - Modern rounded surfaces
  * - Mobile-first touch-friendly sizing
@@ -98,9 +98,9 @@ export function ProcessingScreen({
             <p className="text-muted-foreground">
               Analyzing your vendor image to extract company details...
             </p>
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-field-warn border border-danger rounded-lg">
               <Sparkles className="h-4 w-4 text-primary" />
-              <span className="text-sm text-blue-900 dark:text-blue-100 font-medium">
+              <span className="text-sm text-danger font-medium">
                 Extraction happens once during create flow
               </span>
             </div>

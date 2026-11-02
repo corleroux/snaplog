@@ -195,7 +195,7 @@ export function VendorCard({
             {vendor.extractionMeta?.warnings && vendor.extractionMeta.warnings.length > 0 && (
               <>
                 <span>•</span>
-                <span className="text-amber-600 dark:text-amber-500">Review needed</span>
+                <span className="text-danger dark:text-danger">Review needed</span>
               </>
             )}
           </div>

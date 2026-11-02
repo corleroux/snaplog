@@ -5,7 +5,7 @@
  * Supports visual indication of Info vs Gallery classification.
  *
  * DESIGN ALIGNED:
- * - Premium dark surfaces with warm orange accent for Info state
+ * - Stall accent for Info state
  * - Clear typography hierarchy
  * - Modern rounded surfaces
  * - Mobile-first touch-friendly sizing
@@ -43,7 +43,7 @@ export interface ImageThumbnailProps {
  * Image thumbnail component for capture session
  *
  * Shows the image with visual indication of its classification:
- * - Info images have sparkle icon badge, orange ring, and warm accent
+ * - Info images have sparkle icon badge, primary ring, and Stall accent
  * - Gallery images have neutral styling with subtle border
  * - Active/selected state has clear visual distinction
  */
@@ -65,7 +65,7 @@ export function ImageThumbnail({
       className={cn(
         // Base styles - mobile-first touch-friendly sizing
         'relative group aspect-square rounded-xl overflow-hidden bg-muted',
-        // Border styling - Info gets warm orange ring
+        // Border styling - Info gets primary ring
         'border-2 transition-all cursor-pointer tap-target',
         isActive ? 'border-primary ring-2 ring-ring ring-offset-2' : 'border-border',
         isInfo && 'border-primary shadow-lg shadow-primary/20',

@@ -81,8 +81,8 @@ export function OfflineIndicator({ className, position = 'top' }: OfflineIndicat
         isTop ? 'top-0' : 'bottom-0',
         // Background colors
         !isOnline && 'bg-destructive text-destructive-foreground',
-        isOnline && syncing && 'bg-blue-600 text-white',
-        isOnline && !syncing && pendingCount > 0 && 'bg-amber-500 text-white',
+        isOnline && syncing && 'bg-primary text-primary-foreground',
+        isOnline && !syncing && pendingCount > 0 && 'bg-field-warn text-danger',
         className
       )}
     >
@@ -144,7 +144,7 @@ export function OfflineStatusBadge({ className }: { className?: string }) {
       className={cn(
         'flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium',
         !isOnline && 'bg-destructive/10 text-destructive',
-        isOnline && pendingCount > 0 && 'bg-amber-500/10 text-amber-600',
+        isOnline && pendingCount > 0 && 'bg-field-warn text-danger',
         className
       )}
     >

@@ -413,7 +413,7 @@ export function StyleEditScreen({
         confirmText="Discard Changes"
         cancelText="Keep Editing"
         variant="destructive"
-        icon={<AlertTriangle className="h-6 w-6 text-amber-500" />}
+        icon={<AlertTriangle className="h-6 w-6 text-danger" />}
       />
     </AppFrame>
   )

@@ -5,6 +5,9 @@
  * Used across review and capture screens.
  */
 
+// Categorical confidence tiers (green/amber/red) are intentional status
+// coding, like EntityCard badge hues — not brand surfaces; the warning
+// system for fields is bg-field-warn + border-danger (DESIGN_SYSTEM.md).
 import { Check, AlertTriangle } from 'lucide-react'
 import { cn } from '@/lib/utils/cn'
 import { Badge } from '@/components/ui/badge'

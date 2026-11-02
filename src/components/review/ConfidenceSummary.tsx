@@ -11,6 +11,9 @@
  * - Visual representation of confidence distribution
  */
 
+// Categorical confidence tiers (green/amber/red) are intentional status
+// coding, like EntityCard badge hues — not brand surfaces; the warning
+// system for fields is bg-field-warn + border-danger (DESIGN_SYSTEM.md).
 import { useMemo } from 'react'
 import { Check, AlertTriangle, AlertCircle } from 'lucide-react'
 import { cn } from '@/lib/utils/cn'

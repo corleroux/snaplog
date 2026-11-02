@@ -299,10 +299,10 @@ export function VendorEditScreen({
                   {extractionResultMeta.warnings.map((w, i) => (
                     <div
                       key={i}
-                      className="flex items-start gap-2 p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg"
+                      className="flex items-start gap-2 p-3 bg-field-warn border border-danger rounded-lg"
                     >
-                      <AlertTriangle className="h-4 w-4 text-amber-600 flex-shrink-0 mt-0.5" />
-                      <p className="text-sm text-amber-700">{w}</p>
+                      <AlertTriangle className="h-4 w-4 text-danger flex-shrink-0 mt-0.5" />
+                      <p className="text-sm text-danger">{w}</p>
                     </div>
                   ))}
                 </div>
@@ -515,7 +515,7 @@ export function VendorEditScreen({
         confirmText="Discard Changes"
         cancelText="Keep Editing"
         variant="destructive"
-        icon={<AlertTriangle className="h-6 w-6 text-amber-500" />}
+        icon={<AlertTriangle className="h-6 w-6 text-danger" />}
       />
     </AppFrame>
   )

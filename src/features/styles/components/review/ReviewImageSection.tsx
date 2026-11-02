@@ -34,7 +34,7 @@ export function HeroImage({
             Info
           </Badge>
         )}
-        <Badge className="bg-blue-600 text-white text-xs">
+        <Badge className="bg-primary text-primary-foreground text-xs">
           Primary
         </Badge>
       </div>

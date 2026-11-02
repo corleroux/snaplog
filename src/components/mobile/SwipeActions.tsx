@@ -137,7 +137,7 @@ export function SwipeActions({
             className={`
               flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-200
               ${currentAction === 'delete' ? 'bg-red-500 text-white' : 'bg-red-100 text-red-600'}
-              ${currentAction === 'archive' ? 'bg-amber-500 text-white' : 'bg-amber-100 text-amber-600'}
+              ${currentAction === 'archive' ? 'bg-primary text-primary-foreground' : 'bg-field-warn text-danger'}
             `}
             style={{
               opacity: Math.max(0, -translateX / snapThreshold),

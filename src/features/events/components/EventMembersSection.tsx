@@ -313,7 +313,7 @@ export function EventMembersSection({
         confirmText="Remove"
         cancelText="Keep Member"
         variant="destructive"
-        icon={<Shield className="h-6 w-6 text-amber-500" />}
+        icon={<Shield className="h-6 w-6 text-danger" />}
         isConfirming={isRemoving}
       />
     </>
