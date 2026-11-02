@@ -29,7 +29,9 @@ tap targets ≥44px. No accounts, billing, ordering, or extra categories in any 
 
 Semantic mapping (`:root`, HSL components): Paper → `--background`, Ink → `--foreground`
 and `--primary-foreground` (Stall buttons take Ink text, never white), Stall `#E34A0B` →
-`--primary`/`--ring`/`--accent`, danger → `--destructive`, Stall Grey → `--muted-foreground`.
+`--primary`/`--ring` (solid only), danger → `--destructive`, Stall Grey → `--muted-foreground`.
+`--accent` is the shadcn *hover* semantic — a subtle Stall tint (~10% over Paper) with Ink
+`--accent-foreground`, never solid Stall.
 Solid inks only — no gradients. `.dark` is untouched; the demo is light-only.
 
 ## Type
