@@ -1,27 +1,27 @@
 # DESIGN-02A — Brand asset integration (Stream A)
 
-**Branch:** `task/design-rework` (SHARED design branch — see rule below) · **Priority:** P0 (needed by SUB-02 + app identity) · **Effort:** ~1h
-**Satisfies:** DESIGN-01 Stream A acceptance; SUB-02 (logo in video, app identity).
-**Depends on:** design-reviewer PASS for Stream A (have it).
+**Branch:** `task/design-rework` ONLY (rule below) · **Priority:** P0 · **Effort:** ~1h
+**Satisfies:** DESIGN-01 Stream A; SUB-02 app identity.
+**Status vs staging (Mon Nov 2):** NOT DONE. Assets exist in `docs/brand/`; staging still has pre-brand platform icons, `index.html` has no favicon, and no logo renders anywhere in `src` (`AppHeader` is title-only — verified by grep).
 
-**Decision:** asset swap only — zero code-risk, zero behaviour change. No component, route, or style logic is touched in this plan.
+**Decision:** platform identity only — icons, splash, favicon. No in-app logo placement in this plan (no logo exists to swap; adding one is DES-02C2a chrome, not an asset swap). Zero behaviour change.
 
 ## Files
 
-- `docs/brand/` sources (already in repo): `snaplog-icon-*.svg/png`, `snaplog-avatar.*`, `snaplog-splash-dark/light-2732.*`, `capacitor.zip`.
-- Verify `capacitor.zip` first (A8): unzip, confirm no-alpha 1024 icon + Android adaptive fg/bg pair + README. If anything is missing, regenerate: `npx capacitor-assets generate --iconBackgroundColor "#16150F" --splashBackgroundColor "#16150F"` from the SVG masters.
-- Place platform icons/splash per Capacitor dirs; update the header/app-frame logo to the new lockup SVG (`src/components/ui/app-header.tsx` and anywhere else the old mark renders — grep for it); favicon + PWA manifest icons.
-- Do NOT touch colours, spacing, or any screen in this plan (that's DES-02C1).
+- Verify first: `docs/brand/capacitor.zip` (unzip: 1024 no-alpha icon, Android adaptive fg/bg, README per `DESIGN-HANDOFF.md:24-27`). Missing anything → regenerate from SVG masters: `npx capacitor-assets generate --iconBackgroundColor "#16150F" --splashBackgroundColor "#16150F"`.
+- Masters: `snaplog-icon-1024.svg/png`, `snaplog-icon-fg/bg.*`, `snaplog-splash-dark/light-2732.*`, `snaplog-avatar.*`.
+- Replace generated sets in `ios/App/App/Assets.xcassets/` (AppIcon + Splash) and Android `res/` mipmaps/adaptive pair; keep old sets recoverable in the commit history, don't delete sources.
+- Web: copy `snaplog-icon-192.png` → `public/favicon.png`, add `<link rel="icon">` in `index.html` (currently none).
+- Do NOT touch colours, screens, or `src/components/ui/app-header.tsx`.
 
-## Branch rule (applies to ALL design plans)
+## Branch rule (all DESIGN-02)
 
-All work commits to `task/design-rework` ONLY. **Never merge to `staging` until the owner explicitly signs off** (owner replies "merge design-rework"; builder merges via PR). No exceptions, no partial merges.
+All design work commits to `task/design-rework` ONLY. **Never merge to `staging` until the owner explicitly replies "merge design-rework".** No partial merges.
 
 ## Acceptance
 
-Fresh `pnpm dev` + Capacitor build boots with new icon/splash/logo; `pnpm lint && pnpm check && pnpm test:run` green; screenshot-diff of every screen against pre-plan state shows zero layout/behaviour change (assets only).
+Capacitor build + `pnpm dev` boot with new icon/splash; favicon loads; screenshot-diff vs pre-plan shows zero layout change; `pnpm lint && pnpm check && pnpm test:run` green.
 
-## Risks / verify first
+## Risks
 
-- Confirm which file is the shipped icon on each platform before replacing (don't orphan the old asset path).
-- Keep old assets recoverable until sign-off (commit, don't overwrite blindly).
+- Wrong shipped-icon path per platform — verify Contents.json/adaptive XML before replacing.

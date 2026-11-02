@@ -1,22 +1,22 @@
-# DESIGN-02B — Social exports + logo sting recording (Stream B, operational)
+# DESIGN-02B — Social exports + logo sting (Stream B, operational)
 
-**Branch:** `task/design-rework` (exports commit here; see rule in DES-02A) · **Priority:** P0 (submission-critical: video opener, X post) · **Effort:** ~1–2h (owner + builder)
-**Satisfies:** DESIGN-01 Stream B acceptance; SUB-02 inputs.
-**Depends on:** design-reviewer PASS for Stream B (have it). No code dependency.
+**Branch:** `task/design-rework` (exports commit here) · **Priority:** P0, SUB-02 critical path · **Effort:** ~1–2h (owner records, builder verifies)
+**Satisfies:** DESIGN-01 Stream B; SUB-02 inputs.
+**Status vs staging (Mon Nov 2):** NOT DONE — `docs/brand/exports/` does not exist. Sources are ready (`snaplog-social-covers.html`, `snaplog-social-templates.html`, `snaplog-logo-sting.html`). **Due Mon EOD today**; Tue is recording day.
 
-**Decision:** operational production work, not code. Owner records, builder verifies — split because the owner holds the browser/session while the builder owns the file contract SUB-02 will consume.
+**Decision:** operational production, not code. Owner records (holds the browser session), builder independently verifies the file contract.
 
-## Files / outputs (all under `docs/brand/exports/`, committed to the design branch)
+## Outputs (all under `docs/brand/exports/`)
 
-- Run in-page SVG→PNG export on `snaplog-social-covers.html` (FB 851×315, LinkedIn 1512×256) and `snaplog-social-templates.html` (IG 1080×1080 + 1080×1920 story). Verify exact pixel dimensions after export.
-- Screen-record `snaplog-logo-sting.html` at 1080p, trimmed to exactly 3.0s (timeline ruler + record instructions are in the page). Verify duration + resolution with any media probe before accepting.
-- Editable HTML/SVG remain the source of truth — exports are derivatives. Never edit an export; re-export from source.
+- In-page SVG→PNG export: FB cover 851×315 + LinkedIn cover 1512×256 (`snaplog-social-covers.html`); IG post 1080×1080 + story 1080×1920 (`snaplog-social-templates.html`). Exact pixels, verified after export.
+- Screen-record `snaplog-logo-sting.html` at 1920×1080, trimmed to exactly 3.0s. Verify duration + resolution with a media probe before accepting.
+- Keep each template's alt text alongside its PNG (write-up/submission use).
+- Editable HTML/SVG stay the source of truth — never edit an export; re-export from source.
 
 ## Acceptance
 
-`docs/brand/exports/` contains: FB cover, LinkedIn cover, IG post, IG story (all exact-pixel PNGs) + 3.0s 1080p sting; a second person (builder if owner recorded, and vice versa) independently verified dimensions/duration; SUB-02 can consume without rework.
+All four PNGs at exact dimensions + 3.0s 1080p sting in `docs/brand/exports/`; a second person verifies dimensions/duration independently; SUB-02 consumes without rework.
 
-## Risks / verify first
+## Risks
 
-- This is on the SUB-02 critical path (recording Tue): exports must exist by **Mon EOD**. See producer/slot discussion in handover checkpoints.
-- Keep alt text from the templates with the exported PNGs (write-up/submission page use).
+- This blocks Tue recording. If exports slip past Mon EOD, SUB-02 opens without brand assets — escalate to owner same day, don't silently defer.
