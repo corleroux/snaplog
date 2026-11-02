@@ -131,9 +131,9 @@ export function ItemDetailScreen({
           />
           <ExtractionWarnings warnings={warnings} />
           {needsReview && warnings.length === 0 && (
-            <div className="flex items-start gap-2 p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg">
-              <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-500 flex-shrink-0 mt-0.5" />
-              <p className="text-sm text-amber-700 dark:text-amber-400">
+            <div className="flex items-start gap-2 p-3 bg-field-warn border border-danger rounded-lg">
+              <AlertTriangle className="h-4 w-4 text-danger flex-shrink-0 mt-0.5" />
+              <p className="text-sm text-danger">
                 Needs review — verify the details below against the item photos.
               </p>
             </div>

@@ -230,14 +230,14 @@ export function StyleListScreen({
 
        {/* Secondary toolbar: Vendor info + Export actions */}
        {(!isEmpty || headerContent) && (
-        <div className="flex items-center justify-between px-4 py-2 border-b border-gray-100">
+        <div className="flex items-center justify-between px-4 py-2 border-b border-border">
           {onVendorInfo && (
             <Button
               variant="ghost"
               size="sm"
               onClick={onVendorInfo}
               type="button"
-              className="text-muted-foreground hover:text-orange-500 -ml-2"
+              className="text-muted-foreground hover:text-primary -ml-2"
             >
               <Building2 className="h-4 w-4 mr-1.5" />
               Vendor info
@@ -300,7 +300,7 @@ export function StyleListScreen({
                   shortlistable={!isCatalogueRow}
                   badge={isCatalogueRow ? (
                     needsReview ? (
-                      <Badge variant="outline" className="gap-1 text-xs text-amber-700 dark:text-amber-400 border-amber-500/40 flex-shrink-0 whitespace-nowrap">
+                      <Badge variant="outline" className="gap-1 text-xs text-danger border-danger bg-field-warn flex-shrink-0 whitespace-nowrap">
                         <AlertTriangle className="h-3.5 w-3.5" />
                         Review
                       </Badge>
