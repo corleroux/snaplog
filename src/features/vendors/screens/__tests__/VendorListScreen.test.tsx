@@ -231,4 +231,80 @@ describe('VendorListScreen', () => {
     expect(screen.getByTestId('custom-header')).toBeInTheDocument()
     expect(screen.queryByText('Vendors')).not.toBeInTheDocument()
   })
+
+  it('[FR-CAT-01b] renders singular item count chip', () => {
+    const vendors = [
+      createVendorRecord({ companyName: 'Alpha Fabrics', itemCount: 1 }),
+    ]
+
+    renderWithRouter(<VendorListScreen vendors={vendors} />)
+
+    expect(screen.getByText('1 item')).toBeInTheDocument()
+  })
+
+  it('[FR-CAT-01b] renders plural item count chip', () => {
+    const vendors = [
+      createVendorRecord({ companyName: 'Alpha Fabrics', itemCount: 5 }),
+    ]
+
+    renderWithRouter(<VendorListScreen vendors={vendors} />)
+
+    expect(screen.getByText('5 items')).toBeInTheDocument()
+  })
+
+  it('[FR-CAT-01b] renders zero item count chip', () => {
+    const vendors = [
+      createVendorRecord({ companyName: 'Alpha Fabrics', itemCount: 0 }),
+    ]
+
+    renderWithRouter(<VendorListScreen vendors={vendors} />)
+
+    expect(screen.getByText('0 items')).toBeInTheDocument()
+  })
+
+  it('[FR-CAT-01b] hides count chip when itemCount is undefined', () => {
+    const vendors = [
+      createVendorRecord({ companyName: 'Alpha Fabrics' }),
+    ]
+    expect(vendors[0].itemCount).toBeUndefined()
+
+    renderWithRouter(<VendorListScreen vendors={vendors} />)
+
+    expect(screen.getByText('Alpha Fabrics')).toBeInTheDocument()
+    expect(screen.queryByText(/\d+ items?/)).not.toBeInTheDocument()
+  })
+
+  it('[FR-CAT-01b] reorder mode renders no grip handle', () => {
+    const vendors = [
+      createVendorRecord({ id: 'v-1', companyName: 'Alpha Fabrics' }),
+      createVendorRecord({ id: 'v-2', companyName: 'Beta Textiles' }),
+    ]
+
+    const { container } = renderWithRouter(
+      <VendorListScreen vendors={vendors} onReorder={vi.fn()} />
+    )
+
+    expect(screen.getByText('Alpha Fabrics')).toBeInTheDocument()
+    // Gripless reorder: no GripVertical icon anywhere in reorder mode
+    expect(container.querySelector('.lucide-grip-vertical')).toBeNull()
+  })
+
+  it('[FR-CAT-01b] reorder mode makes the whole card the drag activator', () => {
+    const vendors = [
+      createVendorRecord({ id: 'v-1', companyName: 'Alpha Fabrics' }),
+      createVendorRecord({ id: 'v-2', companyName: 'Beta Textiles' }),
+    ]
+
+    renderWithRouter(
+      <VendorListScreen vendors={vendors} onReorder={vi.fn()} />
+    )
+
+    // dnd-kit sortable attributes/listeners live on the card wrapper root
+    const card = screen.getByTestId('vendor-card-v-1')
+    const sortableRoot = card.closest('[aria-roledescription="sortable"]')
+    expect(sortableRoot).not.toBeNull()
+    expect(sortableRoot).toHaveAttribute('role', 'button')
+    expect(sortableRoot).toHaveAttribute('tabindex', '0')
+    expect(sortableRoot).toHaveClass('touch-none')
+  })
 })

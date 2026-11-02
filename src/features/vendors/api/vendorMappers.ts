@@ -75,7 +75,7 @@ export const VENDOR_APP_TO_DB_KEYS: Record<string, string> = {
  * - field-name overrides (contact_person→contactName, website_url→website)
  * - value transforms (brand_names array→comma string, null→empty string defaults)
  */
-export function vendorRowToVendorRecord(row: Vendor, images: VendorImage[] = [], styleCount?: number): VendorRecord {
+export function vendorRowToVendorRecord(row: Vendor, images: VendorImage[] = [], itemCount?: number): VendorRecord {
   const mapped = toCamelCase(row) as Record<string, unknown>
 
   // Apply field-name overrides: rename DB-specific keys to app-facing names
@@ -109,7 +109,7 @@ export function vendorRowToVendorRecord(row: Vendor, images: VendorImage[] = [],
     extractionMeta: extractExtractionMetaFromVendorRow(row),
     extractionConfidence: row.extraction_confidence ?? null,
     version: row.version,
-    styleCount,
+    itemCount,
     sortOrder: (row as any).sort_order ?? 0,
   }
 }

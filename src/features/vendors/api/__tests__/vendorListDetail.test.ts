@@ -85,24 +85,30 @@ describe('SupabaseVendorRepository.getByEvent', () => {
       makeImageRow({ vendor_id: 'v-1', is_primary: true }),
       makeImageRow({ vendor_id: 'v-2', is_primary: false }),
     ]
-    // style counts for the style-count badge (added in commit 2da4496)
-    const styleCounts = [
+    // item counts for the item-count badge: fabric rows + catalogue rows are summed
+    const fabricRows = [
       { vendor_id: 'v-1' },
       { vendor_id: 'v-1' },
       { vendor_id: 'v-2' },
+    ]
+    const catalogueRows = [
+      { vendor_id: 'v-1' },
     ]
 
     // Call 1: vendors query
     const vendorsChain = createMockSupabaseChain({ data: vendors, error: null })
     // Call 2 (Promise.all[0]): vendor_images query
     const imagesChain = createMockSupabaseChain({ data: images, error: null })
-    // Call 3 (Promise.all[1]): fabric_styles style-count query
-    const styleCountChain = createMockSupabaseChain({ data: styleCounts, error: null })
+    // Call 3 (Promise.all[1]): fabric_styles item-count query
+    const fabricCountChain = createMockSupabaseChain({ data: fabricRows, error: null })
+    // Call 4 (Promise.all[2]): catalogue_items item-count query
+    const catalogueCountChain = createMockSupabaseChain({ data: catalogueRows, error: null })
 
     mockFrom
       .mockReturnValueOnce(vendorsChain as any)
       .mockReturnValueOnce(imagesChain as any)
-      .mockReturnValueOnce(styleCountChain as any)
+      .mockReturnValueOnce(fabricCountChain as any)
+      .mockReturnValueOnce(catalogueCountChain as any)
 
     const result = await repository.getByEvent('evt-1')
 
@@ -111,20 +117,57 @@ describe('SupabaseVendorRepository.getByEvent', () => {
     expect(result[0].images).toHaveLength(1)
     expect(result[1].companyName).toBe('Vendor B')
     expect(result[1].images).toHaveLength(1)
+    // v-1: 2 fabric + 1 catalogue = 3; v-2: 1 fabric + 0 catalogue = 1
+    expect(result[0].itemCount).toBe(3)
+    expect(result[1].itemCount).toBe(1)
     expect(mockFrom).toHaveBeenCalledWith('vendors')
     expect(mockFrom).toHaveBeenCalledWith('vendor_images')
     expect(mockFrom).toHaveBeenCalledWith('fabric_styles')
+    expect(mockFrom).toHaveBeenCalledWith('catalogue_items')
+  })
+
+  it('[FR-CAT-01b] sums fabric styles and catalogue items into itemCount', async () => {
+    const vendors = [
+      makeVendorRow({ id: 'v-1', company_name: 'Fabric Vendor' }),
+      makeVendorRow({ id: 'v-2', company_name: 'Garment Vendor' }),
+    ]
+    const fabricRows = [
+      { vendor_id: 'v-1' },
+      { vendor_id: 'v-1' },
+    ]
+    const catalogueRows = [
+      { vendor_id: 'v-1' },
+      { vendor_id: 'v-2' },
+      { vendor_id: 'v-2' },
+    ]
+
+    mockFrom
+      .mockReturnValueOnce(createMockSupabaseChain({ data: vendors, error: null }) as any)
+      .mockReturnValueOnce(createMockSupabaseChain({ data: [], error: null }) as any)
+      .mockReturnValueOnce(createMockSupabaseChain({ data: fabricRows, error: null }) as any)
+      .mockReturnValueOnce(createMockSupabaseChain({ data: catalogueRows, error: null }) as any)
+
+    const result = await repository.getByEvent('evt-1')
+
+    // Mixed vendor: 2 fabric rows + 1 catalogue row = 3
+    expect(result[0].itemCount).toBe(3)
+    // Garment/video-only vendor: 0 fabric + 2 catalogue rows = 2
+    // (previously read 0 because only fabric_styles was counted)
+    expect(result[1].itemCount).toBe(2)
+    expect(mockFrom).toHaveBeenCalledWith('catalogue_items')
   })
 
   it('should return empty array when no vendors found', async () => {
     const vendorsChain = createMockSupabaseChain({ data: [], error: null })
     const imagesChain = createMockSupabaseChain({ data: [], error: null })
-    const styleCountChain = createMockSupabaseChain({ data: [], error: null })
+    const fabricCountChain = createMockSupabaseChain({ data: [], error: null })
+    const catalogueCountChain = createMockSupabaseChain({ data: [], error: null })
 
     mockFrom
       .mockReturnValueOnce(vendorsChain as any)
       .mockReturnValueOnce(imagesChain as any)
-      .mockReturnValueOnce(styleCountChain as any)
+      .mockReturnValueOnce(fabricCountChain as any)
+      .mockReturnValueOnce(catalogueCountChain as any)
 
     const result = await repository.getByEvent('evt-empty')
     expect(result).toEqual([])
@@ -146,14 +189,19 @@ describe('SupabaseVendorRepository.getByEvent', () => {
     const vendors = [makeVendorRow({ id: 'v-1' })]
     const vendorsChain = createMockSupabaseChain({ data: vendors, error: null })
     const imagesChain = createMockSupabaseChain({ data: [], error: null })
+    const fabricCountChain = createMockSupabaseChain({ data: [], error: null })
+    const catalogueCountChain = createMockSupabaseChain({ data: [], error: null })
 
     mockFrom
       .mockReturnValueOnce(vendorsChain as any)
       .mockReturnValueOnce(imagesChain as any)
+      .mockReturnValueOnce(fabricCountChain as any)
+      .mockReturnValueOnce(catalogueCountChain as any)
 
     const result = await repository.getByEvent('evt-1')
     expect(result).toHaveLength(1)
     expect(result[0].images).toEqual([])
+    expect(result[0].itemCount).toBe(0)
   })
 })
 
