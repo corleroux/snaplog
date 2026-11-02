@@ -16,9 +16,10 @@
  */
 
 import { type ReactNode, useState, useMemo, useEffect } from 'react'
-import { Package, Building2, Search, Loader2, FileSpreadsheet } from 'lucide-react'
+import { Package, Building2, Search, Loader2, FileSpreadsheet, AlertTriangle, Sparkles } from 'lucide-react'
 import { cn } from '@/lib/utils/cn'
 import { Button } from '@/components/ui'
+import { Badge } from '@/components/ui/badge'
 import { StyleCard } from '../components/StyleCard'
 import { SwipeActions, PullToRefresh } from '@/components/mobile'
 import { BatchExportModal, useBatchExportModal } from '@/features/sharing/components/BatchExportModal'
@@ -80,6 +81,10 @@ export interface StyleListScreenProps {
   onLoadMore?: () => void
   /** Callback to toggle shortlist */
   onToggleShortlist?: (styleId: string, value: boolean) => void
+  /** Ids of catalogue (garment/video) rows needing a REVIEW badge.
+   * Catalogue rows are identified by the `ci-` id prefix; fabric rows are
+   * never in this set. */
+  needsReviewIds?: Set<string>
   /** Pull-to-refresh callback */
   onRefresh?: () => Promise<void>
   /** Additional className */
@@ -117,6 +122,7 @@ export function StyleListScreen({
   onLoadMore,
   onToggleShortlist,
   onRefresh,
+  needsReviewIds,
   className,
 }: StyleListScreenProps) {
   const [activeFilterConfig, setActiveFilterConfig] = useState<FilterConfig>({})
@@ -260,9 +266,9 @@ export function StyleListScreen({
         {isEmpty && !emptyStateContent && (
           <EmptyState
             icon={<Package />}
-            heading="No styles yet"
-            description="Capture fabric styles from this vendor to build your catalogue"
-            action={onAddStyle ? { label: 'Add Your First Style', onPress: onAddStyle } : undefined}
+            heading="No items yet"
+            description="Capture items from this vendor to build your catalogue"
+            action={onAddStyle ? { label: 'Add Your First Item', onPress: onAddStyle } : undefined}
           />
         )}
 
@@ -282,15 +288,33 @@ export function StyleListScreen({
         {/* Style grid - premium cards with vertical rhythm */}
         {!isEmpty && !isFilteredEmpty && (
           <div className="grid gap-5">
-            {filteredStyles.map((style) => (
+            {filteredStyles.map((style) => {
+              const isCatalogueRow = style.id.startsWith('ci-')
+              const needsReview = needsReviewIds?.has(style.id) ?? false
+              return (
               <SwipeActions key={style.id}>
                 <StyleCard
                   style={style}
-                  onClick={onStyleClick}
+                  onClick={isCatalogueRow ? undefined : onStyleClick}
                   onToggleShortlist={onToggleShortlist}
+                  shortlistable={!isCatalogueRow}
+                  badge={isCatalogueRow ? (
+                    needsReview ? (
+                      <Badge variant="outline" className="gap-1 text-xs text-amber-700 dark:text-amber-400 border-amber-500/40 flex-shrink-0 whitespace-nowrap">
+                        <AlertTriangle className="h-3.5 w-3.5" />
+                        Review
+                      </Badge>
+                    ) : (
+                      <Badge variant="outline" className="gap-1 text-xs flex-shrink-0 whitespace-nowrap">
+                        <Sparkles className="h-3.5 w-3.5" />
+                        {style.category ? `${style.category} · AI` : 'AI Extracted'}
+                      </Badge>
+                    )
+                  ) : undefined}
                 />
               </SwipeActions>
-            ))}
+              )
+            })}
           </div>
         )}
 

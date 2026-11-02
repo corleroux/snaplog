@@ -28,7 +28,6 @@ import type { VendorRecord } from '@/types/vendor'
 import { CommentThread } from '@/components/comments/CommentThread'
 import { AssignmentSheet } from '@/features/assignments'
 import { VendorPriceComparisonSection } from '../components/VendorPriceComparisonSection'
-import { CatalogueItemsSection } from '@/features/catalogue/components/CatalogueItemsSection'
 
 export interface VendorDetailScreenProps {
   /** The vendor record to display */
@@ -213,10 +212,8 @@ export function VendorDetailScreen({
              )}
            </div>
 
-           {/* Schema-driven catalogue items (FR-SCH-05b) — garments and
-               video-isolated items. Renders nothing when the vendor has
-               none, so legacy pages are visually untouched. */}
-           <CatalogueItemsSection vendorId={vendor.id} />
+           {/* Catalogue items (garments, video items) live on the unified
+               styles list (FR-CAT-01) — reached via Return to Styles. */}
 
            {/* Extraction warning banner */}
            {vendor.extractionMeta?.warnings && vendor.extractionMeta.warnings.length > 0 && (

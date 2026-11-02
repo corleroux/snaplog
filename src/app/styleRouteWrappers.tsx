@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useEventRole } from '@/features/auth'
 import { useStylesQuery, useDeleteStyle, useToggleShortlist } from '@/features/styles/hooks'
+import { useCatalogueItemsQuery } from '@/features/catalogue/hooks/useCatalogueItemsQuery'
 import { useVendorsQuery } from '@/features/vendors/hooks/useVendorQueries'
 import { useRealtimeRefresh } from '@/lib/realtime'
 import { StyleCaptureFlow, StyleListScreen, StyleDetailScreen, StyleEditScreen, VariantEditScreen, type StyleFilters } from '@/features/styles'
@@ -23,19 +24,32 @@ export function StyleListFromRouteWithProvider() {
   const [filters, setFilters] = useState<StyleFilters>({})
 
   useRealtimeRefresh('fabric_styles', [['styles', vendorId]], { column: 'vendor_id', value: vendorId })
+  // Catalogue items (garments, video items) share the list; an items
+  // failure degrades to fabric-only inside the hook, never blocks.
+  const { data: catalogueItems = [], refetch: refetchCatalogueItems } = useCatalogueItemsQuery(vendorId)
+  useRealtimeRefresh('catalogue_items', [['catalogue-items', vendorId]], { column: 'vendor_id', value: vendorId })
 
   const vendor = vendors.find((v: VendorRecord) => v.id === vendorId)
   const vendorName = vendor?.companyName || ''
 
-  const sortedStyles = [...styles].sort((a, b) =>
+  const catalogueRecords = useMemo(
+    () => catalogueItems.map((item) => item.record),
+    [catalogueItems],
+  )
+  const needsReviewIds = useMemo(
+    () => new Set(catalogueItems.filter((item) => item.needsReview).map((item) => item.record.id)),
+    [catalogueItems],
+  )
+
+  const sortedStyles = [...styles, ...catalogueRecords].sort((a, b) =>
     new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   )
 
   const filterOptions = useMemo(() => ({
-    categories: [...new Set(styles.map((s: any) => s.category).filter(Boolean))] as string[],
-    seasons: [...new Set(styles.map((s: any) => s.season).filter(Boolean))] as string[],
-    statuses: [...new Set(styles.map((s: any) => s.status).filter(Boolean))] as string[],
-  }), [styles])
+    categories: [...new Set(sortedStyles.map((s: any) => s.category).filter(Boolean))] as string[],
+    seasons: [...new Set(sortedStyles.map((s: any) => s.season).filter(Boolean))] as string[],
+    statuses: [...new Set(sortedStyles.map((s: any) => s.status).filter(Boolean))] as string[],
+  }), [sortedStyles])
 
   const toggleShortlist = useToggleShortlist(vendorId)
 
@@ -73,15 +87,24 @@ export function StyleListFromRouteWithProvider() {
       onAddStyle={canEdit ? () => navigate(`/events/${eventId}/vendors/${vendorId}/items/new/capture`) : undefined}
       // FAB keeps the fast legacy fabric path (FR-SCH-05b).
       onFabPress={canEdit ? () => navigate(`/events/${eventId}/vendors/${vendorId}/styles/new/capture`) : undefined}
-      onStyleClick={(style) => navigate(`/events/${eventId}/vendors/${vendorId}/styles/${style.id}`)}
+      // Catalogue rows (ci- prefix) have no detail/shortlist path yet —
+      // guard fabric-only actions so they no-op instead of 404ing.
+      onStyleClick={(style) => {
+        if (style.id.startsWith('ci-')) {return}
+        navigate(`/events/${eventId}/vendors/${vendorId}/styles/${style.id}`)
+      }}
       onVendorInfo={() => navigate(`/events/${eventId}/vendors/${vendorId}`)}
       searchQuery={searchQuery}
       onSearchChange={setSearchQuery}
       filters={filters}
       onFiltersChange={setFilters}
       filterOptions={filterOptions}
-      onToggleShortlist={(styleId, value) => toggleShortlist.mutate({ styleId, value })}
-      onRefresh={async () => { await refetchStyles() }}
+      onToggleShortlist={(styleId, value) => {
+        if (styleId.startsWith('ci-')) {return}
+        toggleShortlist.mutate({ styleId, value })
+      }}
+      needsReviewIds={needsReviewIds}
+      onRefresh={async () => { await refetchStyles(); await refetchCatalogueItems() }}
     />
   )
 }

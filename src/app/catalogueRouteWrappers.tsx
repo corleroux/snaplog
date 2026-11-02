@@ -28,8 +28,9 @@ export function CatalogueItemCaptureFlowFromRouteWithProvider() {
     <CatalogueItemCaptureFlow
       eventId={eventId}
       vendorId={vendorId}
-      onSuccess={() => navigate(`/events/${eventId}/vendors/${vendorId}`)}
-      onCancel={() => navigate(`/events/${eventId}/vendors/${vendorId}`)}
+      // Land on the unified styles list where the saved item is visible.
+      onSuccess={() => navigate(`/events/${eventId}/vendors/${vendorId}/styles`)}
+      onCancel={() => navigate(`/events/${eventId}/vendors/${vendorId}/styles`)}
     />
   )
 }
