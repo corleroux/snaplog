@@ -138,3 +138,15 @@ FR-CAT-03, FR-CAT-04, FR-MOD-03, FR-CAT-02, FR-MOD-05 in-app view (the write-up 
 ## When in doubt
 
 Ask the architect — never redesign a plan unilaterally. If a plan conflicts with reality on the ground, stop and escalate rather than improvise.
+
+## Status update — Mon Nov 2 (builder)
+
+Impromptu owner-directed work, all merged to `staging` with reviewer/design-reviewer/tester passes and submission syncs:
+
+- **Nested-button hydration fix** (no FR; markup bug): `StyleCard` outer `<button>` → `<article>` (shortlist heart stays the sole inner `<button>`). Killed the `installHook.js` "button cannot be a descendant of button" warning on the style list.
+- **PR #30 — FR-CAT-01 unified styles screen** (plan `FR-CAT-01-unified-styles.md`, architect-revised via builder escalation; supersedes 05b §2 one-lane split): styles list merges `fabric_styles` + mapped `catalogue_items` (`ci-` ids, shortlist/detail guarded, REVIEW / `Garment · AI` / `Video · AI` badges, neutral empty copy); commit landing moved to the styles list; vendor-page `CatalogueItemsSection` removed. Live-verified: a real garment capture for vendor `aa46a6d5…` renders on the styles screen. Submission patch `0019`.
+- **PR #31 — FR-CAT-01 item detail page** (plan `FR-CAT-01-item-detail.md`): route `…/vendors/:vendorId/items/:itemId`, read-only + canEdit-gated archive (no edit UI, no shortlist/approval/comments/inventory/pricing/QR per scope guard). Tapping a garment opens its detail (hero, schema fields, variants, warnings). Submission patch `0020`.
+- FR-CAT-01 is now met for non-fabric display + detail (fabric leg was already met). Test suite: 859 passed / 0 failed.
+- Deliberately skipped: list→detail e2e (needs data writes on the shared remote project — safety rules); suggested follow-up is a mocked-boundary spec.
+
+Still open from the checkpoint list: Mon EOD Modal endpoint check (owner), benchmark/video live-test asks, Tue 12:00 design fallback trigger, write-up framing review before recording.
