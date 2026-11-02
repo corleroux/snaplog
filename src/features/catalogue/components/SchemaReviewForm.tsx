@@ -43,7 +43,7 @@ function fullPath(parentPath: string | undefined, field: SchemaField): string {
 
 function MissingFlag({ label }: { label: string }) {
   return (
-    <span className="inline-flex items-center gap-1 text-[11px] font-medium text-amber-700 dark:text-amber-400">
+    <span className="inline-flex items-center gap-1 text-[11px] font-medium text-danger">
       <AlertTriangle className="h-3 w-3" />
       {label} not extracted — confirm or fill
     </span>
@@ -153,7 +153,7 @@ export function SchemaReviewForm({
                       e.target.value.split(',').map((s) => s.trim()).filter(Boolean)
                     )
                   }
-                  className={cn(missing && 'border-amber-500/50')}
+                  className={cn(missing && 'border-danger bg-field-warn')}
                 />
                 <ConfidenceBadge confidence={confidences?.[path] ?? null} />
               </div>
@@ -175,7 +175,7 @@ export function SchemaReviewForm({
                   className={cn(
                     'flex min-h-[44px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm',
                     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
-                    missing && 'border-amber-500/50'
+                    missing && 'border-danger bg-field-warn'
                   )}
                 >
                   <option value="">Select {field.label.toLowerCase()}…</option>
@@ -206,7 +206,7 @@ export function SchemaReviewForm({
                   onChange={(e) =>
                     onFieldChange(path, e.target.value === '' ? null : Number(e.target.value))
                   }
-                  className={cn(missing && 'border-amber-500/50')}
+                  className={cn(missing && 'border-danger bg-field-warn')}
                 />
                 <ConfidenceBadge confidence={confidences?.[path] ?? null} />
               </div>
@@ -230,7 +230,7 @@ export function SchemaReviewForm({
                 value={textValue}
                 aria-label={field.label}
                 onChange={(e) => onFieldChange(path, e.target.value === '' ? null : e.target.value)}
-                className={cn(missing && 'border-amber-500/50')}
+                className={cn(missing && 'border-danger bg-field-warn')}
               />
               <ConfidenceBadge confidence={confidences?.[path] ?? null} />
             </div>
