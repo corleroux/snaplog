@@ -244,7 +244,7 @@ export function StyleCard({
             style.latestPrice.priceUnit
           )
           return (
-            <p className="text-sm font-medium text-foreground mt-1.5">
+            <p className="font-mono text-sm font-medium text-foreground mt-1.5">
               {style.latestPrice.currency} {displayPrice.toFixed(2)}{' '}
               <span className="text-xs text-muted-foreground font-normal">/ {displayUnit}</span>
             </p>

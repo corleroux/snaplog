@@ -92,7 +92,7 @@ export function ImageThumbnail({
           <Badge
             variant="accent"
             size="sm"
-            className="gap-1 shadow-md bg-orange-500 text-white font-medium"
+            className="gap-1 shadow-md bg-primary text-primary-foreground font-medium"
           >
             <Sparkles className="h-3 w-3" />
             Info
@@ -138,7 +138,7 @@ export function ImageThumbnail({
             // Mobile-first: always visible, hover effect on desktop
             'opacity-100 sm:opacity-0 sm:group-hover:opacity-100 hover:scale-110',
             isInfo
-              ? 'bg-orange-500 text-white hover:bg-orange-600'
+              ? 'bg-primary text-primary-foreground hover:bg-primary/90'
               : 'bg-background/90 text-foreground hover:bg-background'
           )}
           type="button"

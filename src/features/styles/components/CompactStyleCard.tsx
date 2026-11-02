@@ -135,7 +135,7 @@ export function CompactStyleCard({
       {/* Style info - refined typography hierarchy */}
       <div className="flex-1 min-w-0 flex flex-col justify-center">
         {/* Style name - enhanced hover state */}
-        <h3 className="text-sm font-semibold text-foreground truncate group-hover:text-primary transition-colors duration-200">
+        <h3 className="font-display text-sm font-semibold text-foreground truncate group-hover:text-foreground transition-colors duration-200">
           {style.styleName}
         </h3>
 

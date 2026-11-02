@@ -77,8 +77,8 @@ export function ProcessingScreen({
         {/* Processing indicator overlay */}
         {isProcessing && (
           <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm rounded-2xl">
-            <div className="w-20 h-20 rounded-full bg-orange-500 flex items-center justify-center shadow-lg shadow-orange-500/40 animate-pulse">
-              <Sparkles className="h-10 w-10 text-white animate-spin" />
+            <div className="w-20 h-20 rounded-full bg-primary flex items-center justify-center shadow-lg shadow-primary/40 animate-pulse">
+              <Sparkles className="h-10 w-10 text-primary-foreground animate-spin" />
             </div>
           </div>
         )}
