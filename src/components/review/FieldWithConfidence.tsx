@@ -87,7 +87,7 @@ export function FieldWithConfidence({
     // Apply confidence-based borders
     switch (confidence) {
       case 'low':
-        return 'border-amber-500 focus:border-amber-500'
+        return 'border-danger focus:border-danger'
       case 'high':
         return 'border-green-500/30 focus:border-green-500'
       default:
@@ -98,7 +98,7 @@ export function FieldWithConfidence({
   // Confidence-based background styling (subtle)
   const getBackgroundClass = () => {
     if (confidence === 'low' && !isFocused && !isModified) {
-      return 'bg-amber-50/50 dark:bg-amber-950/10'
+      return 'bg-field-warn'
     }
     return 'bg-background'
   }
@@ -171,7 +171,7 @@ export function FieldWithConfidence({
 
       {/* Helper text for low confidence fields */}
       {confidence === 'low' && !error && !isModified && (
-        <p className="text-xs text-amber-600 dark:text-amber-400">
+        <p className="text-xs text-danger">
           Low confidence — please verify this value
         </p>
       )}
