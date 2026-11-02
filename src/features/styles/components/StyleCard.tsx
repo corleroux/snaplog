@@ -226,7 +226,7 @@ export function StyleCard({
         </div>
 
         {/* Style name */}
-        <h3 className="text-base font-semibold text-foreground tracking-tight leading-tight mb-0.5">
+        <h3 className="font-display text-base font-semibold text-foreground tracking-tight leading-tight mb-0.5">
           {style.styleName || 'Untitled Style'}
         </h3>
 
@@ -244,7 +244,7 @@ export function StyleCard({
             style.latestPrice.priceUnit
           )
           return (
-            <p className="text-sm font-medium text-foreground mt-1.5">
+            <p className="font-mono text-sm font-medium text-foreground mt-1.5">
               {style.latestPrice.currency} {displayPrice.toFixed(2)}{' '}
               <span className="text-xs text-muted-foreground font-normal">/ {displayUnit}</span>
             </p>

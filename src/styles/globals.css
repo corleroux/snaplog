@@ -88,8 +88,9 @@
     --muted: 202.5 14.8% 89.4%; /* Mist */
     --muted-foreground: 44 7.5% 39%; /* Stall Grey #6B675C */
 
-    /* Accent: Stall Orange with Ink foreground */
-    --accent: 17.5 90.8% 46.7%;
+    /* Accent: subtle Stall hover tint with Ink foreground (shadcn hover
+       semantics — solid Stall lives ONLY in --primary/--ring) */
+    --accent: 21 66% 92%; /* Stall at ~10% over Paper */
     --accent-foreground: 51.4 18.9% 7.3%;
 
     /* Destructive for error states */

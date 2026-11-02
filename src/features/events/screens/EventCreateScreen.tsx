@@ -274,7 +274,7 @@ export function EventCreateScreen({
     return (
       <AppFrame className={cn('flex items-center justify-center', className)}>
         <div className="flex flex-col items-center gap-3">
-          <Loader2 className="h-8 w-8 animate-spin text-orange-500" />
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
           <p className="text-muted-foreground">Loading event data...</p>
         </div>
       </AppFrame>
@@ -338,7 +338,7 @@ export function EventCreateScreen({
           <SectionContainer
             title="Basic Info"
             description="Event identity and current status"
-            icon={<Building2 className="h-5 w-5 text-orange-500" />}
+            icon={<Building2 className="h-5 w-5 text-primary" />}
           >
             <div className="space-y-5">
               <Input
@@ -362,7 +362,7 @@ export function EventCreateScreen({
                 <select
                   id="status"
                   {...register('status')}
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-all hover:border-orange-500/50"
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-all hover:border-primary/50"
                 >
                   <option value="upcoming">Upcoming</option>
                   <option value="active">Active</option>
@@ -379,7 +379,7 @@ export function EventCreateScreen({
           <SectionContainer
             title="Location"
             description="Where the event is held"
-            icon={<MapPin className="h-5 w-5 text-orange-500" />}
+            icon={<MapPin className="h-5 w-5 text-primary" />}
           >
             <div className="space-y-5">
               <div className="grid grid-cols-2 gap-4">
@@ -411,7 +411,7 @@ export function EventCreateScreen({
           <SectionContainer
             title="Dates"
             description="When the event takes place"
-            icon={<Calendar className="h-5 w-5 text-orange-500" />}
+            icon={<Calendar className="h-5 w-5 text-primary" />}
           >
             <div className="grid grid-cols-2 gap-4">
               <Input
@@ -434,7 +434,7 @@ export function EventCreateScreen({
           <SectionContainer
             title="Cover Image"
             description="Optional visual represention"
-            icon={<ImageIcon className="h-5 w-5 text-orange-500" />}
+            icon={<ImageIcon className="h-5 w-5 text-primary" />}
           >
             <div className="space-y-4">
               <Input
@@ -467,7 +467,7 @@ export function EventCreateScreen({
             <SectionContainer
               title="Event Members"
               description="Manage team access"
-              icon={<Users className="h-5 w-5 text-orange-500" />}
+              icon={<Users className="h-5 w-5 text-primary" />}
             >
               <EventMembersSection
                 eventId={eventId}
@@ -520,7 +520,7 @@ export function EventCreateScreen({
         confirmText="Discard Changes"
         cancelText="Keep Editing"
         variant="destructive"
-        icon={<AlertTriangle className="h-6 w-6 text-amber-500" />}
+        icon={<AlertTriangle className="h-6 w-6 text-danger" />}
       />
     </AppFrame>
   )

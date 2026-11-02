@@ -16,7 +16,8 @@ tap targets ≥44px. No accounts, billing, ordering, or extra categories in any 
 ```css
 @theme {
   --color-ink: #16150F; --color-paper: #FAFAF7;
-  --color-accent: #E34A0B; --color-kraft: #E8D5AC;
+  --color-accent: #F7E8DE; /* Stall hover tint — solid Stall is the primary, below */
+  --color-kraft: #E8D5AC;
   --color-mist: #E0E5E8; --color-slate: #6B675C;
   --color-danger: #B42318; --color-danger-bg: #FDE8E8;
   --color-field-warn: #FFF7ED;
@@ -29,7 +30,9 @@ tap targets ≥44px. No accounts, billing, ordering, or extra categories in any 
 
 Semantic mapping (`:root`, HSL components): Paper → `--background`, Ink → `--foreground`
 and `--primary-foreground` (Stall buttons take Ink text, never white), Stall `#E34A0B` →
-`--primary`/`--ring`/`--accent`, danger → `--destructive`, Stall Grey → `--muted-foreground`.
+`--primary`/`--ring` (solid only), danger → `--destructive`, Stall Grey → `--muted-foreground`.
+`--accent` is the shadcn *hover* semantic — a subtle Stall tint (~10% over Paper) with Ink
+`--accent-foreground`, never solid Stall.
 Solid inks only — no gradients. `.dark` is untouched; the demo is light-only.
 
 ## Type
@@ -43,6 +46,9 @@ Solid inks only — no gradients. `.dark` is untouched; the demo is light-only.
 
 - Destructive `Alert` → `bg-danger-bg` / `border-danger`.
 - Low-confidence or missing field → `border-danger` + `bg-field-warn` (`#FFF7ED` everywhere).
+- Categorical status/confidence palettes (confidence tiers, variant/stock status, kanban
+  states, EntityCard status hues) may use green/amber/red/blue hues as *status coding* —
+  they are not brand surfaces and are exempt from the field-warning rule above.
 - Every screen carries loading, empty, error, and low-confidence states. Video has an
   additional unconfigured state (disabled action + reason line) — style only what exists;
   never invent Jobs actions (see `docs/plans/DESIGN-02C2c-*.md`).

@@ -22,7 +22,7 @@ export function SourceImagePreview({
       description="This image was used for extraction"
     >
       <div className="flex gap-4 items-start">
-        <div className="flex-shrink-0 w-24 h-24 rounded-xl overflow-hidden border-2 border-orange-500/30 bg-muted">
+        <div className="flex-shrink-0 w-24 h-24 rounded-xl overflow-hidden border-2 border-primary/30 bg-muted">
           <img
             src={infoImage.uri}
             alt="Source Info image"

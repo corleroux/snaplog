@@ -80,7 +80,7 @@ function getActivityIcon(type: ActivityType) {
 function getActivityColor(type: ActivityType) {
   switch (type) {
     case 'capture': return 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950'
-    case 'edit': return 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950'
+    case 'edit': return 'text-danger dark:text-danger bg-field-warn'
     case 'comment': return 'text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-950'
     case 'approval': return 'text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-950'
     case 'delete': return 'text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950'

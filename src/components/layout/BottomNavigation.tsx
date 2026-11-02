@@ -4,10 +4,10 @@
  * Design System Section 10 (Bottom Navigation):
  * - Fixed at bottom of the 430px shell (content scrolls under)
  * - Height: 72px (nav bar) + FAB protrudes ~28px above
- * - Active state: text-primary (Stall on Ink) icon + label
+ * - Active state: Stall icon + label + Stall dot indicator (on Ink bar)
  * - Inactive state: text-paper/70 icon + label
- * - Icon size: 24px (h-6 w-6)
- * - Label: text-[10px]
+ * - Icon size: 24px (h-6 w-6), stroke width 2 everywhere
+ * - Label: sans text-[11px], sentence case
  * - Touch target per item: minimum 44px height
  * - Nav items: [Home] [Events] [FAB +] [Search] [Profile]
  * - Centre FAB replaces Notifications; notifications moved to header bell icon
@@ -34,7 +34,7 @@ import { useAuth, signOut, useProfileRole } from '@/features/auth'
 interface NavItem {
   label: string
   href: string
-  icon: React.ComponentType<{ className?: string }>
+  icon: React.ComponentType<{ className?: string; strokeWidth?: number }>
   isAction?: boolean
 }
 
@@ -207,8 +207,9 @@ export function BottomNavigation({
                   aria-label={active ? `${item.label} (current)` : item.label}
                   aria-current={active ? 'page' : undefined}
                 >
-                  <Icon className="h-6 w-6" />
-                  <span className="font-mono text-[10px] font-medium uppercase tracking-wide leading-none">{item.label}</span>
+                  <Icon className="h-6 w-6" strokeWidth={2} />
+                  <span className="text-[11px] font-medium leading-none">{item.label}</span>
+                  {active && <span className="w-1 h-1 rounded-full bg-current" />}
                 </button>
               </li>
             )
@@ -236,7 +237,7 @@ export function BottomNavigation({
               }}
               className="transition-transform duration-150 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
             >
-              <Plus className="h-6 w-6 text-primary-foreground" strokeWidth={2.5} />
+              <Plus className="h-6 w-6 text-primary-foreground" strokeWidth={2} />
             </button>
           </li>
 
@@ -260,8 +261,9 @@ export function BottomNavigation({
                   aria-label={active ? `${item.label} (current)` : item.label}
                   aria-current={active ? 'page' : undefined}
                 >
-                  <Icon className="h-6 w-6" />
-                  <span className="font-mono text-[10px] font-medium uppercase tracking-wide leading-none">{item.label}</span>
+                  <Icon className="h-6 w-6" strokeWidth={2} />
+                  <span className="text-[11px] font-medium leading-none">{item.label}</span>
+                  {active && <span className="w-1 h-1 rounded-full bg-current" />}
                 </button>
 
                 {/* Profile menu — anchored directly above the Profile button */}
@@ -351,9 +353,9 @@ export function BottomNavigation({
             position: 'absolute',
             left: '50%',
             transform: 'translateX(-50%)',
-            bottom: 6,
-            width: 24,
-            height: 24,
+            bottom: 2,
+            width: 44,
+            height: 44,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -361,9 +363,9 @@ export function BottomNavigation({
             border: 'none',
             background: 'transparent',
           }}
-          className="transition-colors duration-150 text-muted-foreground hover:text-foreground active:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+          className="transition-colors duration-150 text-paper/70 hover:text-paper active:text-paper focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
         >
-          <MessageSquare className="h-5 w-5" strokeWidth={1.5} />
+          <MessageSquare className="h-5 w-5" strokeWidth={2} />
         </button>
       </nav>
     </div>

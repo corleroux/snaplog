@@ -21,7 +21,7 @@ export function HeroImage({
   isInfoImage: boolean
 }) {
   return (
-    <div className="relative aspect-[4/3] w-full rounded-2xl overflow-hidden shadow-lg border-2 border-orange-500/20 bg-muted">
+    <div className="relative aspect-[4/3] w-full rounded-2xl overflow-hidden shadow-lg border-2 border-primary/20 bg-muted">
       <img
         src={image.uri}
         alt="Style image"
@@ -29,12 +29,12 @@ export function HeroImage({
       />
       <div className="absolute top-3 right-3 flex gap-2">
         {isInfoImage && (
-          <Badge className="gap-1 bg-orange-500 text-white text-xs">
+          <Badge className="gap-1 bg-primary text-primary-foreground text-xs">
             <Sparkles className="h-3 w-3" />
             Info
           </Badge>
         )}
-        <Badge className="bg-blue-600 text-white text-xs">
+        <Badge className="bg-primary text-primary-foreground text-xs">
           Primary
         </Badge>
       </div>
@@ -67,7 +67,7 @@ export function ThumbnailStrip({
           aria-pressed={img.id === selectedImageId}
           className={cn(
             "flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 bg-muted transition-all",
-            img.id === selectedImageId ? "border-orange-500 ring-2 ring-orange-500/20" : "border-border hover:border-orange-500/50"
+            img.id === selectedImageId ? "border-primary ring-2 ring-primary/20" : "border-border hover:border-primary/50"
           )}
         >
           <img

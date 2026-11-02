@@ -8,6 +8,9 @@
  * - 0-0.5: red ("Low") with percentage
  */
 
+// Categorical confidence tiers (green/amber/red) are intentional status
+// coding, like EntityCard badge hues — not brand surfaces; the warning
+// system for fields is bg-field-warn + border-danger (DESIGN_SYSTEM.md).
 import { cn } from '@/lib/utils/cn'
 
 export interface ConfidenceBadgeProps {

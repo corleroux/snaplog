@@ -24,6 +24,7 @@
 
 import { Link } from 'react-router-dom'
 import { cn } from '@/lib/utils/cn'
+import { Button } from '@/components/ui/button'
 import type { StyleRecord } from '@/types/style'
 
 export interface CompactStyleCardProps {
@@ -91,7 +92,7 @@ export function CompactStyleCard({
       to={`${basePath}/styles/${style.id}`}
       state={navigationState}
       className={cn(
-        'flex gap-3 p-3 bg-card rounded-xl border border-border/80 hover:border-orange-500/50 hover:bg-accent/5 hover:shadow-md hover:shadow-orange-500/5 transition-all duration-200 active:scale-[0.98] group',
+        'flex gap-3 p-3 bg-card rounded-xl border border-border/80 hover:border-primary/50 hover:bg-accent/50 hover:shadow-md hover:shadow-primary/5 transition-all duration-200 active:scale-[0.98] group',
         className
       )}
     >
@@ -104,18 +105,18 @@ export function CompactStyleCard({
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ease-out"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-950/30 via-gray-900 to-orange-900/20 relative overflow-hidden">
+          <div className="w-full h-full flex items-center justify-center bg-muted relative overflow-hidden">
             {/* Fabric pattern overlay for texture */}
             <div className="absolute inset-0 opacity-[0.05]">
               <svg className="w-full h-full" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                 <pattern id="compact-fabric-pattern" patternUnits="userSpaceOnUse" width="10" height="10">
-                  <circle cx="5" cy="5" r="1.5" fill="currentColor" className="text-orange-500" />
+                  <circle cx="5" cy="5" r="1.5" fill="currentColor" className="text-primary" />
                 </pattern>
                 <rect width="100" height="100" fill="url(#compact-fabric-pattern)" />
               </svg>
             </div>
             <svg
-              className="w-6 h-6 text-orange-500/30 relative z-10"
+              className="w-6 h-6 text-primary/30 relative z-10"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -134,7 +135,7 @@ export function CompactStyleCard({
       {/* Style info - refined typography hierarchy */}
       <div className="flex-1 min-w-0 flex flex-col justify-center">
         {/* Style name - enhanced hover state */}
-        <h3 className="text-sm font-semibold text-foreground truncate group-hover:text-orange-600 dark:group-hover:text-orange-500 transition-colors duration-200">
+        <h3 className="font-display text-sm font-semibold text-foreground truncate group-hover:text-foreground transition-colors duration-200">
           {style.styleName}
         </h3>
 
@@ -166,7 +167,7 @@ export function CompactStyleCard({
       {/* Chevron indicator - refined animation */}
       <div className="flex-shrink-0 flex items-center">
         <svg
-          className="w-4 h-4 text-muted-foreground/40 group-hover:text-orange-500/80 group-hover:translate-x-0.5 transition-all duration-200"
+          className="w-4 h-4 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-0.5 transition-all duration-200"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -237,9 +238,9 @@ export function RelatedStylesSection({
     return (
       <div className={cn('text-center py-10', className)}>
         {/* Refined empty state with premium treatment */}
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-950/20 via-orange-900/10 to-gray-900/20 border border-orange-500/10 mb-4 shadow-sm">
+        <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 mb-4 shadow-sm">
           <svg
-            className="w-8 h-8 text-orange-500/40"
+            className="w-8 h-8 text-primary/60"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -257,16 +258,17 @@ export function RelatedStylesSection({
           Capture styles to link them to this vendor
         </p>
         {showEmptyCTA && onEmptyCTA && (
-          <button
-            type="button"
+          <Button
+            variant="accent"
+            radius="pill"
             onClick={onEmptyCTA}
-            className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white text-sm font-medium rounded-full transition-colors duration-200 shadow-md shadow-orange-500/20 hover:shadow-orange-500/30"
+            className="mt-4 shadow-md"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
             {emptyCTAText}
-          </button>
+          </Button>
         )}
       </div>
     )

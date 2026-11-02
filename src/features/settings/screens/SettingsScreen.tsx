@@ -163,9 +163,9 @@ export function SettingsScreen() {
                   </div>
                   <label
                     htmlFor="avatar-upload"
-                    className="absolute bottom-0 right-0 h-8 w-8 rounded-full bg-accent hover:bg-accent/90 flex items-center justify-center cursor-pointer transition-colors"
+                    className="absolute bottom-0 right-0 h-8 w-8 rounded-full bg-primary hover:bg-primary/90 flex items-center justify-center cursor-pointer transition-colors"
                   >
-                    <Camera className="h-4 w-4 text-accent-foreground" />
+                    <Camera className="h-4 w-4 text-primary-foreground" />
                     <input
                       id="avatar-upload"
                       type="file"

@@ -58,7 +58,7 @@ export function PopularStyles({ eventId, className }: PopularStylesProps) {
   const getRankBadgeColor = (rank: number) => {
     if (rank === 1) return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
     if (rank === 2) return 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300'
-    if (rank === 3) return 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300'
+    if (rank === 3) return 'bg-primary/10 text-primary dark:bg-primary/30 dark:text-primary'
     return 'bg-muted text-muted-foreground'
   }
 

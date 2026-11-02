@@ -173,7 +173,7 @@ function NotificationItem({ notification, onClick, onDelete }: NotificationItemP
   const content = (
     <div
       className={`p-4 hover:bg-accent/50 transition-colors cursor-pointer ${
-        !notification.read_at ? 'bg-accent/30' : ''
+        !notification.read_at ? 'bg-accent text-accent-foreground' : ''
       }`}
       onClick={onClick}
     >

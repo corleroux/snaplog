@@ -52,7 +52,7 @@ export function TaskCard({ task, onTaskClick }: TaskCardProps) {
   const unplanned = !plannedReady
 
   const plannedStatusClass = unplanned
-    ? 'bg-amber-200 dark:bg-amber-700/50 border-amber-400 dark:border-amber-500'
+    ? 'bg-field-warn border-danger'
     : blockedByDeps
       ? 'bg-slate-300 dark:bg-slate-600/50 border-slate-400 dark:border-slate-500'
       : 'bg-card border-border'

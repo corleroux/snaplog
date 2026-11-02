@@ -212,7 +212,7 @@ export function EventsScreen() {
       />
 
       {/* ── Status tabs (underline indicator) ── */}
-      <div className="border-b border-gray-200 bg-white">
+      <div className="border-b border-border bg-background">
         <Tabs value={activeTab} onValueChange={(v) => startTransition(() => setActiveTab(v as EventStatus))}>
           <TabsList
             className={cn(
@@ -235,12 +235,12 @@ export function EventsScreen() {
                     'px-3 pb-3 pt-2',
                     'text-sm font-medium',
                     // Colour states
-                    'text-gray-400',
-                    'data-[state=active]:text-orange-600',
+                    'text-muted-foreground',
+                    'data-[state=active]:text-primary',
                     // Underline indicator on active
                     'after:absolute after:bottom-0 after:left-3 after:right-3',
                     'after:h-0.5 after:rounded-full',
-                    'after:bg-orange-500 after:scale-x-0',
+                    'after:bg-primary after:scale-x-0',
                     'after:transition-transform after:duration-200 after:ease-out',
                     'data-[state=active]:after:scale-x-100',
                   )}
@@ -255,9 +255,9 @@ export function EventsScreen() {
                         'rounded-full',
                         'text-[11px] font-semibold leading-none',
                         // Active state: brand-tinted pill
-                        'data-[state=active]:bg-orange-100 data-[state=active]:text-orange-700',
+                        'data-[state=active]:bg-primary/10 data-[state=active]:text-primary',
                         // Inactive state: neutral pill
-                        'data-[state=inactive]:bg-gray-100 data-[state=inactive]:text-gray-500',
+                        'data-[state=inactive]:bg-muted data-[state=inactive]:text-muted-foreground',
                       )}
                     >
                       {count}

@@ -81,7 +81,7 @@ export function VendorCard({
       className={cn(
         'w-full text-left',
         'bg-card hover:bg-muted/30',
-        'border border-border hover:border-orange-500/30',
+        'border border-border hover:border-primary/30',
         'rounded-xl p-4 sm:p-5',
         'transition-all duration-300',
         'hover:shadow-md overflow-hidden',
@@ -116,7 +116,7 @@ export function VendorCard({
           {/* Header row */}
           <div className="flex items-start justify-between gap-2 mb-2">
             {/* Company name */}
-            <h3 className="text-base sm:text-lg font-semibold text-foreground truncate group-hover:text-orange-500 transition-colors">
+            <h3 className="text-base sm:text-lg font-semibold text-foreground truncate group-hover:text-primary transition-colors">
               {vendor.companyName}
             </h3>
 
@@ -195,7 +195,7 @@ export function VendorCard({
             {vendor.extractionMeta?.warnings && vendor.extractionMeta.warnings.length > 0 && (
               <>
                 <span>•</span>
-                <span className="text-amber-600 dark:text-amber-500">Review needed</span>
+                <span className="text-danger dark:text-danger">Review needed</span>
               </>
             )}
           </div>
