@@ -90,7 +90,7 @@ E. "Ten-day build" (line 5) is stale — deadline is Wed Nov 4 9PM ET. Line 34 b
 | 4–5 (Mon) | D-B Social exports + sting recording | `DESIGN-02B-social-sting.md` | 1–2h | Stream B PASS; must exist by Mon EOD |
 | 4–5 (Mon) | D-C1 Tokens reskin (fallback UI) | `DESIGN-02C1-tokens-reskin.md` | 1–2h | DES-02A; DONE before Tue 12:00 |
 | 5 (Tue, gated) | D-C2 Stream C screens port (visual-only) | `DESIGN-02C2-screens-port.md` | 10–12h | D-C1 DONE; Tue 12:00 gate decides |
-| 4 (Mon EOD) | M-J Modal endpoint check (owner) | `FR-VID-modal-jobs-check.md` | 30 min | — ; decides Jobs live vs unconfigured |
+| 4 (Mon EOD) | M-J Modal endpoint check — ✅ CLOSED GREEN, **Jobs: LIVE** | `FR-VID-modal-jobs-check.md` | 30 min | Fix committed+synced, secret rotated+verified; full probe deferred (owner calls it) |
 | 5 (Mon/Tue) | ⑩ Benchmark runner | `FR-MOD-04-benchmark-runner.md` | 6h | FR-MOD-02a, eval set |
 | 6 (Tue/Wed) | ⑪ Demo video + write-up + submit | `SUB-02-demo-writeup-submission.md` | 4h + recording | everything |
 
@@ -131,7 +131,7 @@ FR-CAT-03, FR-CAT-04, FR-MOD-03, FR-CAT-02, FR-MOD-05 in-app view (the write-up 
 - Secrets audit decision before making `snaplog` public.
 - Explicit asks: benchmark live run (Tue), video pipeline live test.
 - Garment shoot + rack-walk video (Saturday) — feeds eval set and demo.
-- **Mon EOD — Modal endpoint check (YOU, owner):** post one line, "Jobs: LIVE" or "Jobs: UNCONFIGURED" (`FR-VID-modal-jobs-check.md` — 30 min, you hold the account/secrets). Silence defaults to UNCONFIGURED on Tue 09:00. This decides whether Jobs polls live or ships the disabled state — the builder cannot resolve it without you.
+- **Mon EOD — Modal endpoint check: ✅ CLOSED GREEN — Jobs: LIVE, all verified.** Secret re-rotated to an owner-held value and verified both sides (curl signatures match; value lives only in gitignored `.sb.env` + the two secret stores). Compat fix committed + submission-synced; tree clean. Only item deferred: full ≤60s rack-walk probe — owner calls it later, doubles as the FR-VID live test.
 - **Tue 12:00 — fallback trigger (YOU, owner):** Stream C substantially complete? If no, tokens-reskin + current layout ships, no debate. Decide on the hour, not at midnight.
 - **Architect framing review:** builder pings architect with the write-up draft before recording (SUB-02) — architect checks the migration narrative against the SUB-01b standard. 5 min, blocks recording, not the draft itself.
 
@@ -150,4 +150,11 @@ Impromptu owner-directed work, all merged to `staging` with reviewer/design-revi
 - Deliberately skipped: list→detail e2e (needs data writes on the shared remote project — safety rules); suggested follow-up is a mocked-boundary spec.
 - **DESIGN-02 audit (Mon Nov 2):** 02A/02B/C1 rewritten vs staging; C2 split into `DESIGN-02C2` (master gate) + `DESIGN-02C2a/b/c`. Marked DONE there: G1 guard, review functional core, B3 vendor actions (all real). Still NOT DONE: 02A assets integration, 02B exports (due Mon EOD), C1 tokens, C2 port. Conflicts resolved in C1/C2c: review font rule wins over DESIGN-HANDOFF:22; `@theme` block (redesign :98-109) is normative over "extend" (HANDOFF:44 stale, fix rides C1); no Jobs screen exists — video port styles `VideoCaptureScreen` only, unconfigured state needs the owner's Mon-EOD "Jobs: LIVE/UNCONFIGURED" decision, never invented UI.
 
-Still open from the checkpoint list: Mon EOD Modal endpoint check (owner), benchmark/video live-test asks, Tue 12:00 design fallback trigger, write-up framing review before recording.
+Still open from the checkpoint list: benchmark live-test ask, full rack-walk video probe (owner go), Tue 12:00 design fallback trigger, write-up framing review before recording.
+
+## Status update — Mon Nov 2, M-J closed green (architect)
+
+- Deployed code == repo code (compat fix committed), submission synced, secrets owner-held and verified both sides, tree clean, zero secret material in git.
+- Jobs polling is the live path; `unconfig` retained solely as demo-day fallback. This supersedes the pending Mon-EOD decision referenced in the builder audit above.
+- Full probe happens if/when the owner calls it; no further planning needed.
+- **Process note (both teams):** this file lost one round of M-J updates to a stale-checkout overwrite. Rule going forward — builder posts status in chat/session or appends ONLY under "Status update" sections; architect integrates everything above that line. Nobody rewrites another author's section.
