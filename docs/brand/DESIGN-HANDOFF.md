@@ -19,7 +19,7 @@ This archive is the source of truth for turning the design into production code.
 ## Brand tokens (Snaplog)
 - Ink #16150F (foreground, borders, icon background) / Paper #FAFAF7 (background) / Stall Orange #E34A0B (accent only, never body text)
 - Stall Orange buttons must use Ink text, not white, for sunlight legibility.
-- Display: Times / Georgia serif; Body: IBM Plex Mono / monospace. Solid inks only — no gradients.
+- Display: Times / Georgia serif; Body: system stack; IBM Plex Mono (bundled Fontsource) for labels/numbers/prices only. Solid inks only — no gradients. (Normative rule: `DESIGN_SYSTEM.md`.)
 
 ## App icons (Capacitor)
 - iOS / store: `snaplog-icon-1024.png` (1024x1024, no alpha, full-bleed Ink). PWA: 512 / 192. Touch: 180. Small: 48.
@@ -41,7 +41,7 @@ This archive is the source of truth for turning the design into production code.
 ## Stream C — App redesign (working prototype)
 - `snaplog-app-redesign.html`: 390px mobile-first prototype — capture (thumb-zone, fabric/garment switch), schema review (confidence flags, display-only vendor line — vendor pre-selected before capture, never a form field), catalogue (live text search, type filter), vendor page (pre-filled capture entry), video jobs (progress, queue, retry). Every screen ships loading / empty / error / low-confidence variants via the state switcher.
 - Reference inputs (current app, do not ship as-is): `catalogue-list.png`, `capture-page-1.png`, `capture-page-1-image-attached.png`, `capture-image-page2-extacting-process.png`, `capture-image-page3-review.png`, `capture-image-page3-review2.png`, `capture-image-page3-review3.png`, `vendor-list-page.png`, `vendor-page.png`.
-- Tokens emitted as a Tailwind extend block; screen→shadcn-primitive map in-page. No bespoke components.
+- Tokens emitted as a Tailwind v4 `@theme` paste-block (the `@theme` block is normative; any `extend` shim is CDN-only); screen→shadcn-primitive map in-page. No bespoke components.
 
 ## Responsive contract
 Validate the implementation across this 2025–2026 viewport matrix:
