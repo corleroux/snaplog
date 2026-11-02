@@ -4,10 +4,10 @@
  * Design System Section 10 (Bottom Navigation):
  * - Fixed at bottom of the 430px shell (content scrolls under)
  * - Height: 72px (nav bar) + FAB protrudes ~28px above
- * - Active state: text-primary (Stall on Ink) icon + label
+ * - Active state: Stall icon + label + Stall dot indicator (on Ink bar)
  * - Inactive state: text-paper/70 icon + label
- * - Icon size: 24px (h-6 w-6)
- * - Label: text-[10px]
+ * - Icon size: 24px (h-6 w-6), stroke width 2 everywhere
+ * - Label: sans text-[11px], sentence case
  * - Touch target per item: minimum 44px height
  * - Nav items: [Home] [Events] [FAB +] [Search] [Profile]
  * - Centre FAB replaces Notifications; notifications moved to header bell icon
@@ -34,7 +34,7 @@ import { useAuth, signOut, useProfileRole } from '@/features/auth'
 interface NavItem {
   label: string
   href: string
-  icon: React.ComponentType<{ className?: string }>
+  icon: React.ComponentType<{ className?: string; strokeWidth?: number }>
   isAction?: boolean
 }
 
@@ -207,8 +207,9 @@ export function BottomNavigation({
                   aria-label={active ? `${item.label} (current)` : item.label}
                   aria-current={active ? 'page' : undefined}
                 >
-                  <Icon className="h-6 w-6" />
+                  <Icon className="h-6 w-6" strokeWidth={2} />
                   <span className="text-[11px] font-medium leading-none">{item.label}</span>
+                  {active && <span className="w-1 h-1 rounded-full bg-current" aria-hidden="true" />}
                 </button>
               </li>
             )
@@ -260,8 +261,9 @@ export function BottomNavigation({
                   aria-label={active ? `${item.label} (current)` : item.label}
                   aria-current={active ? 'page' : undefined}
                 >
-                  <Icon className="h-6 w-6" />
+                  <Icon className="h-6 w-6" strokeWidth={2} />
                   <span className="text-[11px] font-medium leading-none">{item.label}</span>
+                  {active && <span className="w-1 h-1 rounded-full bg-current" aria-hidden="true" />}
                 </button>
 
                 {/* Profile menu — anchored directly above the Profile button */}

@@ -39,6 +39,7 @@
 import React from 'react'
 import { ChevronLeft, X } from 'lucide-react'
 import { cn } from '@/lib/utils'   // shadcn/ui utility — adjust path if needed
+import { Button } from '@/components/ui/button'
 
 interface PageHeaderProps {
   /** Primary heading — truncates if too long, never wraps */
@@ -106,21 +107,20 @@ export function PageHeader({
     >
       {/* ── Left slot: back chevron ── */}
       {hasLeftSlot && (
-        <button
+        <Button
+          variant="ghost"
+          size="icon"
           onClick={onBack}
           aria-label="Go back"
           className={cn(
             // 44x44px minimum touch target (DESIGN_SYSTEM.md rule)
             'flex-shrink-0 -ml-1',
-            'w-11 h-11 flex items-center justify-center',
-            'rounded-full',
+            'w-11 h-11 rounded-full',
             'text-foreground',
-            'hover:bg-accent active:bg-accent',
-            'transition-colors duration-150',
           )}
         >
           <ChevronLeft className="w-6 h-6" strokeWidth={2} />
-        </button>
+        </Button>
       )}
 
       {/* ── Centre: title + subtitle ── */}
@@ -151,19 +151,18 @@ export function PageHeader({
         <div className="flex-shrink-0">
           {onClose ? (
             /* Close button — used in modals/sheets */
-            <button
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={onClose}
               aria-label="Close"
               className={cn(
-                'w-11 h-11 flex items-center justify-center',
-                'rounded-full',
+                'w-11 h-11 rounded-full',
                 'text-muted-foreground',
-                'hover:bg-accent active:bg-accent',
-                'transition-colors duration-150',
               )}
             >
               <X className="w-5 h-5" strokeWidth={2} />
-            </button>
+            </Button>
           ) : (
             /* Arbitrary action — Button, icon button, etc. */
             action

@@ -49,6 +49,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import { MoreVertical, ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -107,6 +108,8 @@ export interface EntityCardProps {
 // Badge styles
 // ---------------------------------------------------------------------------
 
+// Status palettes (upcoming/active/error hues) are intentional — there are
+// no success/info design tokens; archived/draft use design tokens.
 const badgeStyles: Record<BadgeVariant, string> = {
   upcoming: 'bg-blue-50   text-blue-700',
   active:   'bg-green-50  text-green-700',
@@ -274,7 +277,8 @@ function ActionMenuItem({
   onClose: () => void
 }) {
   return (
-    <button
+    <Button
+      variant="ghost"
       role="menuitem"
       disabled={action.disabled}
       onClick={() => {
@@ -284,9 +288,9 @@ function ActionMenuItem({
         }
       }}
       className={cn(
-        'w-full flex items-center gap-3',
+        'w-full h-auto rounded-none justify-start gap-3',
         'px-4 py-3',
-        'text-sm text-left',
+        'text-sm text-left font-normal',
         'transition-colors duration-100',
         action.destructive
           ? 'text-danger hover:bg-danger-bg active:bg-danger-bg'
@@ -299,7 +303,7 @@ function ActionMenuItem({
         {action.icon}
       </span>
       <span>{action.label}</span>
-    </button>
+    </Button>
   )
 }
 

@@ -53,7 +53,7 @@ export function AppShell({
           'relative',
           'w-full max-w-[430px]',   // hard mobile cap — never exceeded
           'h-screen',                // always full viewport height for bottom nav positioning
-          'bg-white',
+          'bg-background',
           'pt-2',
           'flex flex-col',           // column layout for header/content/footer
           // Shadow gives the "phone on a desk" feel on larger screens

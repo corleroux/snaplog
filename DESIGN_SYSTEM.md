@@ -16,7 +16,8 @@ tap targets ≥44px. No accounts, billing, ordering, or extra categories in any 
 ```css
 @theme {
   --color-ink: #16150F; --color-paper: #FAFAF7;
-  --color-accent: #E34A0B; --color-kraft: #E8D5AC;
+  --color-accent: #F7E8DE; /* Stall hover tint — solid Stall is the primary, below */
+  --color-kraft: #E8D5AC;
   --color-mist: #E0E5E8; --color-slate: #6B675C;
   --color-danger: #B42318; --color-danger-bg: #FDE8E8;
   --color-field-warn: #FFF7ED;
