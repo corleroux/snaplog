@@ -410,7 +410,9 @@ export function EntityCard({
       {/* ── Overflow action trigger ── */}
       {hasActions && (
         <div className="flex-shrink-0 pr-1">
-          <button
+          <Button
+            variant="ghost"
+            size="icon"
             ref={triggerRef}
             aria-label={`Actions for ${title}`}
             aria-haspopup="menu"
@@ -421,17 +423,13 @@ export function EntityCard({
             }}
             className={cn(
               // 44x44px touch target (DESIGN_SYSTEM.md)
-              'w-11 h-11',
-              'flex items-center justify-center',
-              'rounded-full',
+              'w-11 h-11 rounded-full',
               'text-muted-foreground',
-              'hover:bg-muted active:bg-accent',
               'hover:text-foreground',
-              'transition-colors duration-150',
             )}
           >
             <MoreVertical className="w-5 h-5" />
-          </button>
+          </Button>
 
           {/* Action menu — rendered via Portal to escape overflow:hidden */}
           {menuOpen && (

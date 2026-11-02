@@ -153,19 +153,19 @@ export function EmptyState({
       {/* Fabric-themed illustration */}
       {illustration || (
         <div className={cn(
-          'rounded-2xl bg-gradient-to-br from-orange-100 to-orange-50 dark:from-orange-950/30 dark:to-orange-900/20 flex items-center justify-center mb-6 relative overflow-hidden',
+          'rounded-2xl bg-primary/10 flex items-center justify-center mb-6 relative overflow-hidden',
           containerSizeClasses[size]
         )}>
           {/* Subtle fabric pattern overlay */}
           <div className="absolute inset-0 opacity-[0.03]">
             <svg className="w-full h-full" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
               <pattern id="empty-fabric-pattern" patternUnits="userSpaceOnUse" width="8" height="8">
-                <circle cx="4" cy="4" r="1" fill="currentColor" className="text-orange-500" />
+                <circle cx="4" cy="4" r="1" fill="currentColor" className="text-primary" />
               </pattern>
               <rect width="100" height="100" fill="url(#empty-fabric-pattern)" />
             </svg>
           </div>
-          {icon || <Package className={cn('text-orange-500 relative z-10', sizeClasses[size])} />}
+          {icon || <Package className={cn('text-primary relative z-10', sizeClasses[size])} />}
         </div>
       )}
 
@@ -214,7 +214,7 @@ export function VendorEmptyState(props: {
 }) {
   return (
     <EmptyState
-      icon={<Building2 className="h-12 w-12 text-orange-500 relative z-10" />}
+      icon={<Building2 className="h-12 w-12 text-primary relative z-10" />}
       title="No vendors yet"
       description="Vendors will appear here after capture. Start by adding your first vendor."
       action={props.onAddVendor ? {
@@ -239,7 +239,7 @@ export function StyleEmptyState(props: {
   if (!hasAnyStyles) {
     return (
       <EmptyState
-        icon={<Package className="h-12 w-12 text-orange-500 relative z-10" />}
+        icon={<Package className="h-12 w-12 text-primary relative z-10" />}
         title="No styles yet"
         description="Styles will appear here after capture. Start by adding your first style."
         action={onAddStyle ? {
@@ -255,7 +255,7 @@ export function StyleEmptyState(props: {
   // No styles for specific vendor (but styles exist elsewhere)
   return (
     <EmptyState
-      icon={<Package className="h-12 w-12 text-orange-500 relative z-10" />}
+      icon={<Package className="h-12 w-12 text-primary relative z-10" />}
       title="No styles for this vendor"
       description="This vendor doesn't have any styles yet. Capture your first style to get started."
       action={onAddStyle && vendorId ? {
@@ -274,7 +274,7 @@ export function SearchEmptyState(props: {
 }) {
   return (
     <EmptyState
-      icon={<Search className="h-12 w-12 text-orange-500 relative z-10" />}
+      icon={<Search className="h-12 w-12 text-primary relative z-10" />}
       title="No results found"
       description={`No items match "${props.searchQuery}". Try adjusting your search terms.`}
       className={props.className}

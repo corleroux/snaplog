@@ -24,6 +24,7 @@
 
 import { Link } from 'react-router-dom'
 import { cn } from '@/lib/utils/cn'
+import { Button } from '@/components/ui/button'
 import type { StyleRecord } from '@/types/style'
 
 export interface CompactStyleCardProps {
@@ -257,16 +258,17 @@ export function RelatedStylesSection({
           Capture styles to link them to this vendor
         </p>
         {showEmptyCTA && onEmptyCTA && (
-          <button
-            type="button"
+          <Button
+            variant="accent"
+            radius="pill"
             onClick={onEmptyCTA}
-            className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-medium rounded-full transition-colors duration-200 shadow-md"
+            className="mt-4 shadow-md"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
             {emptyCTAText}
-          </button>
+          </Button>
         )}
       </div>
     )

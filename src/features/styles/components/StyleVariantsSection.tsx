@@ -75,7 +75,7 @@ export function StyleVariantsSection({
                 variant.status === 'discontinued' && "opacity-60"
               )}
             >
-              <div className="flex items-center justify-between p-3 rounded-lg border border-border hover:bg-accent/5 hover:border-orange-500/30 transition-all">
+              <div className="flex items-center justify-between p-3 rounded-lg border border-border hover:bg-accent/5 hover:border-primary/30 transition-all">
                 <div className="flex items-center gap-3 flex-1 min-w-0">
                   {variant.color_code && (
                     <div
