@@ -115,7 +115,7 @@ export function PageHeader({
             'w-11 h-11 flex items-center justify-center',
             'rounded-full',
             'text-foreground',
-            'hover:bg-muted active:bg-muted',
+            'hover:bg-accent active:bg-accent',
             'transition-colors duration-150',
           )}
         >
@@ -158,7 +158,7 @@ export function PageHeader({
                 'w-11 h-11 flex items-center justify-center',
                 'rounded-full',
                 'text-muted-foreground',
-                'hover:bg-muted active:bg-muted',
+                'hover:bg-accent active:bg-accent',
                 'transition-colors duration-150',
               )}
             >

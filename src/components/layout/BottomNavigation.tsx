@@ -236,7 +236,7 @@ export function BottomNavigation({
               }}
               className="transition-transform duration-150 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
             >
-              <Plus className="h-6 w-6 text-primary-foreground" strokeWidth={2.5} />
+              <Plus className="h-6 w-6 text-primary-foreground" strokeWidth={2} />
             </button>
           </li>
 
@@ -351,9 +351,9 @@ export function BottomNavigation({
             position: 'absolute',
             left: '50%',
             transform: 'translateX(-50%)',
-            bottom: 6,
-            width: 24,
-            height: 24,
+            bottom: 2,
+            width: 44,
+            height: 44,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -361,9 +361,9 @@ export function BottomNavigation({
             border: 'none',
             background: 'transparent',
           }}
-          className="transition-colors duration-150 text-muted-foreground hover:text-foreground active:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+          className="transition-colors duration-150 text-paper/70 hover:text-paper active:text-paper focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
         >
-          <MessageSquare className="h-5 w-5" strokeWidth={1.5} />
+          <MessageSquare className="h-5 w-5" strokeWidth={2} />
         </button>
       </nav>
     </div>
