@@ -107,7 +107,7 @@ export function VideoCaptureScreen({ eventId, vendorId, className }: VideoCaptur
           {phase === 'done' && job && job.items_found > 0 && (
             <div className="space-y-3 py-2">
               <p className="flex items-center gap-2 text-sm font-medium">
-                <CheckCircle2 className="h-5 w-5 text-emerald-500" />
+                <CheckCircle2 className="h-5 w-5 text-primary" />
                 Found {job.items_found} item{job.items_found === 1 ? '' : 's'}
               </p>
               <p className="text-xs text-muted-foreground">

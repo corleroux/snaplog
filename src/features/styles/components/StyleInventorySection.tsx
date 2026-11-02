@@ -98,7 +98,7 @@ function StockStatusBadge({ status }: { status: string }) {
     sample_only: 'bg-muted text-muted-foreground',
     out_of_stock: 'bg-danger-bg text-danger',
   }
-  const className = styles[status] || 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400'
+  const className = styles[status] || 'bg-muted text-muted-foreground'
   const label = status.replace('_', ' ')
   return (
     <span className={cn('text-xs px-2 py-1 rounded', className)}>

@@ -136,7 +136,7 @@ export function SwipeActions({
           <div
             className={`
               flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-200
-              ${onArchive ? (currentAction === 'archive' ? 'bg-primary text-primary-foreground' : 'bg-field-warn text-danger') : (currentAction === 'delete' ? 'bg-destructive text-destructive-foreground' : 'bg-danger-bg text-danger')}
+              ${onArchive ? (currentAction === 'archive' ? 'bg-primary text-primary-foreground' : 'bg-primary/10 text-primary') : (currentAction === 'delete' ? 'bg-destructive text-destructive-foreground' : 'bg-danger-bg text-danger')}
             `}
             style={{
               opacity: Math.max(0, -translateX / snapThreshold),

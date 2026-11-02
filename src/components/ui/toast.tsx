@@ -11,7 +11,7 @@ const toastVariants = cva(
         success: 'bg-muted border-border',
         error: 'bg-danger-bg border-danger',
         warning: 'bg-field-warn border-danger',
-        info: 'bg-muted border-border',
+        info: 'bg-primary/10 border-border',
         default: 'bg-background border-border',
       },
     },

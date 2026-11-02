@@ -151,12 +151,12 @@ export function SyncProgressIndicator({
         {/* Status Summary */}
         <div className="flex items-center gap-4 text-sm">
           <div className="flex items-center gap-1.5">
-            <CheckCircle2 className="w-4 h-4 text-green-600" />
+            <CheckCircle2 className="w-4 h-4 text-primary" />
             <span>{status.totalSynced} synced</span>
           </div>
           {status.totalQueued > 0 && (
             <div className="flex items-center gap-1.5">
-              <AlertCircle className="w-4 h-4 text-danger" />
+              <AlertCircle className="w-4 h-4 text-primary" />
               <span>{status.totalQueued} pending</span>
             </div>
           )}
