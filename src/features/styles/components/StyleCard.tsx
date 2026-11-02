@@ -156,7 +156,7 @@ export function StyleCard({
         'group relative w-full overflow-hidden rounded-2xl shadow-sm transition-all duration-300 bg-card border border-border/50',
         // Hover/press affordance only when the card is interactive —
         // catalogue rows without onClick render static (no dead affordance).
-        onClick && 'cursor-pointer tap-target hover:shadow-md hover:shadow-orange-500/10 active:scale-[0.98]',
+        onClick && 'cursor-pointer tap-target hover:shadow-md hover:shadow-primary/10 active:scale-[0.98]',
         className
       )}
     >
@@ -173,7 +173,7 @@ export function StyleCard({
         ) : (
           <div className="absolute inset-0 flex items-center justify-center">
             <svg
-              className="w-16 h-16 text-orange-500/30"
+              className="w-16 h-16 text-primary/30"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"

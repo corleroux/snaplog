@@ -92,7 +92,7 @@ export function StyleReviewScreen({
           background="muted"
         >
           <div className="flex items-center gap-2 flex-wrap">
-            <Badge variant="accent" className="gap-1 bg-orange-500 text-white text-xs">
+            <Badge variant="accent" className="gap-1 bg-primary text-primary-foreground text-xs">
               <Sparkles className="h-3 w-3" />
               AI Extracted
             </Badge>
@@ -117,10 +117,10 @@ export function StyleReviewScreen({
         <SectionContainer
           title="Duplicate Style Detected"
           background="muted"
-          icon={<AlertTriangle className="h-5 w-5 text-amber-500" />}
+          icon={<AlertTriangle className="h-5 w-5 text-danger" />}
         >
           <div className="space-y-3">
-            <p className="text-sm text-amber-700 dark:text-amber-400">
+            <p className="text-sm text-danger">
               A style with item code <strong>{duplicateInfo.itemCode}</strong> already exists for this vendor 
               {duplicateInfo.existingStyle?.name && ` (${duplicateInfo.existingStyle.name})`}.
             </p>
@@ -130,7 +130,7 @@ export function StyleReviewScreen({
                 size="sm" 
                 onClick={onConfirmDuplicate}
                 disabled={isSaving}
-                className="bg-amber-500/10 border-amber-500/30 hover:bg-amber-500/20 text-amber-700 dark:text-amber-400"
+                className="bg-field-warn border-danger hover:bg-danger-bg text-danger"
               >
                 Continue Anyway
               </Button>
@@ -145,10 +145,10 @@ export function StyleReviewScreen({
             {extractionResult.warnings.map((warning, index) => (
               <div
                 key={index}
-                className="flex items-start gap-2 p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg"
+                className="flex items-start gap-2 p-3 bg-field-warn border border-danger rounded-lg"
               >
-                <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-500 flex-shrink-0 mt-0.5" />
-                <p className="text-sm text-amber-700 dark:text-amber-400">{warning}</p>
+                <AlertTriangle className="h-4 w-4 text-danger flex-shrink-0 mt-0.5" />
+                <p className="text-sm text-danger">{warning}</p>
               </div>
             ))}
           </div>

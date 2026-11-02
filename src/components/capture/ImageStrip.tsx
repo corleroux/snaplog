@@ -132,7 +132,7 @@ export function ImageStrip({
             <Button
               variant="outline"
               onClick={onAddMore}
-              className="w-full aspect-square rounded-xl flex flex-col items-center justify-center gap-1 border-dashed border-2 hover:border-orange-500/50 hover:bg-orange-50/50 dark:hover:bg-orange-950/20 transition-all"
+              className="w-full aspect-square rounded-xl flex flex-col items-center justify-center gap-1 border-dashed border-2 hover:border-primary/50 hover:bg-primary/5 transition-all"
               type="button"
               aria-label="Add more images"
             >
@@ -157,7 +157,7 @@ export function ImageStrip({
             {infoImageId && (
               <>
                 <span className="text-muted-foreground">•</span>
-                <span className="text-orange-500 font-medium flex items-center gap-1">
+                <span className="text-primary font-medium flex items-center gap-1">
                   <Sparkles className="h-3.5 w-3.5" />
                   1 Info image
                 </span>
