@@ -61,3 +61,11 @@ Flow: architect plans → builder implements, delegating model-layer work to `in
 - Branch from `staging` on `task/*` branches and integrate by PR. Never push directly to `main`.
 - One plan in `docs/plans/` per task, one task per branch. Name branches after the requirement ID, for example `task/fr-sch-03-garment-schema`.
 - Done means: the PRD requirement is met, checks pass, the demo flow still works, any new environment variable is added to the relevant `.example` file, and the submission repo is synced via `build-submission.sh` + push.
+
+### Shared-doc discipline (prevents silent overwrites)
+
+- `docs/plans/**` is architect-integrated. The builder appends status ONLY under dated "Status update" sections, or reports in session chat — never rewrites, deletes, or "resolves" another author's sections. The architect likewise never edits builder status sections; it appends its own.
+- Sync before every commit on a shared branch: fetch and rebase onto the latest `staging` (or pull with rebase). Never `push --force` to `staging` or any `task/*` branch under review.
+- Never `git checkout -- <file>` a shared doc to clear a conflict. If a merge touches `docs/plans/**` or `AGENTS.md`, stop and escalate to the architect — do not resolve unilaterally.
+- If you work in a worktree, sync it at session start and state the worktree path + branch in every report, so divergent copies are diagnosable.
+- Commit task branches early and often; small, recent commits shrink the overwrite window.
