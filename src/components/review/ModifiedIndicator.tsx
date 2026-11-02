@@ -27,10 +27,10 @@ export function ModifiedIndicator({ onRevert, isDisabled }: ModifiedIndicatorPro
       className={cn(
         'inline-flex items-center gap-1 text-xs font-medium',
         'px-2 py-0.5 rounded-full',
-        'bg-blue-50 dark:bg-blue-950/30',
-        'text-blue-600 dark:text-blue-400',
-        'border border-blue-200 dark:border-blue-900/50',
-        'hover:bg-blue-100 dark:hover:bg-blue-950/50',
+        'bg-muted',
+        'text-muted-foreground',
+        'border border-border',
+        'hover:bg-accent',
         'transition-colors',
         'disabled:opacity-50 disabled:cursor-not-allowed'
       )}

@@ -11,9 +11,9 @@ const badgeVariants = cva(
         secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
         destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/80',
         outline: 'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
-        success: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
-        warning: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
-        info: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
+        success: 'bg-muted text-muted-foreground',
+        warning: 'bg-field-warn text-danger border border-danger',
+        info: 'bg-primary/10 text-primary',
         // Stall accent with Ink text (DESIGN_SYSTEM.md: never white on Stall)
         accent: 'bg-primary text-primary-foreground hover:bg-primary/90',
         // Soft Stall tint for emphasis without a filled button surface

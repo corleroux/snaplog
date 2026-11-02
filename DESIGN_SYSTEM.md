@@ -46,6 +46,9 @@ Solid inks only — no gradients. `.dark` is untouched; the demo is light-only.
 
 - Destructive `Alert` → `bg-danger-bg` / `border-danger`.
 - Low-confidence or missing field → `border-danger` + `bg-field-warn` (`#FFF7ED` everywhere).
+- Categorical status/confidence palettes (confidence tiers, variant/stock status, kanban
+  states, EntityCard status hues) may use green/amber/red/blue hues as *status coding* —
+  they are not brand surfaces and are exempt from the field-warning rule above.
 - Every screen carries loading, empty, error, and low-confidence states. Video has an
   additional unconfigured state (disabled action + reason line) — style only what exists;
   never invent Jobs actions (see `docs/plans/DESIGN-02C2c-*.md`).

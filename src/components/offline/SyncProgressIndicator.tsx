@@ -223,10 +223,10 @@ export function SyncProgressIndicator({
                 key={item.id}
                 className={cn(
                   'flex items-center justify-between py-1 px-2 rounded',
-                  item.status === 'synced' && 'bg-green-50 text-green-700',
-                  item.status === 'failed' && 'bg-red-50 text-red-700',
+                  item.status === 'synced' && 'bg-muted text-foreground',
+                  item.status === 'failed' && 'bg-danger-bg text-danger',
                   item.status === 'queued' && 'bg-field-warn text-danger',
-                  item.status === 'uploading' && 'bg-blue-50 text-blue-700'
+                  item.status === 'uploading' && 'bg-primary/10 text-primary'
                 )}
               >
                 <span className="truncate flex-1">{item.type}</span>
@@ -274,7 +274,7 @@ export function SyncStatusBadge({ className }: { className?: string }) {
     <div
       className={cn(
         'flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium',
-        'bg-blue-600 text-white',
+        'bg-primary text-primary-foreground',
         syncing && 'animate-pulse',
         className
       )}
