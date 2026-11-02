@@ -43,12 +43,16 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 from sam_parser import group_by_track
 
-MODAL_DIR = Path("/root/modal") if Path("/root/modal/sam_segment.js").exists() else Path(__file__).parent
+try:
+    _HAS_MODAL_MOUNT = Path("/root/modal/sam_segment.js").exists()
+except OSError:
+    _HAS_MODAL_MOUNT = False
+MODAL_DIR = Path("/root/modal") if _HAS_MODAL_MOUNT else Path(__file__).parent
 
 image = (
     modal.Image.debian_slim(python_version="3.12")
     .apt_install("ffmpeg", "nodejs", "npm")
-    .pip_install("supabase", "opencv-python-headless", "numpy", "requests")
+    .pip_install("supabase", "opencv-python-headless", "numpy", "requests", "fastapi[standard]")
     .run_commands("npm install -g openai @meta-sam/parser")
     # Ship the Modal sources (pipeline, Node helper, parser) into the container.
     .add_local_dir("modal", remote_path="/root/modal")
@@ -208,7 +212,7 @@ def run_pipeline(payload: dict) -> dict:
 
 
 @app.function(image=image, secrets=[modal.Secret.from_name("snaplog-video")])
-@modal.web_endpoint(method="POST")
+@modal.fastapi_endpoint(method="POST")
 def process_video(payload: dict) -> dict:
     """Lightweight webhook: validates, spawns the worker, returns 202-style
     immediately. The edge function awaits only this fast dispatch."""
