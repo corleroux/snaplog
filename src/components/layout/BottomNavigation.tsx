@@ -209,7 +209,7 @@ export function BottomNavigation({
                 >
                   <Icon className="h-6 w-6" strokeWidth={2} />
                   <span className="text-[11px] font-medium leading-none">{item.label}</span>
-                  {active && <span className="w-1 h-1 rounded-full bg-current" aria-hidden="true" />}
+                  {active && <span className="w-1 h-1 rounded-full bg-current" />}
                 </button>
               </li>
             )
@@ -263,7 +263,7 @@ export function BottomNavigation({
                 >
                   <Icon className="h-6 w-6" strokeWidth={2} />
                   <span className="text-[11px] font-medium leading-none">{item.label}</span>
-                  {active && <span className="w-1 h-1 rounded-full bg-current" aria-hidden="true" />}
+                  {active && <span className="w-1 h-1 rounded-full bg-current" />}
                 </button>
 
                 {/* Profile menu — anchored directly above the Profile button */}
