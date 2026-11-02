@@ -8,7 +8,8 @@
  * - Calls onAddStyle from CTA
  * - Shows style count
  * - Renders vendor name in header
- * - Catalogue (`ci-`) rows render REVIEW / AI Extracted badges with no
+ * - Catalogue (`ci-`) rows render REVIEW / `{category} · AI` badges
+ *   (falling back to "AI Extracted" when category is missing) with no
  *   shortlist heart and no detail navigation; fabric rows unchanged
  */
 
@@ -178,11 +179,12 @@ describe('StyleListScreen', () => {
     expect(screen.queryByText('Styles')).not.toBeInTheDocument()
   })
 
-  it('[FR-CAT-01] catalogue rows render an AI Extracted badge with no shortlist heart', () => {
+  it('[FR-CAT-01] catalogue rows without a category fall back to an AI Extracted badge with no shortlist heart', () => {
     const catalogueStyle = createStyleRecord({
       id: 'ci-item-1',
       styleName: 'Denim Jacket',
       composition: 'Jacket · Relaxed · Size M',
+      category: undefined,
     })
 
     renderWithRouter(
@@ -198,10 +200,55 @@ describe('StyleListScreen', () => {
     expect(screen.queryByLabelText(/shortlist/i)).not.toBeInTheDocument()
   })
 
+  it('[FR-CAT-01] catalogue rows show a "{category} · AI" badge (Garment)', () => {
+    const catalogueStyle = createStyleRecord({
+      id: 'ci-item-1b',
+      styleName: 'Denim Jacket',
+      composition: 'Jacket · Relaxed · Size M',
+      category: 'Garment',
+    })
+
+    renderWithRouter(
+      <StyleListScreen
+        styles={[catalogueStyle]}
+        onStyleClick={mockOnStyleClick}
+        onToggleShortlist={vi.fn()}
+      />
+    )
+
+    expect(screen.getByText('Denim Jacket')).toBeInTheDocument()
+    expect(screen.getByText('Garment · AI')).toBeInTheDocument()
+    expect(screen.queryByText('AI Extracted')).not.toBeInTheDocument()
+    expect(screen.queryByLabelText(/shortlist/i)).not.toBeInTheDocument()
+  })
+
+  it('[FR-CAT-01] catalogue rows show a "{category} · AI" badge (Video)', () => {
+    const catalogueStyle = createStyleRecord({
+      id: 'ci-item-1c',
+      styleName: 'Booth Walkthrough',
+      composition: 'Stall tour · Aisle 4',
+      category: 'Video',
+    })
+
+    renderWithRouter(
+      <StyleListScreen
+        styles={[catalogueStyle]}
+        onStyleClick={mockOnStyleClick}
+        onToggleShortlist={vi.fn()}
+      />
+    )
+
+    expect(screen.getByText('Booth Walkthrough')).toBeInTheDocument()
+    expect(screen.getByText('Video · AI')).toBeInTheDocument()
+    expect(screen.queryByText('AI Extracted')).not.toBeInTheDocument()
+    expect(screen.queryByLabelText(/shortlist/i)).not.toBeInTheDocument()
+  })
+
   it('[FR-CAT-01] catalogue rows in needsReviewIds render a Review badge with no heart', () => {
     const catalogueStyle = createStyleRecord({
       id: 'ci-item-2',
       styleName: 'Linen Shirt',
+      category: 'Garment',
     })
 
     renderWithRouter(
@@ -214,6 +261,8 @@ describe('StyleListScreen', () => {
     )
 
     expect(screen.getByText('Review')).toBeInTheDocument()
+    // Review takes precedence over the category badge, even when set.
+    expect(screen.queryByText('Garment · AI')).not.toBeInTheDocument()
     expect(screen.queryByText('AI Extracted')).not.toBeInTheDocument()
     expect(screen.queryByLabelText(/shortlist/i)).not.toBeInTheDocument()
   })
@@ -250,6 +299,7 @@ describe('StyleListScreen', () => {
 
     // No catalogue badges on fabric rows.
     expect(screen.queryByText('AI Extracted')).not.toBeInTheDocument()
+    expect(screen.queryByText(/· AI/)).not.toBeInTheDocument()
     expect(screen.queryByText('Review')).not.toBeInTheDocument()
 
     // Heart present and clickable.

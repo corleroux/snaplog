@@ -300,14 +300,14 @@ export function StyleListScreen({
                   shortlistable={!isCatalogueRow}
                   badge={isCatalogueRow ? (
                     needsReview ? (
-                      <Badge variant="outline" className="gap-1 text-[10px] text-amber-700 dark:text-amber-400 border-amber-500/40 flex-shrink-0">
-                        <AlertTriangle className="h-3 w-3" />
+                      <Badge variant="outline" className="gap-1 text-xs text-amber-700 dark:text-amber-400 border-amber-500/40 flex-shrink-0 whitespace-nowrap">
+                        <AlertTriangle className="h-3.5 w-3.5" />
                         Review
                       </Badge>
                     ) : (
-                      <Badge variant="outline" className="gap-1 text-[10px] flex-shrink-0">
-                        <Sparkles className="h-3 w-3" />
-                        AI Extracted
+                      <Badge variant="outline" className="gap-1 text-xs flex-shrink-0 whitespace-nowrap">
+                        <Sparkles className="h-3.5 w-3.5" />
+                        {style.category ? `${style.category} · AI` : 'AI Extracted'}
                       </Badge>
                     )
                   ) : undefined}
