@@ -185,8 +185,8 @@ export interface VendorRecord {
   /** Optimistic concurrency version counter */
   version: number
 
-  /** Number of styles captured for this vendor */
-  styleCount?: number
+  /** Total items captured for this vendor (fabric styles + catalogue items) */
+  itemCount?: number
 
   /** Manual sort order for drag-and-drop reordering (lower = earlier) */
   sortOrder?: number

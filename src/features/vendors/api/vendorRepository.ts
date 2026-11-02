@@ -67,8 +67,8 @@ export class SupabaseVendorRepository implements VendorRepository {
 
     const vendorIds = vendors?.map(v => v.id) || []
 
-    // Fetch images and style counts in parallel
-    const [{ data: images }, { data: styleRows }] = await Promise.all([
+    // Fetch images and item counts in parallel
+    const [{ data: images }, { data: styleRows }, { data: catalogueRows }] = await Promise.all([
       supabase
         .from('vendor_images')
         .select('*')
@@ -80,6 +80,14 @@ export class SupabaseVendorRepository implements VendorRepository {
         .select('vendor_id')
         .in('vendor_id', vendorIds)
         .is('deleted_at', null),
+      // Garment and video items land in catalogue_items once committed
+      // (commit-reviewed-catalogue-item); count active items only, matching
+      // the catalogue display query in useCatalogueItemsQuery.
+      supabase
+        .from('catalogue_items')
+        .select('vendor_id')
+        .in('vendor_id', vendorIds)
+        .eq('status', 'active'),
     ])
 
     // Group images by vendor
@@ -89,14 +97,18 @@ export class SupabaseVendorRepository implements VendorRepository {
       imagesByVendor.set(img.vendor_id, [...current, img])
     })
 
-    // Count styles per vendor
-    const styleCountByVendor = new Map<string, number>()
-    styleRows?.forEach(row => {
-      styleCountByVendor.set(row.vendor_id, (styleCountByVendor.get(row.vendor_id) ?? 0) + 1)
-    })
+    // Count items per vendor: fabric styles plus catalogue items
+    // (garments and video-derived items), so non-fabric vendors
+    // no longer report zero.
+    const itemCountByVendor = new Map<string, number>()
+    const addItemCount = (vendorId: string) => {
+      itemCountByVendor.set(vendorId, (itemCountByVendor.get(vendorId) ?? 0) + 1)
+    }
+    styleRows?.forEach(row => addItemCount(row.vendor_id))
+    catalogueRows?.forEach(row => addItemCount(row.vendor_id))
 
     return vendors?.map(v =>
-      vendorRowToVendorRecord(v, imagesByVendor.get(v.id), styleCountByVendor.get(v.id) ?? 0)
+      vendorRowToVendorRecord(v, imagesByVendor.get(v.id), itemCountByVendor.get(v.id) ?? 0)
     ) || []
   }
 

@@ -329,7 +329,7 @@ export function VendorListScreen({
                         title={vendor.companyName}
                         subtitle={getVendorSubtitle(vendor)}
                         badge={vendor.status === 'archived' ? { label: 'Archived', variant: 'archived' } : undefined}
-                        countChip={vendor.styleCount !== undefined ? `${vendor.styleCount} ${vendor.styleCount === 1 ? 'style' : 'styles'}` : undefined}
+                        countChip={vendor.itemCount !== undefined ? `${vendor.itemCount} ${vendor.itemCount === 1 ? 'item' : 'items'}` : undefined}
                         leadingIcon={<Building2 className="w-5 h-5" />}
                         onPress={() => onVendorClick?.(vendor)}
                         actions={[
@@ -454,7 +454,7 @@ function SortableVendorItem({ vendor, onEditVendor, onVendorClick }: SortableVen
             title={vendor.companyName}
             subtitle={getVendorSubtitle(vendor)}
             badge={vendor.status === 'archived' ? { label: 'Archived', variant: 'archived' } : undefined}
-            countChip={vendor.styleCount !== undefined ? `${vendor.styleCount} ${vendor.styleCount === 1 ? 'style' : 'styles'}` : undefined}
+            countChip={vendor.itemCount !== undefined ? `${vendor.itemCount} ${vendor.itemCount === 1 ? 'item' : 'items'}` : undefined}
             leadingIcon={<Building2 className="w-5 h-5" />}
             onPress={() => onVendorClick?.(vendor)}
             actions={[
