@@ -30,6 +30,11 @@ export interface StyleCardProps {
   className?: string
   /** Callback to toggle shortlist */
   onToggleShortlist?: (styleId: string, value: boolean) => void
+  /** Whether the shortlist heart is shown. Defaults to true; catalogue
+   * (garment/video) rows pass false since shortlist is a fabric-only path. */
+  shortlistable?: boolean
+  /** Optional badge (e.g. REVIEW / AI Extracted) rendered beside the timestamp. */
+  badge?: React.ReactNode
 }
 
 /**
@@ -98,6 +103,8 @@ export function StyleCard({
   onClick,
   className,
   onToggleShortlist,
+  shortlistable = true,
+  badge,
 }: StyleCardProps) {
   const handleClick = useCallback(() => {
     onClick?.(style)
@@ -179,7 +186,8 @@ export function StyleCard({
           ) : <span />}
           <div className="flex items-center gap-2">
             <span className="text-[10px] text-muted-foreground">{timeAgo}</span>
-            {onToggleShortlist && (
+            {badge}
+            {shortlistable && onToggleShortlist && (
               <button
                 type="button"
                 onClick={handleShortlistToggle}

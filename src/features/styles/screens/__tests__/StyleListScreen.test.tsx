@@ -1,13 +1,15 @@
 /**
- * StyleListScreen tests (part of TEST-01)
+ * StyleListScreen tests (part of TEST-01; FR-CAT-01 unified rows)
  *
  * Tests that:
  * - Renders style cards when styles provided
- * - Renders empty state when no styles
- * - Shows "Capture First Style" CTA in empty state
+ * - Renders empty state when no styles (FR-CAT-01 category-neutral copy)
+ * - Shows "Add Your First Item" CTA in empty state
  * - Calls onAddStyle from CTA
  * - Shows style count
  * - Renders vendor name in header
+ * - Catalogue (`ci-`) rows render REVIEW / AI Extracted badges with no
+ *   shortlist heart and no detail navigation; fabric rows unchanged
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
@@ -78,8 +80,9 @@ describe('StyleListScreen', () => {
       />
     )
 
-    expect(screen.getByText('No styles yet')).toBeInTheDocument()
-    expect(screen.getByText('Add Your First Style')).toBeInTheDocument()
+    expect(screen.getByText('No items yet')).toBeInTheDocument()
+    expect(screen.getByText('Capture items from this vendor to build your catalogue')).toBeInTheDocument()
+    expect(screen.getByText('Add Your First Item')).toBeInTheDocument()
   })
 
   it('calls onAddStyle when empty state CTA clicked', () => {
@@ -90,7 +93,7 @@ describe('StyleListScreen', () => {
       />
     )
 
-    fireEvent.click(screen.getByText('Add Your First Style'))
+    fireEvent.click(screen.getByText('Add Your First Item'))
     expect(mockOnAddStyle).toHaveBeenCalledOnce()
   })
 
@@ -173,5 +176,90 @@ describe('StyleListScreen', () => {
 
     expect(screen.getByTestId('custom-header')).toBeInTheDocument()
     expect(screen.queryByText('Styles')).not.toBeInTheDocument()
+  })
+
+  it('[FR-CAT-01] catalogue rows render an AI Extracted badge with no shortlist heart', () => {
+    const catalogueStyle = createStyleRecord({
+      id: 'ci-item-1',
+      styleName: 'Denim Jacket',
+      composition: 'Jacket · Relaxed · Size M',
+    })
+
+    renderWithRouter(
+      <StyleListScreen
+        styles={[catalogueStyle]}
+        onStyleClick={mockOnStyleClick}
+        onToggleShortlist={vi.fn()}
+      />
+    )
+
+    expect(screen.getByText('Denim Jacket')).toBeInTheDocument()
+    expect(screen.getByText('AI Extracted')).toBeInTheDocument()
+    expect(screen.queryByLabelText(/shortlist/i)).not.toBeInTheDocument()
+  })
+
+  it('[FR-CAT-01] catalogue rows in needsReviewIds render a Review badge with no heart', () => {
+    const catalogueStyle = createStyleRecord({
+      id: 'ci-item-2',
+      styleName: 'Linen Shirt',
+    })
+
+    renderWithRouter(
+      <StyleListScreen
+        styles={[catalogueStyle]}
+        needsReviewIds={new Set(['ci-item-2'])}
+        onStyleClick={mockOnStyleClick}
+        onToggleShortlist={vi.fn()}
+      />
+    )
+
+    expect(screen.getByText('Review')).toBeInTheDocument()
+    expect(screen.queryByText('AI Extracted')).not.toBeInTheDocument()
+    expect(screen.queryByLabelText(/shortlist/i)).not.toBeInTheDocument()
+  })
+
+  it('[FR-CAT-01] catalogue rows do not trigger detail navigation on click', () => {
+    const catalogueStyle = createStyleRecord({
+      id: 'ci-item-3',
+      styleName: 'Wool Coat',
+    })
+
+    renderWithRouter(
+      <StyleListScreen
+        styles={[catalogueStyle]}
+        onStyleClick={mockOnStyleClick}
+        onToggleShortlist={vi.fn()}
+      />
+    )
+
+    fireEvent.click(screen.getByText('Wool Coat'))
+    expect(mockOnStyleClick).not.toHaveBeenCalled()
+  })
+
+  it('[FR-CAT-01] fabric rows keep the shortlist heart and click behaviour', () => {
+    const fabricStyle = createStyleRecord({ styleName: 'Cotton Twill' })
+    const mockOnToggleShortlist = vi.fn()
+
+    renderWithRouter(
+      <StyleListScreen
+        styles={[fabricStyle]}
+        onStyleClick={mockOnStyleClick}
+        onToggleShortlist={mockOnToggleShortlist}
+      />
+    )
+
+    // No catalogue badges on fabric rows.
+    expect(screen.queryByText('AI Extracted')).not.toBeInTheDocument()
+    expect(screen.queryByText('Review')).not.toBeInTheDocument()
+
+    // Heart present and clickable.
+    fireEvent.click(screen.getByLabelText(/shortlist/i))
+    expect(mockOnToggleShortlist).toHaveBeenCalledWith(fabricStyle.id, true)
+
+    // Card click still navigates.
+    fireEvent.click(screen.getByText('Cotton Twill'))
+    expect(mockOnStyleClick).toHaveBeenCalledWith(
+      expect.objectContaining({ id: fabricStyle.id })
+    )
   })
 })
