@@ -208,7 +208,7 @@ export function BottomNavigation({
                   aria-current={active ? 'page' : undefined}
                 >
                   <Icon className="h-6 w-6" />
-                  <span className="font-mono text-[10px] font-medium uppercase tracking-wide leading-none">{item.label}</span>
+                  <span className="text-[11px] font-medium leading-none">{item.label}</span>
                 </button>
               </li>
             )
@@ -261,7 +261,7 @@ export function BottomNavigation({
                   aria-current={active ? 'page' : undefined}
                 >
                   <Icon className="h-6 w-6" />
-                  <span className="font-mono text-[10px] font-medium uppercase tracking-wide leading-none">{item.label}</span>
+                  <span className="text-[11px] font-medium leading-none">{item.label}</span>
                 </button>
 
                 {/* Profile menu — anchored directly above the Profile button */}

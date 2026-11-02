@@ -226,7 +226,7 @@ export function StyleCard({
         </div>
 
         {/* Style name */}
-        <h3 className="text-base font-semibold text-foreground tracking-tight leading-tight mb-0.5">
+        <h3 className="font-display text-base font-semibold text-foreground tracking-tight leading-tight mb-0.5">
           {style.styleName || 'Untitled Style'}
         </h3>
 

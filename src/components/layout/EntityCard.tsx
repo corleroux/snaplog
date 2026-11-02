@@ -376,7 +376,7 @@ export function EntityCard({
         <div className="flex-1 min-w-0">
           {/* Title row: title + badge */}
           <div className="flex items-center gap-2 min-w-0">
-            <span className="text-sm font-semibold text-gray-900 truncate min-w-0">
+            <span className="font-display text-sm font-semibold text-gray-900 truncate min-w-0">
               {title}
             </span>
             {badge && (

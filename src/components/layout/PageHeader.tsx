@@ -133,14 +133,14 @@ export function PageHeader({
       <div className="flex-1 min-w-0 flex flex-col justify-center">
         <h1
           className={cn(
-            'text-xl font-bold text-foreground',
+            'font-display text-xl font-bold text-foreground',
             'truncate leading-tight',
           )}
         >
           {title}
         </h1>
         {subtitle && (
-          <p className="font-mono text-xs text-muted-foreground truncate leading-tight mt-0.5">
+          <p className="text-xs text-muted-foreground truncate leading-tight mt-0.5">
             {subtitle}
           </p>
         )}
