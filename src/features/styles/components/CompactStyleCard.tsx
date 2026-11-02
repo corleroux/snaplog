@@ -104,7 +104,7 @@ export function CompactStyleCard({
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ease-out"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-950/30 via-gray-900 to-orange-900/20 relative overflow-hidden">
+          <div className="w-full h-full flex items-center justify-center bg-muted relative overflow-hidden">
             {/* Fabric pattern overlay for texture */}
             <div className="absolute inset-0 opacity-[0.05]">
               <svg className="w-full h-full" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">

@@ -49,7 +49,7 @@ import { Button } from '@/components/ui/button'
 // ---------------------------------------------------------------------------
 
 type EmptyStateVariant =
-  | 'default'    // standard list empty — orange-tinted icon bg
+  | 'default'    // standard list empty — Stall-tinted icon bg
   | 'search'     // no search results — neutral icon bg
   | 'offline'    // no connectivity — neutral icon bg
   | 'error'      // failed to load — red-tinted icon bg
