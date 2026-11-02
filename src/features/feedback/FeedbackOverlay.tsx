@@ -84,7 +84,7 @@ export function FeedbackOverlay({ isOpen, onClose }: FeedbackOverlayProps) {
           className={cn(
             'flex-1 w-full min-h-[200px] rounded-lg border border-input bg-background px-4 py-3',
             'text-sm placeholder:text-muted-foreground/50',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/30',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30',
             'resize-none'
           )}
           disabled={submitting}
@@ -108,10 +108,10 @@ export function FeedbackOverlay({ isOpen, onClose }: FeedbackOverlayProps) {
           className={cn(
             'w-full inline-flex items-center justify-center gap-2 rounded-lg px-4 py-3',
             'text-sm font-medium text-white',
-            'bg-orange-500 hover:bg-orange-600 active:bg-orange-700',
+            'bg-primary hover:bg-primary/90 active:bg-primary/80',
             'disabled:opacity-50 disabled:cursor-not-allowed',
             'transition-colors duration-150',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/50',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50',
           )}
         >
           {submitting ? (

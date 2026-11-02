@@ -60,7 +60,7 @@ export function ProcessingScreen({
     )}>
       {/* Info image preview */}
       <div className="mb-8 relative">
-        <div className="w-48 h-48 sm:w-64 sm:h-64 rounded-2xl overflow-hidden shadow-2xl border-4 border-orange-500/30 bg-muted">
+        <div className="w-48 h-48 sm:w-64 sm:h-64 rounded-2xl overflow-hidden shadow-2xl border-4 border-primary/30 bg-muted">
           {infoImage?.uri ? (
             <img
               src={infoImage.uri}
@@ -90,7 +90,7 @@ export function ProcessingScreen({
         {isProcessing && (
           <>
             <div className="flex items-center justify-center gap-2">
-              <Loader2 className="h-5 w-5 text-orange-500 animate-spin" />
+              <Loader2 className="h-5 w-5 text-primary animate-spin" />
               <h2 className="text-xl font-semibold text-foreground">
                 Extracting Information
               </h2>
@@ -99,7 +99,7 @@ export function ProcessingScreen({
               Analyzing your vendor image to extract company details...
             </p>
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg">
-              <Sparkles className="h-4 w-4 text-orange-500" />
+              <Sparkles className="h-4 w-4 text-primary" />
               <span className="text-sm text-blue-900 dark:text-blue-100 font-medium">
                 Extraction happens once during create flow
               </span>

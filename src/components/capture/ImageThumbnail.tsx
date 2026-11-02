@@ -68,7 +68,7 @@ export function ImageThumbnail({
         // Border styling - Info gets warm orange ring
         'border-2 transition-all cursor-pointer tap-target',
         isActive ? 'border-primary ring-2 ring-ring ring-offset-2' : 'border-border',
-        isInfo && 'border-orange-500 shadow-lg shadow-orange-500/20',
+        isInfo && 'border-primary shadow-lg shadow-primary/20',
         className
       )}
       onClick={() => onClick?.(image.id)}

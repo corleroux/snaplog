@@ -58,7 +58,7 @@ export function StyleSuccessScreen({
         <div className="w-24 h-24 rounded-full bg-green-100 dark:bg-green-950/30 flex items-center justify-center">
           <CheckCircle className="h-14 w-14 text-green-600 dark:text-green-400" />
         </div>
-        <div className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-orange-500 flex items-center justify-center shadow-lg">
+        <div className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-lg">
           <Sparkles className="h-4 w-4 text-white" />
         </div>
       </div>

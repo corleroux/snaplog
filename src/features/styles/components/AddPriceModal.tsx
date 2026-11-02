@@ -101,7 +101,7 @@ export function AddPriceModal({
             <select
               value={currency}
               onChange={(e) => setCurrency(e.target.value)}
-              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-orange-500/50"
+              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring/50"
             >
               <option value="USD">USD</option>
               <option value="EUR">EUR</option>
@@ -124,7 +124,7 @@ export function AddPriceModal({
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
                 placeholder="0.00"
-                className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-orange-500/50"
+                className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/50"
               />
             </div>
           </div>
@@ -138,7 +138,7 @@ export function AddPriceModal({
           <select
             value={priceUnit}
             onChange={(e) => setPriceUnit(e.target.value)}
-            className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-orange-500/50"
+            className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring/50"
           >
             <option value="meter">per meter</option>
             <option value="yard">per yard</option>
@@ -158,7 +158,7 @@ export function AddPriceModal({
               value={moq}
               onChange={(e) => setMoq(e.target.value)}
               placeholder="Min. Order"
-              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-orange-500/50"
+              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/50"
             />
           </div>
           <div>
@@ -168,7 +168,7 @@ export function AddPriceModal({
             <select
               value={moqUnit}
               onChange={(e) => setMoqUnit(e.target.value)}
-              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-orange-500/50"
+              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring/50"
             >
               <option value="meter">meters</option>
               <option value="yard">yards</option>
@@ -189,7 +189,7 @@ export function AddPriceModal({
               value={leadTimeValue}
               onChange={(e) => setLeadTimeValue(e.target.value)}
               placeholder="e.g., 4"
-              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-orange-500/50"
+              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/50"
             />
           </div>
           <div>
@@ -199,7 +199,7 @@ export function AddPriceModal({
             <select
               value={leadTimeUnit}
               onChange={(e) => setLeadTimeUnit(e.target.value)}
-              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-orange-500/50"
+              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring/50"
             >
               <option value="days">days</option>
               <option value="weeks">weeks</option>

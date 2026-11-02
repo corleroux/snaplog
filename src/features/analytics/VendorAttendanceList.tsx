@@ -187,7 +187,7 @@ export function VendorAttendanceList() {
                   <p className="text-xs text-muted-foreground">Captured</p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-2xl font-bold text-orange-600">
+                  <p className="text-2xl font-bold text-primary">
                     {attendance.total - attendance.captured_count}
                   </p>
                   <p className="text-xs text-muted-foreground">Not Captured</p>
@@ -250,7 +250,7 @@ export function VendorAttendanceList() {
 
             <Card>
               <CardHeader>
-                <CardTitle className="text-orange-600">
+                <CardTitle className="text-primary">
                   Not Captured ({attendance.total - attendance.captured_count})
                 </CardTitle>
               </CardHeader>

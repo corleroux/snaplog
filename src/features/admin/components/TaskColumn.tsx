@@ -22,7 +22,7 @@ const STATE_HEADER_COLOURS: Record<BoardColumn, string> = {
 
 const STATE_COUNT_COLOURS: Record<BoardColumn, string> = {
   todo: 'bg-slate-400 text-slate-900 dark:bg-slate-500 dark:text-slate-100',
-  planned: 'bg-orange-500 text-white dark:bg-orange-600 dark:text-orange-100',
+  planned: 'bg-primary text-white dark:bg-orange-600 dark:text-orange-100',
   in_progress: 'bg-blue-500 text-white dark:bg-blue-600 dark:text-blue-100',
   blocked: 'bg-red-500 text-white dark:bg-red-600 dark:text-red-100',
   done: 'bg-green-500 text-white dark:bg-green-600 dark:text-green-100',
