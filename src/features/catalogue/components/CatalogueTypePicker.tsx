@@ -120,12 +120,12 @@ export function CatalogueTypePicker({ onSelect, className }: CatalogueTypePicker
                   onClick={() => onSelect(selection)}
                   className={cn(
                     'w-full flex items-center gap-3 p-4 rounded-xl border border-border',
-                    'bg-card hover:border-orange-500/50 active:scale-[0.99] transition-all',
+                    'bg-card hover:border-primary/50 active:scale-[0.99] transition-all',
                     'min-h-[56px] text-left'
                   )}
                 >
-                  <span className="flex items-center justify-center h-10 w-10 rounded-full bg-orange-500/10 flex-shrink-0">
-                    <Icon className="h-5 w-5 text-orange-500" />
+                  <span className="flex items-center justify-center h-10 w-10 rounded-full bg-primary/10 flex-shrink-0">
+                    <Icon className="h-5 w-5 text-primary" />
                   </span>
                   <span className="flex-1 min-w-0">
                     <span className="block text-sm font-medium">{def.display_name}</span>
@@ -148,12 +148,12 @@ export function CatalogueTypePicker({ onSelect, className }: CatalogueTypePicker
             onClick={() => onSelect({ kind: 'video' })}
             className={cn(
               'w-full flex items-center gap-3 p-4 rounded-xl border border-border',
-              'bg-card hover:border-orange-500/50 active:scale-[0.99] transition-all',
+              'bg-card hover:border-primary/50 active:scale-[0.99] transition-all',
               'min-h-[56px] text-left'
             )}
           >
-            <span className="flex items-center justify-center h-10 w-10 rounded-full bg-orange-500/10 flex-shrink-0">
-              <Video className="h-5 w-5 text-orange-500" />
+            <span className="flex items-center justify-center h-10 w-10 rounded-full bg-primary/10 flex-shrink-0">
+              <Video className="h-5 w-5 text-primary" />
             </span>
             <span className="flex-1 min-w-0">
               <span className="block text-sm font-medium">Rack video</span>

@@ -98,9 +98,9 @@ export function PageHeader({
         'flex items-center',
         'px-4 gap-3',
         // Visual separation
-        showBorder && 'border-b border-gray-200',
+        showBorder && 'border-b border-border',
         // Always on top of scrollable content
-        'bg-white z-10',
+        'bg-background z-10',
         className,
       )}
     >
@@ -114,8 +114,8 @@ export function PageHeader({
             'flex-shrink-0 -ml-1',
             'w-11 h-11 flex items-center justify-center',
             'rounded-full',
-            'text-gray-700',
-            'hover:bg-gray-100 active:bg-gray-200',
+            'text-foreground',
+            'hover:bg-muted active:bg-muted',
             'transition-colors duration-150',
           )}
         >
@@ -133,14 +133,14 @@ export function PageHeader({
       <div className="flex-1 min-w-0 flex flex-col justify-center">
         <h1
           className={cn(
-            'text-xl font-bold text-gray-900',
+            'text-xl font-bold text-foreground',
             'truncate leading-tight',
           )}
         >
           {title}
         </h1>
         {subtitle && (
-          <p className="text-xs text-gray-500 truncate leading-tight mt-0.5">
+          <p className="font-mono text-xs text-muted-foreground truncate leading-tight mt-0.5">
             {subtitle}
           </p>
         )}
@@ -157,8 +157,8 @@ export function PageHeader({
               className={cn(
                 'w-11 h-11 flex items-center justify-center',
                 'rounded-full',
-                'text-gray-500',
-                'hover:bg-gray-100 active:bg-gray-200',
+                'text-muted-foreground',
+                'hover:bg-muted active:bg-muted',
                 'transition-colors duration-150',
               )}
             >

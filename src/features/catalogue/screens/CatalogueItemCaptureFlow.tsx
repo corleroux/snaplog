@@ -219,7 +219,7 @@ export function CatalogueItemCaptureFlow({
         confirmText="Discard"
         cancelText="Keep Editing"
         variant="destructive"
-        icon={<AlertTriangle className="h-6 w-6 text-amber-500" />}
+        icon={<AlertTriangle className="h-6 w-6 text-danger" />}
       />
 
       <input
