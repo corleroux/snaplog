@@ -263,7 +263,7 @@ export function VendorListScreen({
         )}
 
         {/* ── Scrollable vendor list ── */}
-        <main className="flex-1 overflow-y-auto px-4 pt-3">
+        <main className="flex-1 overflow-y-auto overflow-x-clip px-4 pt-3">
           <PullToRefresh onRefresh={async () => { await onRefresh?.() }}>
             {/* Optional search bar */}
             {!isEmpty && onSearchChange && (
@@ -437,7 +437,7 @@ function SortableVendorItem({ vendor, onEditVendor, onVendorClick }: SortableVen
   }
 
   return (
-    <div ref={setNodeRef} style={style} className="flex items-center gap-1">
+    <div ref={setNodeRef} style={style} className="flex items-center gap-1 min-w-0">
       <div
         {...attributes}
         {...listeners}
