@@ -350,6 +350,7 @@ export function EntityCard({
           isNavigable && [
             'cursor-pointer',
             'hover:bg-gray-50 active:bg-gray-100',
+            'outline-none focus-visible:ring-2 focus-visible:ring-orange-500/40',
             'transition-colors duration-150',
             'rounded-l-xl',               // only left corners when overflow button present
             !hasActions && 'rounded-xl',
