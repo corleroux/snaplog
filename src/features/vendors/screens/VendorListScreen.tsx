@@ -12,7 +12,7 @@
  */
 
 import { type ReactNode, useMemo, startTransition, useDeferredValue } from 'react'
-import { Building2, Search, Loader2, Pencil, Archive, GripVertical } from 'lucide-react'
+import { Building2, Search, Loader2, Pencil, Archive } from 'lucide-react'
 import {
   DndContext,
   closestCenter,
@@ -436,45 +436,49 @@ function SortableVendorItem({ vendor, onEditVendor, onVendorClick }: SortableVen
     zIndex: isDragging ? 1000 : 'auto',
   }
 
+  // Gripless reorder (FR-CAT-01b): the whole card is the drag activator.
+  // PointerSensor (distance 8) keeps tap-to-open intact and TouchSensor
+  // (delay 150, tolerance 5) means quick scrolls/swipes never lift the
+  // card — only a long-press does. `attributes` keeps the card root
+  // focusable so KeyboardSensor reorder still works. Three-gesture
+  // coexistence (scroll vs long-press-drag vs swipe) is gated on
+  // on-device QA per the FR-CAT-01b plan.
   return (
-    <div ref={setNodeRef} style={style} className="flex items-center gap-1 min-w-0">
-      <div
-        {...attributes}
-        {...listeners}
-        className="flex-shrink-0 touch-none min-w-[36px] min-h-[36px] flex items-center justify-center cursor-grab active:cursor-grabbing"
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      className="min-w-0 touch-none rounded-xl cursor-grab outline-none focus-visible:ring-2 focus-visible:ring-orange-500 active:cursor-grabbing"
+    >
+      <SwipeActions
+        key={vendor.id}
+        onEdit={onEditVendor ? () => onEditVendor(vendor) : undefined}
       >
-        <GripVertical className="w-5 h-5 text-muted-foreground" />
-      </div>
-      <div className="flex-1 min-w-0">
-        <SwipeActions
-          key={vendor.id}
-          onEdit={onEditVendor ? () => onEditVendor(vendor) : undefined}
-        >
-          <EntityCard
-            title={vendor.companyName}
-            subtitle={getVendorSubtitle(vendor)}
-            badge={vendor.status === 'archived' ? { label: 'Archived', variant: 'archived' } : undefined}
-            countChip={vendor.itemCount !== undefined ? `${vendor.itemCount} ${vendor.itemCount === 1 ? 'item' : 'items'}` : undefined}
-            leadingIcon={<Building2 className="w-5 h-5" />}
-            onPress={() => onVendorClick?.(vendor)}
-            actions={[
-              ...(onEditVendor ? [{
-                label: 'Edit',
-                icon: <Pencil className="w-[18px] h-[18px]" />,
-                onPress: () => onEditVendor(vendor),
-              }] : []),
-              {
-                label: 'Archive',
-                icon: <Archive className="w-[18px] h-[18px]" />,
-                onPress: () => {
-                  // Archive action - to be implemented
-                },
+        <EntityCard
+          title={vendor.companyName}
+          subtitle={getVendorSubtitle(vendor)}
+          badge={vendor.status === 'archived' ? { label: 'Archived', variant: 'archived' } : undefined}
+          countChip={vendor.itemCount !== undefined ? `${vendor.itemCount} ${vendor.itemCount === 1 ? 'item' : 'items'}` : undefined}
+          leadingIcon={<Building2 className="w-5 h-5" />}
+          onPress={() => onVendorClick?.(vendor)}
+          actions={[
+            ...(onEditVendor ? [{
+              label: 'Edit',
+              icon: <Pencil className="w-[18px] h-[18px]" />,
+              onPress: () => onEditVendor(vendor),
+            }] : []),
+            {
+              label: 'Archive',
+              icon: <Archive className="w-[18px] h-[18px]" />,
+              onPress: () => {
+                // Archive action - to be implemented
               },
-            ]}
-            testId={`vendor-card-${vendor.id}`}
-          />
-        </SwipeActions>
-      </div>
+            },
+          ]}
+          testId={`vendor-card-${vendor.id}`}
+        />
+      </SwipeActions>
     </div>
   )
 }
