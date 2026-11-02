@@ -29,7 +29,7 @@ interface ScanThumbnailRow {
   source_image_path: string | null
 }
 
-function resolveThumbnailUrl(row: ScanThumbnailRow): string | null {
+export function resolveThumbnailUrl(row: ScanThumbnailRow): string | null {
   if (row.source_image_url && !isSignedUrl(row.source_image_url)) {
     return row.source_image_url
   }

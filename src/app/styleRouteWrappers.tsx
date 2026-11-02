@@ -1,5 +1,7 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import { useQueryClient } from '@tanstack/react-query'
+import { supabase } from '@/lib/supabase/client'
 import { useEventRole } from '@/features/auth'
 import { useStylesQuery, useDeleteStyle, useToggleShortlist } from '@/features/styles/hooks'
 import { useCatalogueItemsQuery } from '@/features/catalogue/hooks/useCatalogueItemsQuery'
@@ -7,6 +9,8 @@ import { useVendorsQuery } from '@/features/vendors/hooks/useVendorQueries'
 import { useRealtimeRefresh } from '@/lib/realtime'
 import { StyleCaptureFlow, StyleListScreen, StyleDetailScreen, StyleEditScreen, VariantEditScreen, type StyleFilters } from '@/features/styles'
 import { useStyleDetail } from '@/features/styles'
+import { useCatalogueItemDetail } from '@/features/catalogue/hooks/useCatalogueItemDetail'
+import { ItemDetailScreen } from '@/features/catalogue/screens/ItemDetailScreen'
 import { StyleLoadingState, LoadingErrorState } from '@/components/ui'
 import { ConfirmationDialog } from '@/components/feedback/ConfirmationDialog'
 import type { VendorRecord } from '@/types/vendor'
@@ -87,10 +91,14 @@ export function StyleListFromRouteWithProvider() {
       onAddStyle={canEdit ? () => navigate(`/events/${eventId}/vendors/${vendorId}/items/new/capture`) : undefined}
       // FAB keeps the fast legacy fabric path (FR-SCH-05b).
       onFabPress={canEdit ? () => navigate(`/events/${eventId}/vendors/${vendorId}/styles/new/capture`) : undefined}
-      // Catalogue rows (ci- prefix) have no detail/shortlist path yet —
-      // guard fabric-only actions so they no-op instead of 404ing.
+      // Catalogue rows (ci- prefix) open the item detail page; fabric rows
+      // open the style detail page. Catalogue rows have no detail write
+      // paths, so their clicks are read-only navigation.
       onStyleClick={(style) => {
-        if (style.id.startsWith('ci-')) {return}
+        if (style.id.startsWith('ci-')) {
+          navigate(`/events/${eventId}/vendors/${vendorId}/items/${style.id.slice(3)}`)
+          return
+        }
         navigate(`/events/${eventId}/vendors/${vendorId}/styles/${style.id}`)
       }}
       onVendorInfo={() => navigate(`/events/${eventId}/vendors/${vendorId}`)}
@@ -241,5 +249,68 @@ export function VariantEditScreenFromRouteWithProvider() {
       variantId={variantId}
       onBack={() => navigate(`/events/${eventId}/vendors/${vendorId}/styles/${styleId}`)}
     />
+  )
+}
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
+/**
+ * Catalogue item detail route wrapper (FR-CAT-01) — read-only + archive.
+ * The route carries the raw UUID; the `ci-` list prefix is stripped by the
+ * list click handler before navigating here.
+ */
+export function ItemDetailFromRouteWithProvider() {
+  const { eventId = '', vendorId = '', itemId = '' } = useParams()
+  const navigate = useNavigate()
+  const queryClient = useQueryClient()
+  const { canEdit } = useEventRole(eventId)
+  const stylesPath = `/events/${eventId}/vendors/${vendorId}/styles`
+
+  const validId = UUID_RE.test(itemId)
+  const { data, isLoading, error, refetch } = useCatalogueItemDetail(
+    vendorId,
+    validId ? itemId : '',
+  )
+
+  const [showArchiveConfirm, setShowArchiveConfirm] = useState(false)
+  const [archiving, setArchiving] = useState(false)
+
+  const handleArchive = async () => {
+    setArchiving(true)
+    try {
+      const { error: archiveError } = await supabase
+        .from('catalogue_items')
+        .update({ status: 'archived' })
+        .eq('id', itemId)
+        .eq('vendor_id', vendorId)
+      if (archiveError) {throw archiveError}
+      queryClient.invalidateQueries({ queryKey: ['catalogue-items', vendorId] })
+      queryClient.invalidateQueries({ queryKey: ['catalogue-item-detail', vendorId, itemId] })
+      navigate(stylesPath)
+    } catch {
+      setArchiving(false)
+      setShowArchiveConfirm(false)
+    }
+  }
+
+  return (
+    <>
+      <ItemDetailScreen
+        data={data ?? undefined}
+        loading={isLoading}
+        error={!validId ? 'Invalid item id' : (error instanceof Error ? error.message : null)}
+        onRefresh={() => { void refetch() }}
+        onBack={() => navigate(stylesPath)}
+        onArchive={canEdit ? () => setShowArchiveConfirm(true) : undefined}
+      />
+      <ConfirmationDialog
+        isOpen={showArchiveConfirm}
+        onClose={() => setShowArchiveConfirm(false)}
+        title="Archive Item"
+        description="Are you sure you want to archive this item? It will be hidden from the catalogue but the data will be preserved."
+        confirmText={archiving ? 'Archiving...' : 'Archive'}
+        onConfirm={() => { void handleArchive() }}
+        variant="destructive"
+      />
+    </>
   )
 }

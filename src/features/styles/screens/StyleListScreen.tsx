@@ -295,7 +295,7 @@ export function StyleListScreen({
               <SwipeActions key={style.id}>
                 <StyleCard
                   style={style}
-                  onClick={isCatalogueRow ? undefined : onStyleClick}
+                  onClick={onStyleClick}
                   onToggleShortlist={onToggleShortlist}
                   shortlistable={!isCatalogueRow}
                   badge={isCatalogueRow ? (
