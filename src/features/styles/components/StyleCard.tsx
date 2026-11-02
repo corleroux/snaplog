@@ -108,6 +108,17 @@ export function StyleCard({
     onToggleShortlist?.(style.id, !style.isShortlisted)
   }, [style.id, style.isShortlisted, onToggleShortlist])
 
+  const handleCardKeyDown = useCallback((e: React.KeyboardEvent) => {
+    // Ignore keys from nested interactive elements (e.g. the shortlist button).
+    if (e.target !== e.currentTarget) {
+      return
+    }
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      handleClick()
+    }
+  }, [handleClick])
+
   // Get the primary image (source info image or first image)
   const primaryImage = style.images.find(
     (img) => img.id === style.sourceInfoImageId
@@ -126,8 +137,14 @@ export function StyleCard({
   const timeAgo = getRelativeTime(style.createdAt)
 
   return (
-    <button
+    // NOTE: intentionally an <article>, not a <button> — the card contains a
+    // nested shortlist <button>, and <button> inside <button> is invalid HTML
+    // that breaks hydration (React installHook warning on the style list).
+    <article
       onClick={handleClick}
+      onKeyDown={handleCardKeyDown}
+      tabIndex={onClick ? 0 : undefined}
+      aria-label={style.styleName || 'Style'}
       className={cn(
         'group relative w-full overflow-hidden rounded-2xl shadow-sm transition-all duration-300 bg-card border border-border/50',
         'hover:shadow-md hover:shadow-orange-500/10 active:scale-[0.98]',
@@ -225,6 +242,6 @@ export function StyleCard({
           )
         })()}
       </div>
-    </button>
+    </article>
   )
 }
