@@ -1,0 +1,4 @@
+snaplog-fb-cover-851x315.png: Snaplog Facebook cover
+snaplog-linkedin-cover-1512x256.png: Snaplog LinkedIn cover
+snaplog-ig-post-1080x1080.png: Snaplog hackathon announcement post — "We turned trade-fair chaos into a searchable catalogue — built with Meta's AI stack. Snap it. Catalogued."
+snaplog-ig-story-1080x1920.png: Snaplog logo above the words "Chaos in. Catalogue out." plus "We turned trade-fair chaos into a searchable catalogue. Built with Meta's AI."
