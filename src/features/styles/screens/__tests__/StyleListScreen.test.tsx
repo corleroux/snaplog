@@ -10,7 +10,9 @@
  * - Renders vendor name in header
  * - Catalogue (`ci-`) rows render REVIEW / `{category} · AI` badges
  *   (falling back to "AI Extracted" when category is missing) with no
- *   shortlist heart and no detail navigation; fabric rows unchanged
+ *   shortlist heart; catalogue card clicks call onStyleClick (the route
+ *   wrapper strips `ci-` and navigates to the item detail page);
+ *   fabric rows unchanged
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
@@ -267,7 +269,7 @@ describe('StyleListScreen', () => {
     expect(screen.queryByLabelText(/shortlist/i)).not.toBeInTheDocument()
   })
 
-  it('[FR-CAT-01] catalogue rows do not trigger detail navigation on click', () => {
+  it('[FR-CAT-01] catalogue card click calls onStyleClick with the ci- style (wrapper routes to detail)', () => {
     const catalogueStyle = createStyleRecord({
       id: 'ci-item-3',
       styleName: 'Wool Coat',
@@ -282,7 +284,10 @@ describe('StyleListScreen', () => {
     )
 
     fireEvent.click(screen.getByText('Wool Coat'))
-    expect(mockOnStyleClick).not.toHaveBeenCalled()
+    expect(mockOnStyleClick).toHaveBeenCalledTimes(1)
+    expect(mockOnStyleClick).toHaveBeenCalledWith(
+      expect.objectContaining({ id: 'ci-item-3' })
+    )
   })
 
   it('[FR-CAT-01] fabric rows keep the shortlist heart and click behaviour', () => {

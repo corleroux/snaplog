@@ -19,6 +19,7 @@ import {
   StyleDetailFromRouteWithProvider,
   StyleEditScreenFromRouteWithProvider,
   VariantEditScreenFromRouteWithProvider,
+  ItemDetailFromRouteWithProvider,
 } from './styleRouteWrappers'
 import {
   CatalogueItemCaptureFlowFromRouteWithProvider,
@@ -303,6 +304,20 @@ function App() {
                 <RequireAuth>
                   <ErrorBoundary feature="variant-edit">
                     <VariantEditScreenFromRouteWithProvider />
+                  </ErrorBoundary>
+                </RequireAuth>
+              }
+            />
+
+            {/* Catalogue item detail (FR-CAT-01) — garments/video. Static
+                segments (new/capture, video) rank above :itemId, so there
+                is no route conflict. */}
+            <Route
+              path="/events/:eventId/vendors/:vendorId/items/:itemId"
+              element={
+                <RequireAuth>
+                  <ErrorBoundary feature="item-detail">
+                    <ItemDetailFromRouteWithProvider />
                   </ErrorBoundary>
                 </RequireAuth>
               }
