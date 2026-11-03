@@ -30,6 +30,10 @@ backup/
 .cloud-backups/
 test-results/
 playwright-report/
+# DEMO-01 video production: HyperFrames project, raw footage, renders (never in git)
+docs/demo-video/project/
+docs/demo-video/footage/
+docs/demo-video/renders/
 prompts/
 tasks/
 ENGINEERING_CLOSEOUT.md
