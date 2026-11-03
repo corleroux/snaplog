@@ -165,15 +165,48 @@ interface DryRunCase {
   recorded: Record<string, { rawText: string; model: string | null; usage: { inputTokens: number; outputTokens: number } | null }>
 }
 
-function recordedOf(fixture: { model?: string; choices: Array<{ message: { content: string } }>; usage?: { prompt_tokens?: number; completion_tokens?: number } }) {
-  const rawText = fixture.choices[0].message.content
-  const usage = fixture.usage
+interface OpenAIRecordedFixture {
+  model?: string
+  choices: Array<{ message: { content: string } }>
+  usage?: { prompt_tokens?: number; completion_tokens?: number }
+}
+
+interface GeminiNativeFixture {
+  modelVersion?: string
+  candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }>
+  usageMetadata?: { promptTokenCount?: number; candidatesTokenCount?: number }
+}
+
+function recordedOf(fixture: OpenAIRecordedFixture | GeminiNativeFixture) {
+  // OpenAI chat-completions shape (muse-spark, spark-open fixtures).
+  const openai = fixture as OpenAIRecordedFixture
+  if (Array.isArray(openai.choices)) {
+    const rawText = openai.choices[0]?.message?.content
+    if (typeof rawText !== 'string') {
+      throw new Error('Recorded OpenAI-shape fixture has no choices[0].message.content')
+    }
+    const usage = openai.usage
+      ? {
+        inputTokens: openai.usage.prompt_tokens ?? 0,
+        outputTokens: openai.usage.completion_tokens ?? 0,
+      }
+      : null
+    return { rawText, model: openai.model ?? null, usage }
+  }
+  // Gemini native shape: candidates[0].content.parts[].text (joined).
+  const gemini = fixture as GeminiNativeFixture
+  const parts = gemini.candidates?.[0]?.content?.parts ?? []
+  const rawText = parts.map((p) => p.text ?? '').join('')
+  if (!rawText) {
+    throw new Error('Recorded Gemini-shape fixture has no candidates[0].content.parts[].text')
+  }
+  const usage = gemini.usageMetadata
     ? {
-      inputTokens: fixture.usage.prompt_tokens ?? 0,
-      outputTokens: fixture.usage.completion_tokens ?? 0,
+      inputTokens: gemini.usageMetadata.promptTokenCount ?? 0,
+      outputTokens: gemini.usageMetadata.candidatesTokenCount ?? 0,
     }
     : null
-  return { rawText, model: fixture.model ?? null, usage }
+  return { rawText, model: gemini.modelVersion ?? null, usage }
 }
 
 function dryRunCases(): DryRunCase[] {

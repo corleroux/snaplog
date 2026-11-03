@@ -21,6 +21,7 @@
     "test:e2e:chromium": "playwright test --project=chromium",
     "test:e2e:mobile": "playwright test --project=mobile-chrome",
     "test:e2e:staging": "playwright test --config=playwright.config.ts",
+    "test:e2e:demo": "playwright test --config=playwright.demo.config.ts",
     "test:e2e:report": "playwright show-report",
     "test:rls": "RLS_TESTS_ENABLED=1 vitest run src/features/vendors/api/__tests__/vendors.rls.test.ts src/features/styles/api/__tests__/styles.rls.test.ts",
     "test:edge": "SUPABASE_URL=http://127.0.0.1:54321 SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0 deno test --allow-net --allow-env --no-check supabase/functions/_tests/",

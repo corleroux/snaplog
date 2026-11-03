@@ -328,6 +328,93 @@
       },
       "languages": [],
       "failure_tags": []
+    },
+    {
+      "id": "jacket-01-front",
+      "file": "captures/jacket-01-front.png",
+      "class": "garment",
+      "source": "fresh",
+      "schema": "garment",
+      "ground_truth": {
+        "item": {
+          "item_code": null,
+          "name": null,
+          "garment_type": "Jacket",
+          "silhouette": null,
+          "construction": "Quilted",
+          "fabric_composition": null,
+          "closure": "Button",
+          "neckline": "Collar",
+          "sleeve": "Long sleeve",
+          "fit": null,
+          "sizing": null,
+          "season": null,
+          "metadata": null,
+          "colourways": [
+            { "colour_code": null, "colour_name": "Black", "variant_name": null, "sizing": null, "metadata": null }
+          ]
+        }
+      },
+      "languages": [],
+      "failure_tags": []
+    },
+    {
+      "id": "jacket-02-back",
+      "file": "captures/jacket-02-back.png",
+      "class": "garment",
+      "source": "fresh",
+      "schema": "garment",
+      "ground_truth": {
+        "item": {
+          "item_code": null,
+          "name": null,
+          "garment_type": "Jacket",
+          "silhouette": null,
+          "construction": "Quilted",
+          "fabric_composition": null,
+          "closure": null,
+          "neckline": null,
+          "sleeve": "Long sleeve",
+          "fit": null,
+          "sizing": null,
+          "season": null,
+          "metadata": null,
+          "colourways": [
+            { "colour_code": null, "colour_name": "Black", "variant_name": null, "sizing": null, "metadata": null }
+          ]
+        }
+      },
+      "languages": [],
+      "failure_tags": ["back-view"]
+    },
+    {
+      "id": "jacket-03-label",
+      "file": "captures/jacket-03-label.png",
+      "class": "garment",
+      "source": "fresh",
+      "schema": "garment",
+      "ground_truth": {
+        "item": {
+          "item_code": "NALP-WS23-BLK",
+          "name": "Alpine Shield Parka",
+          "garment_type": "Jacket",
+          "silhouette": null,
+          "construction": null,
+          "fabric_composition": "Shell: 100% Recycled Polyester; Insulation: 100% Polyester (Down Alternative); Lining: 100% Recycled Polyester",
+          "closure": "Zip",
+          "neckline": null,
+          "sleeve": null,
+          "fit": null,
+          "sizing": "M",
+          "season": null,
+          "metadata": null,
+          "colourways": [
+            { "colour_code": null, "colour_name": "Black", "variant_name": null, "sizing": "M", "metadata": null }
+          ]
+        }
+      },
+      "languages": ["en"],
+      "failure_tags": []
     }
   ]
 }
