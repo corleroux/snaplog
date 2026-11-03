@@ -2,7 +2,7 @@
 workflow: general-video
 flow: automation
 storyboard: no
-message: "extraction used to run on Gemini; this week we moved it behind a provider interface onto Muse Spark — and a catalogue type is just a schema."
+message: "extraction used to run on Gemini; this week we moved it behind a provider interface onto Muse Spark."
 destination: youtube-unlisted
 aspect: 1920x1080
 language: en

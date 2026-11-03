@@ -170,3 +170,15 @@ Still open from the checkpoint list: benchmark-on-images run, full rack-walk vid
 - **DEMO-01 written** (Hyperframes assembly, real footage only): `e2e/demo/` spec on local stack, timed rack-walk placeholder now, slot-in when the clip lands this afternoon. Renders + raw footage stay OUT of git and out of the submission sync.
 - **Still needed from owner (nothing else):** record VO tonight once the script lands; rack-walk clip + Modal credits this afternoon as committed; YouTube unlisted link + X post Wed.
 - **Demo-spec auth: no owner action needed unless the seed path fails.** Primary is `createTestUser()` on the local stack; failover is the gitignored `secrets/secrets.md` creds via `E2E_USER_EMAIL`/`E2E_USER_PASSWORD` env only (recorded in DEMO-01). Builder: never print, log, or commit these values; never point them at the shared remote project without explicit owner go.
+
+## Status update — Tue Nov 3, DEMO-01 scaffolding + jacket manifest (builder)
+
+Branch `task/demo-video-production` off `staging` (reviewer PASS, one minor fixed):
+
+- **DEMO-01 scaffolding DONE:** `docs/demo-video/BRIEF.md` (locked DEMO-SCRIPT beat map, render-env findings), `playwright.demo.config.ts` (separate config, Pixel 5, `video:'on'`, CI config untouched; `.demo.ts` suffix keeps specs out of `pnpm test:e2e`), `e2e/demo/demo-capture.demo.ts` (fabric + garment live flows, deterministic find-or-create seed, hard-fails on `*.supabase.co` without `DEMO_ALLOW_REMOTE=1`), `pnpm test:e2e:demo` script, gitignore for `docs/demo-video/{project,footage,renders}`. Spec validated by `--list` only — footage capture NOT yet run (needs local stack + local functions + staged label image).
+- **Hyperframes render-env check DONE (before authoring):** CLI 0.9.8 / Node 24 / FFmpeg 7.0.2 / headless Chrome OK. Risks recorded in BRIEF: 3.7 GB RAM (draft quality, one worker) and 1.9 GB `/tmp` tmpfs (frames cache must relocate to main disk). No composition authored yet.
+- **Jacket manifest DONE (tester):** `jacket-01-front/-02-back/-03-label` in `eval/manifest.json` with label-derived GT, never-guess nulls; copies in gitignored `eval/captures/`; `docs/assets/` originals stay untracked locally. Validator: OK, 15 entries.
+- **Benchmark dry-run bug FIXED (inference, pre-existing):** `recordedOf` now handles Gemini-native fixture shape; dry-run completes and reproduces `docs/benchmark-results.md` numbers exactly (gemini 53/53, muse-spark 59/71 83.1%, spark-open 53/53). Gap noted: no unit test pins `recordedOf` — tester follow-up.
+- **DES-02B builder check DONE (dimensions/duration):** all 4 PNGs at exact spec size; sting 1920×1080 H.264 30fps, 3.000s exact. Visual/pixel QA still open.
+- **Checks:** `pnpm check` PASS, `pnpm test:run` 866 passed, `pnpm build` PASS, changed-files eslint 0 errors (full-repo lint failure is pre-existing baseline: 496 errors on clean `staging`, zero delta from this branch).
+- **Still open:** benchmark LIVE run on images (owner GO recorded; awaiting explicit session confirmation + provider scope), footage capture on local stack, composition assembly, owner VO tonight, rack-walk clip + probe go, Tue 19:00 SAST design fallback trigger.
