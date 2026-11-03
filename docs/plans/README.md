@@ -94,6 +94,7 @@ E. "Ten-day build" (line 5) is stale — deadline is Wed Nov 4 9PM ET. Line 34 b
 | 4 (Mon EOD) | M-J Modal endpoint check — ✅ CLOSED GREEN, **Jobs: LIVE** | `FR-VID-modal-jobs-check.md` | 30 min | Fix committed+synced, secret rotated+verified; full probe deferred (owner calls it) |
 | 5 (Mon/Tue) | ⑩ Benchmark runner | `FR-MOD-04-benchmark-runner.md` | 6h | FR-MOD-02a, eval set |
 | 6 (Tue/Wed) | ⑪ Demo video + write-up + submit | `SUB-02-demo-writeup-submission.md` | 4h + recording | everything |
+| 6 (Tue) | DEMO-01 Video production (Hyperframes, real footage only) | `DEMO-01-video-production.md` | 6–8h + owner VO tonight | SUB-02 script (locked+reviewed), DES-02B exports verified, benchmark numbers, VO |
 
 Waves 1 and 3+ run as parallel tracks (builder ∥ inference agent). **Critical path: FR-MOD-01 → FR-MOD-02a → FR-VID → benchmark → submit.** Reviewer (read-only P0 pass) before submission; design-reviewer after ⑨.
 
@@ -131,7 +132,7 @@ FR-CAT-03, FR-CAT-04, FR-MOD-03, FR-CAT-02, FR-MOD-05 in-app view (the write-up 
 - Supervised live probe go (≤5 Muse Spark calls, Wave 3).
 - Modal proxy token + credit status (by Sun EOD / Mon EOD).
 - Secrets audit decision before making `snaplog` public.
-- Explicit asks: benchmark live run (Tue), video pipeline live test.
+- Explicit asks: benchmark live run — ✅ GRANTED for images (Standard mode only; video items slot in when rack-walk lands); video pipeline live test (still needs owner go — the ≤60s rack-walk probe).
 - Garment shoot + rack-walk video (Saturday) — feeds eval set and demo.
 - **Mon EOD — Modal endpoint check: ✅ CLOSED GREEN — Jobs: LIVE, all verified.** Secret re-rotated to an owner-held value and verified both sides (curl signatures match; value lives only in gitignored `.sb.env` + the two secret stores). Compat fix committed + submission-synced; tree clean. Only item deferred: full ≤60s rack-walk probe — owner calls it later, doubles as the FR-VID live test.
 - **Tue 12:00 — fallback trigger (YOU, owner):** Stream C substantially complete? If no, tokens-reskin + current layout ships, no debate. Decide on the hour, not at midnight.
@@ -152,7 +153,7 @@ Impromptu owner-directed work, all merged to `staging` with reviewer/design-revi
 - Deliberately skipped: list→detail e2e (needs data writes on the shared remote project — safety rules); suggested follow-up is a mocked-boundary spec.
 - **DESIGN-02 audit (Mon Nov 2):** 02A/02B/C1 rewritten vs staging; C2 split into `DESIGN-02C2` (master gate) + `DESIGN-02C2a/b/c`. Marked DONE there: G1 guard, review functional core, B3 vendor actions (all real). Still NOT DONE: 02A assets integration, 02B exports (due Mon EOD), C1 tokens, C2 port. Conflicts resolved in C1/C2c: review font rule wins over DESIGN-HANDOFF:22; `@theme` block (redesign :98-109) is normative over "extend" (HANDOFF:44 stale, fix rides C1); no Jobs screen exists — video port styles `VideoCaptureScreen` only, unconfigured state needs the owner's Mon-EOD "Jobs: LIVE/UNCONFIGURED" decision, never invented UI.
 
-Still open from the checkpoint list: benchmark live-test ask, full rack-walk video probe (owner go), Tue 12:00 design fallback trigger, write-up framing review before recording.
+Still open from the checkpoint list: benchmark-on-images run, full rack-walk video probe (owner go, doubles as FR-VID live test), Tue 12:00 design fallback trigger, write-up framing review before recording.
 
 ## Status update — Mon Nov 2, M-J closed green (architect)
 
@@ -160,3 +161,12 @@ Still open from the checkpoint list: benchmark live-test ask, full rack-walk vid
 - Jobs polling is the live path; `unconfig` retained solely as demo-day fallback. This supersedes the pending Mon-EOD decision referenced in the builder audit above.
 - Full probe happens if/when the owner calls it; no further planning needed.
 - **Process note (both teams):** this file lost one round of M-J updates to a stale-checkout overwrite. Rule going forward — builder posts status in chat/session or appends ONLY under "Status update" sections; architect integrates everything above that line. Nobody rewrites another author's section.
+
+## Status update — Tue Nov 3, submission prep (architect)
+
+- **VO: owner self-records tonight** to the locked SUB-02 script (~2:45 read). TTS is fallback only. Architect framing review blocks recording, not drafting.
+- **Benchmark: GO for images** (Standard mode only). Runner (`scripts/run-benchmark.ts`) + eval manifest exist. The 3 new jacket captures (`docs/assets/jacket-{front,back,label}.png`) need manifest entries + hand-labelled ground truth from the label photo before they can score — builder/tester task, no owner action.
+- **DES-02B exports: all 6 artifacts present** (`docs/brand/exports/`: FB + LinkedIn covers, IG post + story PNGs, 3.0s sting MP4, alt text). Presence + names verified architect-side; exact pixels + sting duration is a builder check (second-person verification per DES-02B) — confirm before SUB-02 needs them tonight.
+- **DEMO-01 written** (Hyperframes assembly, real footage only): `e2e/demo/` spec on local stack, timed rack-walk placeholder now, slot-in when the clip lands this afternoon. Renders + raw footage stay OUT of git and out of the submission sync.
+- **Still needed from owner (nothing else):** record VO tonight once the script lands; rack-walk clip + Modal credits this afternoon as committed; YouTube unlisted link + X post Wed.
+- **Demo-spec auth: no owner action needed unless the seed path fails.** Primary is `createTestUser()` on the local stack; failover is the gitignored `secrets/secrets.md` creds via `E2E_USER_EMAIL`/`E2E_USER_PASSWORD` env only (recorded in DEMO-01). Builder: never print, log, or commit these values; never point them at the shared remote project without explicit owner go.
