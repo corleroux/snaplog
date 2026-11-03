@@ -57,7 +57,7 @@ quality is spot-checked manually per PRD §8.4.
 
 | Provider | Captures (matched/scored) | Mean accuracy | Cost/item |
 |---|---|---|---|---|
-| gemini (legacy baseline) | 2 (53/53) | 100.0% | n/a |
+| gemini (legacy baseline, recorded fixtures) | 2 (53/53) | 100.0% | n/a |
 | muse-spark 1.3 Standard | 3 (59/71) | 83.1% | ~$0.0050 |
 | muse-spark-open | 2 (53/53) | 100.0% | ~$0.0025 |
 
@@ -66,11 +66,7 @@ Tuesday live run over the full eval set. Full table: `docs/benchmark-results.md`
 
 ## Tooling note (PRD §9): Muse Code trial
 
-*Status: pending owner input — do not publish empty claims.*
-Planned comparison: the current multi-agent workflow (architect → builder,
-reviewer, design-reviewer) against Muse Code on a like-for-like extraction
-task, scored on parity of output, review findings caught, and wall-clock
-time. Results land here before submission.
+Muse Code trialling did not fit the runway before submission; the build used the multi-agent workflow above throughout. No comparison claims are made here.
 
 ## What's next
 
