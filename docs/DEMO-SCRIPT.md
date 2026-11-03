@@ -52,11 +52,9 @@ review → commit path."
 [Full-screen table, ~10 seconds, no narration beyond one line:]
 
 "Same captures, every provider, field-level accuracy. Muse Spark versus
-Muse Spark Open versus the Gemini baseline."
+Muse Spark Open versus the recorded Gemini baseline."
 
-[Use the live numbers from the Tue benchmark run. Dry-run reference:
-muse-spark 83.1% mean (59/71, exact-match lower bound), Gemini and
-Spark Open fixtures 100% — provisional, replaced live.]
+[Use the live numbers from the Tue benchmark run; label the Gemini row "baseline (recorded fixtures — never called live)". Dry-run reference: muse-spark 83.1% mean (59/71, exact-match lower bound), Gemini and Spark Open fixtures 100% — provisional, replaced live. If no live run lands, do not narrate "same captures" over mixed-denominator dry-run numbers — flash the table with its fixture footnote or cut the beat to a spoken one-liner.]
 
 ## 2:45–3:00 — What's next + close
 
@@ -71,4 +69,4 @@ is ever lost. Snap it. Catalogued."
 - [ ] App on Standard mode (`muse-spark-1.3`); no contributor endpoints
 - [ ] Backup screen-recording of the video pipeline ready
 - [ ] Benchmark table numbers pasted from the Tue live run
-- [ ] Architect framing review of this script: migration narrative matches SUB-01b (blocks recording, not the draft)
+- [x] Architect framing review of this script: CHANGES REQUIRED applied (benchmark-honesty edits 1+2, Tue Nov 3) — recording unblocked
