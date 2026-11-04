@@ -1,5 +1,6 @@
 {
   "_note": "Provisional web-sourced garment leg. source=web entries are replaced by the trade-fair shoot. Captures live in eval/captures/ (gitignored, never published). Ground truth mirrors the schema payload shape; null only where truly absent.",
+  "_probe_clip": "fresh-rack-video-01",
   "captures": [
     {
       "id": "web-garment-01",
@@ -414,6 +415,20 @@
         }
       },
       "languages": ["en"],
+      "failure_tags": []
+    },
+    {
+      "id": "fresh-rack-video-01",
+      "file": "captures/rack-walk-test.mp4",
+      "class": "rack_video",
+      "source": "fresh",
+      "schema": "garment",
+      "ground_truth": {
+        "expected_distinct_items": 7,
+        "expected_items_note": "Close slow lateral along a rail of ~7 distinct garments (grey, white, magenta, lilac gingham, blue, pale lilac, yellow check, left to right; 23 s clip). A hand briefly parts the rail mid-clip. Count is an estimate — tune after the first Modal run.",
+        "expected_items_estimated": true
+      },
+      "languages": [],
       "failure_tags": []
     }
   ]
