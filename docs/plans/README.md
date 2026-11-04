@@ -182,3 +182,9 @@ Branch `task/demo-video-production` off `staging` (reviewer PASS, one minor fixe
 - **DES-02B builder check DONE (dimensions/duration):** all 4 PNGs at exact spec size; sting 1920×1080 H.264 30fps, 3.000s exact. Visual/pixel QA still open.
 - **Checks:** `pnpm check` PASS, `pnpm test:run` 866 passed, `pnpm build` PASS, changed-files eslint 0 errors (full-repo lint failure is pre-existing baseline: 496 errors on clean `staging`, zero delta from this branch).
 - **Still open:** benchmark LIVE run on images (owner GO recorded; awaiting explicit session confirmation + provider scope), footage capture on local stack, composition assembly, owner VO tonight, rack-walk clip + probe go, Tue 19:00 SAST design fallback trigger.
+
+## Status update — Wed Nov 4, benchmark dry-run fallback (builder)
+
+- **Benchmark LIVE run: STOPPED at pre-flight, owner chose dry-run fallback.** Owner authorised the full live run in session Wed Nov 4; `@inference` pre-flight then found `MODEL_API_KEY` / `MODAL_PROXY_TOKEN` / `SPARK_OPEN_BASE_URL` present-but-empty in `supabase/.sb.env` and `SUPABASE_SERVICE_ROLE_KEY` absent everywhere, so no probe, no extraction, no credits spent, no remote writes, Gemini never called (it never is on this path). All 13 photo captures verified present. Owner decision: ship the dry-run.
+- **Honesty edits (this branch):** `docs/benchmark-results.md` banner, `docs/WRITEUP.md` benchmark footnote, and `docs/DEMO-SCRIPT.md` 2:35–2:45 beat + checklist now state the live run was not executed and the fixture table is the submitted benchmark; the script's "never narrate 'same captures' over dry-run numbers" rule is marked active. Numbers unchanged (verified reproducible by the fixed runner Tue: gemini fixtures 53/53, muse-spark 59/71 83.1%, spark-open 53/53).
+- **Known gap:** no unit test pins `recordedOf`'s dual fixture-shape handling (tester follow-up, non-blocking).

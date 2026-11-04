@@ -51,10 +51,10 @@ review → commit path."
 
 [Full-screen table, ~10 seconds, no narration beyond one line:]
 
-"Same captures, every provider, field-level accuracy. Muse Spark versus
+"Recorded fixtures, every provider, field-level accuracy. Muse Spark versus
 Muse Spark Open versus the recorded Gemini baseline."
 
-[Use the live numbers from the Tue benchmark run; label the Gemini row "baseline (recorded fixtures — never called live)". Dry-run reference: muse-spark 83.1% mean (59/71, exact-match lower bound), Gemini and Spark Open fixtures 100% — provisional, replaced live. If no live run lands, do not narrate "same captures" over mixed-denominator dry-run numbers — flash the table with its fixture footnote or cut the beat to a spoken one-liner.]
+[Fallback CHOSEN Wed Nov 4: no live run lands (pre-flight stopped — local provider secrets unpopulated; no credits spent). Flash the dry-run table with its fixture footnote; label the Gemini row "baseline (recorded fixtures — never called live)". Do NOT narrate "same captures" over these mixed-denominator dry-run numbers (muse-spark 83.1% mean, 59/71, exact-match lower bound; Gemini and Spark Open fixtures 100%).]
 
 ## 2:45–3:00 — What's next + close
 
@@ -68,5 +68,5 @@ is ever lost. Snap it. Catalogued."
 - [ ] Demo data staged: vendor card, fabric composition tag (Chinese), garment rack, 30–60 s rack-walk clip
 - [ ] App on Standard mode (`muse-spark-1.3`); no contributor endpoints
 - [ ] Backup screen-recording of the video pipeline ready
-- [ ] Benchmark table numbers pasted from the Tue live run
+- [x] Benchmark: dry-run fallback chosen Wed Nov 4 (no live run) — table flashed with fixture footnote, no "same captures" narration
 - [x] Architect framing review of this script: CHANGES REQUIRED applied (benchmark-honesty edits 1+2, Tue Nov 3) — recording unblocked

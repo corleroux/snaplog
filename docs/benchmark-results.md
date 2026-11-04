@@ -1,6 +1,6 @@
 # Benchmark results (FR-MOD-04)
 
-> DRY RUN — recorded fixtures only, no live models. Live numbers land here after the owner-approved run (Tue).
+> DRY RUN — recorded fixtures only, no live models. The live run was not executed (owner fallback decision Wed Nov 4: pre-flight found local provider secrets unpopulated; stopped before any call — no credits spent, Gemini never called live). These fixture numbers are the submitted benchmark.
 
 | Provider | Model | Captures (matched/scored) | Mean accuracy | Mean latency (ms) | Cost/item (USD) |
 |---|---|---|---|---|---|---|
@@ -12,7 +12,7 @@
 
 Same captures × each provider, scored field-by-field against hand-labelled ground truth with the real schema normaliser (`extractionNormaliser.ts`): normalised string/number match counts; null-vs-value counted both ways (missing expected value, or guessed value where null was correct — the never-guess rule rewards abstention). Cost = usage × hard-coded Standard price table (Muse Spark $1.25 in / $4.25 out per Mtok; same for Spark Open).
 
-Exact string match is a **lower bound**: a semantically correct but wordier extraction (e.g. "Denim Trucker Jacket" vs ground truth "Jacket") scores as a mismatch. Translation quality and semantic equivalence are spot-checked manually per PRD §8.4 on the live run.
+Exact string match is a **lower bound**: a semantically correct but wordier extraction (e.g. "Denim Trucker Jacket" vs ground truth "Jacket") scores as a mismatch. Translation quality and semantic equivalence manual spot-check (PRD §8.4) is deferred — no live run was executed for this table.
 
 ## Failure patterns
 
@@ -33,6 +33,6 @@ Exact string match is a **lower bound**: a semantically correct but wordier extr
 
 - Gemini rows are legacy-baseline context (fixtures/write-up); Gemini is never called live and is not a scored demo provider.
 - Muse Spark ran in Standard mode (hard-pinned; contributor output can never appear here).
-- Garment leg provisional on web captures until the shoot; video rows need the Modal endpoint + live runs.
+- Garment leg basis: the recorded fixture captures listed in `eval/manifest.json` — this is the submitted benchmark table; no live run was executed and no replacement numbers are pending.
 - Rack-video entries are not scored by this runner (item isolation is the video pipeline's job); expected counts tune after the first Modal run.
 - `N/A` / `UNKNOWN` strings instead of null (`item.item_code`, `item.name` on garment-05) — prompt hardening for the benchmark: "use null, never write N/A or UNKNOWN".
