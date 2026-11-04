@@ -49,8 +49,8 @@ Built with **Muse Spark Open**.
 
 ## Benchmark
 
-Same real captures, every provider, field-level accuracy plus latency and
-cost per item. Method: normalised string/number match counts; null-vs-value
+Same-capture method, every provider, field-level accuracy plus latency and
+cost per item (fixture subsets differ in this dry run — see footnote below). Method: normalised string/number match counts; null-vs-value
 counted both ways, so the never-guess rule is rewarded. Exact string match is
 a lower bound — wordier-correct extractions score as misses, and translation
 quality is spot-checked manually per PRD §8.4.
@@ -61,8 +61,7 @@ quality is spot-checked manually per PRD §8.4.
 | muse-spark 1.3 Standard | 3 (59/71) | 83.1% | ~$0.0050 |
 | muse-spark-open | 2 (53/53) | 100.0% | ~$0.0025 |
 
-*Dry-run numbers from recorded fixtures (no live models) — replaced by the
-Tuesday live run over the full eval set. Full table: `docs/benchmark-results.md`.*
+*Dry-run numbers from recorded fixtures (no live models). The live run was not executed — owner fallback decision Wed Nov 4, after pre-flight found the local provider secrets unpopulated and stopped before any call; no credits were spent and Gemini was never called live. Full table: `docs/benchmark-results.md`.*
 
 ## Tooling note (PRD §9): Muse Code trial
 
