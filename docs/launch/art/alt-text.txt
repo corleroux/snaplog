@@ -1,0 +1,9 @@
+youtube-thumbnail-1280x720.png: YouTube thumbnail — "Snap it. Catalogued." in large white serif on near-black, subline "AI turns trade-fair photos into searchable catalogues", orange chip "Meta × Cerebral Valley Hackathon", right: Snaplog review screen showing a jacket's materials label being AI-extracted into a style record.
+x-header-1500x500.png: X profile header — "Snaplog" in white serif on near-black left, tagline "Phone photos → structured, searchable catalogues for trade-fair buyers", orange chip "SNAP IT. CATALOGUED.", right: close-up of colourful sweaters hanging on a rail.
+tiktok-cover-1080x1920.png: TikTok cover — Snaplog garment review screen (black winter jacket, "AI Extracted · Garment v1") above the headline "Your camera roll, catalogued." and "Fabric + garments for trade-fair buyers. Built on Meta AI." Footer: "SNAP IT. CATALOGUED."
+snaplog-profile-512.png: Snaplog profile image (brand avatar, 512×512) for Facebook, Instagram, X, TikTok, LinkedIn.
+snaplog-fb-cover-851x315.png (copy in docs/launch/art/; master in docs/brand/exports/): Snaplog Facebook cover.
+snaplog-linkedin-cover-1512x256.png (copy in docs/launch/art/; master in docs/brand/exports/): Snaplog LinkedIn cover.
+snaplog-ig-post-1080x1080.png (copy in docs/launch/art/; master in docs/brand/exports/): Snaplog Instagram announcement post — "We turned trade-fair chaos into a searchable catalogue — built with Meta's AI stack. Snap it. Catalogued."
+snaplog-ig-story-1080x1920.png (copy in docs/launch/art/; master in docs/brand/exports/): Snaplog logo above "Chaos in. Catalogue out." — "We turned trade-fair chaos into a searchable catalogue. Built with Meta's AI."
+snaplog-logo-sting-1920x1080.mp4 (copy in docs/launch/art/; master in docs/brand/exports/): 3-second Snaplog logo sting (opening animation for the demo video).

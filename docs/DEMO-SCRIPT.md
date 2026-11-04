@@ -9,7 +9,8 @@
 [Buyer walking a rail, phone in hand, camera roll chaos — 3 quick cuts]
 
 "Every trade fair ends the same way: a camera roll you can't search, and a
-spreadsheet you build by hand. Snap it. Catalogued."
+spreadsheet you build by hand. What if your camera roll was the catalogue?
+Snap it. Catalogued."
 
 [SUB-01b migration sentence — verbatim, do not paraphrase:]
 "extraction used to run on Gemini; this week we moved it behind a
