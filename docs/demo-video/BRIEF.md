@@ -40,6 +40,8 @@ deadline day.
 
 ## Assets
 
+- **Amendment — Wed Nov 4 (builder, owner-directed):** (1) Owner rack-walk clip could not be completed → the rack beat uses the eval set's Mixkit stock clips (`rack-video-02-sweaters.mp4` primary, `rack-video-01-pants.mp4` for the hook; 1280×720, source URLs in `eval/manifest.json`), framed as buying-floor B-roll with an architecture lower-third — never presented as footage this pipeline processed. (2) Fabric footage uses the owner's real jacket materials label (`docs/assets/jacket-label.png`) — the staged Chinese composition label never existed (the old `e2e/fixtures/assets/*.jpg` are 0-byte placeholders); extraction/translation narration must not claim a Chinese label is shown. (3) Footage was recorded against the DEPLOYED app with explicit owner go (`DEMO_ALLOW_REMOTE=1`, marked “Demo — Snaplog Showcase” event) because no Docker/local stack exists on this machine; the demo event tree was deleted and verified empty afterwards. Both flows passed (fabric 40.8s, garment 39.8s raw) and were frame-verified (capture → Set-as-Info → processing → “AI Extracted” review → Styles list).
+
 - `docs/brand/exports/snaplog-logo-sting-1920x1080.mp4` — opener sting. VERIFIED Tue Nov 3 (builder second-person check): 1920×1080, H.264, 30 fps, exactly 3.000 s. Visual/pixel QA still open.
 - `docs/demo-video/` (this dir) — BRIEF tracked; `project/`, `footage/`, `renders/` gitignored. Raw footage and renders NEVER enter git or the submission sync.
 - Playwright footage — `e2e/demo/demo-capture.demo.ts` via `playwright.demo.config.ts` (separate config, Pixel 5, `video: 'on'`). Output lands in `test-results/demo/` (gitignored). NOT a CI test: the `.demo.ts` suffix keeps it out of the default config's testMatch; `pnpm test:e2e` never runs it.

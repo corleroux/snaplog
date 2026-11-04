@@ -30,7 +30,7 @@ import { test, expect, type Page } from '@playwright/test'
 import { createClient } from '@supabase/supabase-js'
 import { existsSync } from 'fs'
 import { resolve } from 'path'
-import { login, createTestUser } from '../helpers/auth-helpers'
+import { createTestUser } from '../helpers/auth-helpers'
 
 const SUPABASE_URL =
   process.env.DEMO_SUPABASE_URL ||
@@ -69,6 +69,21 @@ function assertLocalStackOnly() {
 /** Hold on a beat so the recorded footage is legible. */
 async function beat(page: Page) {
   await page.waitForTimeout(PACE_MS)
+}
+
+/**
+ * UI login for footage. The shared helper waits for `**\/events**`, but the
+ * app lands on `/` (the events dashboard) after login — wait for either.
+ */
+async function loginForFootage(page: Page) {
+  await page.goto('/login')
+  await page.getByLabel('Email').fill(DEMO_EMAIL)
+  await page.getByLabel('Password').fill(DEMO_PASSWORD)
+  await page.getByRole('button', { name: /log in|sign in/i }).click()
+  await page.waitForURL(
+    (url) => url.pathname === '/' || url.pathname.startsWith('/events'),
+    { timeout: 20_000 }
+  )
 }
 
 let eventId = ''
@@ -116,18 +131,36 @@ async function seedDemoData() {
   if (events && events.length > 0) {
     eventId = events[0].id
   } else {
+    // Mirror the app's event creation (eventRepository.create): events use
+    // created_by (not owner_id), then the creator joins as owner member —
+    // membership is what RLS checks for everything downstream.
     const { data, error } = await supabase
       .from('events')
       .insert({
         name: EVENT_NAME,
-        description: 'Snaplog hackathon demo (local stack only)',
-        location: 'Trade fair — demo hall',
-        owner_id: ownerId,
+        slug: 'demo-snaplog-showcase',
+        venue: 'Trade fair — demo hall',
+        created_by: ownerId,
       })
       .select('id')
       .single()
     if (error) throw new Error(`[demo] Failed to seed demo event: ${error.message}`)
     eventId = data.id
+  }
+
+  const { data: membership } = await supabase
+    .from('event_members')
+    .select('event_id')
+    .eq('event_id', eventId)
+    .eq('user_id', ownerId)
+    .limit(1)
+  if (!membership || membership.length === 0) {
+    const { error: memberError } = await supabase
+      .from('event_members')
+      .insert({ event_id: eventId, user_id: ownerId, role: 'owner' })
+    if (memberError) {
+      throw new Error(`[demo] Failed to seed demo event membership: ${memberError.message}`)
+    }
   }
 
   const { data: vendors } = await supabase
@@ -145,7 +178,7 @@ async function seedDemoData() {
         event_id: eventId,
         company_name: VENDOR_NAME,
         booth_number: 'H3-01',
-        owner_id: ownerId,
+        created_by: ownerId,
       })
       .select('id')
       .single()
@@ -163,6 +196,11 @@ async function uploadCapture(page: Page, imagePath: string) {
   }
   await page.locator('input[type="file"]').first().setInputFiles(imagePath)
   await beat(page)
+
+  // The capture panel requires one image marked as Info before AI
+  // extraction unlocks (the DEMO-SCRIPT info-image overlay beat).
+  await page.getByRole('button', { name: /set as info/i }).first().click()
+  await beat(page)
 }
 
 test.describe.configure({ mode: 'serial' })
@@ -174,7 +212,7 @@ test.describe('DEMO-01 footage', () => {
 
   test('fabric label → extract → review → commit', async ({ page }) => {
     test.setTimeout(300_000)
-    await login(page, DEMO_EMAIL, DEMO_PASSWORD)
+    await loginForFootage(page)
     await beat(page)
 
     await page.goto(`/events/${eventId}/vendors/${vendorId}/styles/new/capture`)
@@ -182,9 +220,11 @@ test.describe('DEMO-01 footage', () => {
 
     await uploadCapture(page, FABRIC_IMAGE)
 
+    await page.getByRole('button', { name: /extract style info/i }).first().click()
+
     // Extraction runs live (Standard mode). Wait for the review screen.
     await expect(
-      page.getByText(/review|extracted|composition|fabric/i).first()
+      page.getByText(/review.*details|AI extracted/i).first()
     ).toBeVisible({ timeout: 120_000 })
     await beat(page)
 
@@ -198,7 +238,7 @@ test.describe('DEMO-01 footage', () => {
 
   test('garment capture → extract → review → commit', async ({ page }) => {
     test.setTimeout(300_000)
-    await login(page, DEMO_EMAIL, DEMO_PASSWORD)
+    await loginForFootage(page)
     await beat(page)
 
     await page.goto(`/events/${eventId}/vendors/${vendorId}/items/new/capture`)
@@ -210,7 +250,7 @@ test.describe('DEMO-01 footage', () => {
 
     await uploadCapture(page, GARMENT_IMAGE)
 
-    await page.getByRole('button', { name: /extract.*info/i }).first().click()
+    await page.getByRole('button', { name: /extract item info/i }).first().click()
     await expect(page.getByLabel(/garment.*type/i).first()).toBeVisible({
       timeout: 120_000,
     })
@@ -219,9 +259,10 @@ test.describe('DEMO-01 footage', () => {
     await page.waitForTimeout(3_000)
 
     await page.getByRole('button', { name: /save garment|save|commit/i }).first().click()
-    await expect(page.getByText(/saved to the catalogue/i)).toBeVisible({
-      timeout: 30_000,
-    })
+    // A successful commit lands on the vendor's Styles list with the new
+    // item in it (no "saved" toast in this flow).
+    await expect(page).toHaveURL(/\/styles/, { timeout: 30_000 })
+    await expect(page.getByText(/jacket/i).first()).toBeVisible({ timeout: 15_000 })
     await beat(page)
   })
 })
