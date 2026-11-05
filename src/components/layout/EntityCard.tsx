@@ -6,7 +6,7 @@
  * card surface.
  *
  * Rules (from DESIGN_SYSTEM.md):
- *   - Background: white, rounded-xl, border border-gray-200
+ *   - Background: card token, rounded-xl, border token
  *   - Title:    one line, truncates, font-semibold
  *   - Subtitle: one line, truncates, text-secondary
  *   - Badge:    status only, one per card maximum
@@ -49,6 +49,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import { MoreVertical, ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -107,11 +108,13 @@ export interface EntityCardProps {
 // Badge styles
 // ---------------------------------------------------------------------------
 
+// Status palettes (upcoming/active/error hues) are intentional — there are
+// no success/info design tokens; archived/draft use design tokens.
 const badgeStyles: Record<BadgeVariant, string> = {
   upcoming: 'bg-blue-50   text-blue-700',
   active:   'bg-green-50  text-green-700',
-  archived: 'bg-gray-100  text-gray-500',
-  draft:    'bg-orange-50 text-orange-700',
+  archived: 'bg-muted  text-muted-foreground',
+  draft:    'bg-field-warn text-danger',
   error:    'bg-red-50    text-red-600',
 }
 
@@ -232,8 +235,8 @@ function ActionMenu({ actions, onClose, triggerRef }: ActionMenuProps) {
         }}
         className={cn(
           'w-48',
-          'bg-white rounded-xl',
-          'border border-gray-200',
+          'bg-card rounded-xl',
+          'border border-border',
           'shadow-lg shadow-black/10',
           'overflow-hidden',
         )}
@@ -249,7 +252,7 @@ function ActionMenu({ actions, onClose, triggerRef }: ActionMenuProps) {
 
         {/* Divider before destructive actions */}
         {destructiveActions.length > 0 && standardActions.length > 0 && (
-          <div className="border-t border-gray-200 my-0.5" />
+          <div className="border-t border-border my-0.5" />
         )}
 
         {/* Destructive actions */}
@@ -274,7 +277,8 @@ function ActionMenuItem({
   onClose: () => void
 }) {
   return (
-    <button
+    <Button
+      variant="ghost"
       role="menuitem"
       disabled={action.disabled}
       onClick={() => {
@@ -284,13 +288,13 @@ function ActionMenuItem({
         }
       }}
       className={cn(
-        'w-full flex items-center gap-3',
+        'w-full h-auto rounded-none justify-start gap-3',
         'px-4 py-3',
-        'text-sm text-left',
+        'text-sm text-left font-normal',
         'transition-colors duration-100',
         action.destructive
-          ? 'text-red-600 hover:bg-red-50 active:bg-red-100'
-          : 'text-gray-700 hover:bg-gray-50 active:bg-gray-100',
+          ? 'text-danger hover:bg-danger-bg active:bg-danger-bg'
+          : 'text-foreground hover:bg-muted active:bg-accent',
         action.disabled && 'opacity-40 cursor-not-allowed',
       )}
     >
@@ -299,7 +303,7 @@ function ActionMenuItem({
         {action.icon}
       </span>
       <span>{action.label}</span>
-    </button>
+    </Button>
   )
 }
 
@@ -326,9 +330,9 @@ export function EntityCard({
   return (
     <div
       className={cn(
-        'bg-white rounded-xl',
-        'border border-gray-200',
-        'flex items-center',
+        'bg-card rounded-xl',
+        'border border-border',
+        'flex items-center min-w-0',
         className,
       )}
       data-testid={testId}
@@ -349,7 +353,8 @@ export function EntityCard({
           'p-4',
           isNavigable && [
             'cursor-pointer',
-            'hover:bg-gray-50 active:bg-gray-100',
+            'hover:bg-muted active:bg-muted',
+            'outline-none focus-visible:ring-2 focus-visible:ring-ring/40',
             'transition-colors duration-150',
             'rounded-l-xl',               // only left corners when overflow button present
             !hasActions && 'rounded-xl',
@@ -362,9 +367,9 @@ export function EntityCard({
           <div className={cn(
             'flex-shrink-0',
             'w-10 h-10',
-            'rounded-full bg-orange-50',
+            'rounded-full bg-primary/10',
             'flex items-center justify-center',
-            'text-orange-600',
+            'text-primary',
             '[&>svg]:w-5 [&>svg]:h-5',
           )}>
             {leadingIcon}
@@ -375,14 +380,14 @@ export function EntityCard({
         <div className="flex-1 min-w-0">
           {/* Title row: title + badge */}
           <div className="flex items-center gap-2 min-w-0">
-            <span className="text-sm font-semibold text-gray-900 truncate">
+            <span className="font-display text-sm font-semibold text-foreground truncate min-w-0">
               {title}
             </span>
             {badge && (
               <StatusBadge label={badge.label} variant={badge.variant} />
             )}
             {countChip && (
-              <span className="inline-flex items-center text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full whitespace-nowrap flex-shrink-0">
+              <span className="inline-flex items-center text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full whitespace-nowrap flex-shrink-0">
                 {countChip}
               </span>
             )}
@@ -390,7 +395,7 @@ export function EntityCard({
 
           {/* Subtitle */}
           {subtitle && (
-            <p className="text-xs text-gray-500 truncate mt-0.5">
+            <p className="text-xs text-muted-foreground truncate mt-0.5">
               {subtitle}
             </p>
           )}
@@ -398,14 +403,16 @@ export function EntityCard({
 
         {/* Right chevron — only when navigable and no overflow menu */}
         {isNavigable && !hasActions && (
-          <ChevronRight className="w-4 h-4 text-gray-400 flex-shrink-0" />
+          <ChevronRight className="w-4 h-4 text-muted-foreground flex-shrink-0" />
         )}
       </div>
 
       {/* ── Overflow action trigger ── */}
       {hasActions && (
         <div className="flex-shrink-0 pr-1">
-          <button
+          <Button
+            variant="ghost"
+            size="icon"
             ref={triggerRef}
             aria-label={`Actions for ${title}`}
             aria-haspopup="menu"
@@ -416,17 +423,13 @@ export function EntityCard({
             }}
             className={cn(
               // 44x44px touch target (DESIGN_SYSTEM.md)
-              'w-11 h-11',
-              'flex items-center justify-center',
-              'rounded-full',
-              'text-gray-400',
-              'hover:bg-gray-100 active:bg-gray-200',
-              'hover:text-gray-600',
-              'transition-colors duration-150',
+              'w-11 h-11 rounded-full',
+              'text-muted-foreground',
+              'hover:text-foreground',
             )}
           >
             <MoreVertical className="w-5 h-5" />
-          </button>
+          </Button>
 
           {/* Action menu — rendered via Portal to escape overflow:hidden */}
           {menuOpen && (

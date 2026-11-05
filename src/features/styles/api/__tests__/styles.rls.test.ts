@@ -242,3 +242,148 @@ describe.skipIf(!rlsEnabled)('fabric_styles RLS policies', () => {
     expect(data![0].id).toBe(styleForOwnerDeleteId)
   })
 })
+
+describe.skipIf(!rlsEnabled)('catalogue_types RLS policies', () => {
+  let authClient: SupabaseClient
+
+  beforeAll(async () => {
+    const user = await createUserWithProfile(
+      `catalogue-types-rls-${Date.now()}@example.com`,
+      'password123'
+    )
+    authClient = user.client
+  })
+
+  it('authenticated users can SELECT active catalogue_types', async () => {
+    const { data, error } = await authClient
+      .from('catalogue_types')
+      .select('slug, version, schema')
+      .eq('slug', 'fabric')
+      .single()
+
+    expect(error).toBeNull()
+    expect(data).not.toBeNull()
+    expect(data!.slug).toBe('fabric')
+    expect(data!.version).toBe(1)
+    expect(data!.schema).toHaveProperty('fields')
+  })
+
+  it('anonymous users cannot SELECT catalogue_types', async () => {
+    const anon = createClient(LOCAL_URL, ANON_KEY, {
+      auth: { persistSession: false, autoRefreshToken: false },
+    })
+
+    const { data, error } = await anon
+      .from('catalogue_types')
+      .select('slug')
+      .eq('slug', 'fabric')
+      .single()
+
+    expect(error).not.toBeNull()
+    expect(data).toBeNull()
+  })
+
+  it('authenticated users cannot INSERT catalogue_types', async () => {
+    const { error } = await authClient.from('catalogue_types').insert({
+      slug: 'malicious',
+      kind: 'catalogue_type',
+      display_name: 'Malicious',
+      version: 1,
+      schema: { fields: [] },
+    })
+
+    expect(error).not.toBeNull()
+  })
+})
+
+describe.skipIf(!rlsEnabled)('catalogue_items RLS policies', () => {
+  let eventId: string
+  let vendorId: string
+  let ownerClient: SupabaseClient
+  let editorClient: SupabaseClient
+
+  beforeAll(async () => {
+    const owner = await createUserWithProfile(
+      `catalogue-items-owner-${Date.now()}@example.com`,
+      'password123'
+    )
+    ownerClient = owner.client
+
+    const editor = await createUserWithProfile(
+      `catalogue-items-editor-${Date.now()}@example.com`,
+      'password123'
+    )
+    editorClient = editor.client
+
+    const { data: event } = await service
+      .from('events')
+      .insert({ name: 'Garment RLS Test Event', created_by: owner.userId })
+      .select('id')
+      .single()
+    eventId = event!.id
+
+    const { data: vendor } = await service
+      .from('vendors')
+      .insert({ event_id: eventId, name: 'Garment RLS Vendor', created_by: owner.userId })
+      .select('id')
+      .single()
+    vendorId = vendor!.id
+
+    await service.from('event_members').insert([
+      { event_id: eventId, user_id: owner.userId, role: 'owner' },
+      { event_id: eventId, user_id: editor.userId, role: 'editor' },
+    ])
+  })
+
+  it('members can SELECT catalogue_items', async () => {
+    const { data, error } = await ownerClient
+      .from('catalogue_items')
+      .select('id')
+      .eq('event_id', eventId)
+
+    expect(error).toBeNull()
+    expect(data).toHaveLength(0)
+  })
+
+  it('members can INSERT catalogue_items', async () => {
+    const { data, error } = await ownerClient
+      .from('catalogue_items')
+      .insert({
+        event_id: eventId,
+        vendor_id: vendorId,
+        schema_type: 'garment',
+        schema_version: 1,
+        item_code: 'GRLS-001',
+        extracted_fields: { garment_type: 'Dress' },
+      })
+      .select('id')
+      .single()
+
+    expect(error).toBeNull()
+    expect(data).not.toBeNull()
+  })
+
+  it('editor cannot DELETE catalogue_items', async () => {
+    const { data: item } = await ownerClient
+      .from('catalogue_items')
+      .insert({
+        event_id: eventId,
+        vendor_id: vendorId,
+        schema_type: 'garment',
+        schema_version: 1,
+        item_code: 'GRLS-002',
+        extracted_fields: {},
+      })
+      .select('id')
+      .single()
+
+    const { data, error } = await editorClient
+      .from('catalogue_items')
+      .delete()
+      .eq('id', item!.id)
+      .select('id')
+
+    expect(error).toBeNull()
+    expect(data).toHaveLength(0)
+  })
+})

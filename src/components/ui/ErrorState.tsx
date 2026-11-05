@@ -107,7 +107,7 @@ export function ErrorState({
   if (variant === 'inline-banner') {
     return (
       <div className={cn(
-        'rounded-lg bg-destructive/10 border border-destructive/20 p-4',
+        'rounded-lg bg-danger-bg border border-danger p-4',
         className
       )}>
         <div className="flex items-start gap-3">

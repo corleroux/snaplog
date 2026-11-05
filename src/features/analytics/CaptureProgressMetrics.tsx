@@ -100,7 +100,7 @@ export function CaptureProgressMetrics() {
                   <p className="text-xs text-muted-foreground">Captured</p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-2xl font-bold text-orange-600">
+                  <p className="text-2xl font-bold text-primary">
                     {progress.remaining_vendors}
                   </p>
                   <p className="text-xs text-muted-foreground">Remaining</p>

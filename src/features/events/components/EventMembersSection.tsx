@@ -169,7 +169,7 @@ export function EventMembersSection({
   if (state === 'loading') {
     return (
       <div className="flex items-center justify-center py-8">
-        <Loader2 className="h-6 w-6 animate-spin text-orange-500" />
+        <Loader2 className="h-6 w-6 animate-spin text-primary" />
       </div>
     )
   }
@@ -313,7 +313,7 @@ export function EventMembersSection({
         confirmText="Remove"
         cancelText="Keep Member"
         variant="destructive"
-        icon={<Shield className="h-6 w-6 text-amber-500" />}
+        icon={<Shield className="h-6 w-6 text-danger" />}
         isConfirming={isRemoving}
       />
     </>

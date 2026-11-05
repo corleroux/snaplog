@@ -1,6 +1,24 @@
 {
   "version": 1,
   "skills": {
+    "migrate-radix-to-base": {
+      "source": "shadcn/ui",
+      "sourceType": "github",
+      "skillPath": "skills/migrate-radix-to-base/SKILL.md",
+      "computedHash": "e1f2030ee5059be3dff0812ca0e4b995ee9fa3132176f049ebe6c90346a6755e"
+    },
+    "modal": {
+      "source": "modal-labs/modal-client",
+      "sourceType": "github",
+      "skillPath": "py/modal/skills/modal/SKILL.md",
+      "computedHash": "a8715761370aa9b16fec4ccff2acd29fba778824a5e8c0d4b50efe3971fe5d98"
+    },
+    "shadcn": {
+      "source": "shadcn/ui",
+      "sourceType": "github",
+      "skillPath": "skills/shadcn/SKILL.md",
+      "computedHash": "b864a958765563321f485a96f4d59c0bb6539f4286ab6d8b8b66895b7ebd302d"
+    },
     "supabase": {
       "source": "supabase/agent-skills",
       "sourceType": "github",

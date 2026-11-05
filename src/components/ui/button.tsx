@@ -9,8 +9,8 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default: 'bg-primary text-primary-foreground hover:bg-primary/90',
-        // Primary action - warm orange accent
-        accent: 'bg-orange-500 text-white hover:bg-orange-600 shadow-sm',
+        // Primary action - Stall accent with Ink text (DESIGN_SYSTEM.md: never white on Stall)
+        accent: 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm',
         // Secondary alternative action
         secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
         destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',

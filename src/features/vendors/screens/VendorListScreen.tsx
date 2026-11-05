@@ -12,7 +12,7 @@
  */
 
 import { type ReactNode, useMemo, startTransition, useDeferredValue } from 'react'
-import { Building2, Search, Loader2, Pencil, Archive, GripVertical } from 'lucide-react'
+import { Building2, Search, Loader2, Pencil, Archive } from 'lucide-react'
 import {
   DndContext,
   closestCenter,
@@ -203,7 +203,7 @@ export function VendorListScreen({
 
         {/* ── Status tabs (underline indicator) ── */}
         {!isEmpty && (
-          <div className="border-b border-gray-200 bg-white">
+          <div className="border-b border-border bg-background">
             <Tabs value={statusFilter} onValueChange={(v) => startTransition(() => onStatusFilterChange?.(v as TabValue))}>
               <TabsList
                 className={cn(
@@ -226,12 +226,12 @@ export function VendorListScreen({
                         'px-3 pb-3 pt-2',
                         'text-sm font-medium',
                         // Colour states
-                        'text-gray-400',
-                        'data-[state=active]:text-orange-600',
+                        'text-muted-foreground',
+                        'data-[state=active]:text-primary',
                         // Underline indicator on active
                         'after:absolute after:bottom-0 after:left-3 after:right-3',
                         'after:h-0.5 after:rounded-full',
-                        'after:bg-orange-500 after:scale-x-0',
+                        'after:bg-primary after:scale-x-0',
                         'after:transition-transform after:duration-200 after:ease-out',
                         'data-[state=active]:after:scale-x-100',
                       )}
@@ -246,9 +246,9 @@ export function VendorListScreen({
                             'rounded-full',
                             'text-[11px] font-semibold leading-none',
                             // Active state: brand-tinted pill
-                            'data-[state=active]:bg-orange-100 data-[state=active]:text-orange-700',
+                            'data-[state=active]:bg-primary/10 data-[state=active]:text-primary',
                             // Inactive state: neutral pill
-                            'data-[state=inactive]:bg-gray-100 data-[state=inactive]:text-gray-500',
+                            'data-[state=inactive]:bg-muted data-[state=inactive]:text-muted-foreground',
                           )}
                         >
                           {count}
@@ -263,7 +263,7 @@ export function VendorListScreen({
         )}
 
         {/* ── Scrollable vendor list ── */}
-        <main className="flex-1 overflow-y-auto px-4 pt-3">
+        <main className="flex-1 overflow-y-auto overflow-x-clip px-4 pt-3">
           <PullToRefresh onRefresh={async () => { await onRefresh?.() }}>
             {/* Optional search bar */}
             {!isEmpty && onSearchChange && (
@@ -273,7 +273,7 @@ export function VendorListScreen({
                   value={searchQuery}
                   onChange={(e) => onSearchChange(e.target.value)}
                   placeholder="Search vendors..."
-                  className="bg-muted/50 pl-10 h-11 border-none rounded-xl focus-visible:ring-orange-500/30"
+                  className="bg-muted/50 pl-10 h-11 border-none rounded-xl focus-visible:ring-ring/30"
                 />
               </div>
             )}
@@ -329,7 +329,7 @@ export function VendorListScreen({
                         title={vendor.companyName}
                         subtitle={getVendorSubtitle(vendor)}
                         badge={vendor.status === 'archived' ? { label: 'Archived', variant: 'archived' } : undefined}
-                        countChip={vendor.styleCount !== undefined ? `${vendor.styleCount} ${vendor.styleCount === 1 ? 'style' : 'styles'}` : undefined}
+                        countChip={vendor.itemCount !== undefined ? `${vendor.itemCount} ${vendor.itemCount === 1 ? 'item' : 'items'}` : undefined}
                         leadingIcon={<Building2 className="w-5 h-5" />}
                         onPress={() => onVendorClick?.(vendor)}
                         actions={[
@@ -436,45 +436,49 @@ function SortableVendorItem({ vendor, onEditVendor, onVendorClick }: SortableVen
     zIndex: isDragging ? 1000 : 'auto',
   }
 
+  // Gripless reorder (FR-CAT-01b): the whole card is the drag activator.
+  // PointerSensor (distance 8) keeps tap-to-open intact and TouchSensor
+  // (delay 150, tolerance 5) means quick scrolls/swipes never lift the
+  // card — only a long-press does. `attributes` keeps the card root
+  // focusable so KeyboardSensor reorder still works. Three-gesture
+  // coexistence (scroll vs long-press-drag vs swipe) is gated on
+  // on-device QA per the FR-CAT-01b plan.
   return (
-    <div ref={setNodeRef} style={style} className="flex items-center gap-1">
-      <div
-        {...attributes}
-        {...listeners}
-        className="flex-shrink-0 touch-none min-w-[36px] min-h-[36px] flex items-center justify-center cursor-grab active:cursor-grabbing"
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      className="min-w-0 touch-none rounded-xl cursor-grab outline-none focus-visible:ring-2 focus-visible:ring-ring active:cursor-grabbing"
+    >
+      <SwipeActions
+        key={vendor.id}
+        onEdit={onEditVendor ? () => onEditVendor(vendor) : undefined}
       >
-        <GripVertical className="w-5 h-5 text-muted-foreground" />
-      </div>
-      <div className="flex-1 min-w-0">
-        <SwipeActions
-          key={vendor.id}
-          onEdit={onEditVendor ? () => onEditVendor(vendor) : undefined}
-        >
-          <EntityCard
-            title={vendor.companyName}
-            subtitle={getVendorSubtitle(vendor)}
-            badge={vendor.status === 'archived' ? { label: 'Archived', variant: 'archived' } : undefined}
-            countChip={vendor.styleCount !== undefined ? `${vendor.styleCount} ${vendor.styleCount === 1 ? 'style' : 'styles'}` : undefined}
-            leadingIcon={<Building2 className="w-5 h-5" />}
-            onPress={() => onVendorClick?.(vendor)}
-            actions={[
-              ...(onEditVendor ? [{
-                label: 'Edit',
-                icon: <Pencil className="w-[18px] h-[18px]" />,
-                onPress: () => onEditVendor(vendor),
-              }] : []),
-              {
-                label: 'Archive',
-                icon: <Archive className="w-[18px] h-[18px]" />,
-                onPress: () => {
-                  // Archive action - to be implemented
-                },
+        <EntityCard
+          title={vendor.companyName}
+          subtitle={getVendorSubtitle(vendor)}
+          badge={vendor.status === 'archived' ? { label: 'Archived', variant: 'archived' } : undefined}
+          countChip={vendor.itemCount !== undefined ? `${vendor.itemCount} ${vendor.itemCount === 1 ? 'item' : 'items'}` : undefined}
+          leadingIcon={<Building2 className="w-5 h-5" />}
+          onPress={() => onVendorClick?.(vendor)}
+          actions={[
+            ...(onEditVendor ? [{
+              label: 'Edit',
+              icon: <Pencil className="w-[18px] h-[18px]" />,
+              onPress: () => onEditVendor(vendor),
+            }] : []),
+            {
+              label: 'Archive',
+              icon: <Archive className="w-[18px] h-[18px]" />,
+              onPress: () => {
+                // Archive action - to be implemented
               },
-            ]}
-            testId={`vendor-card-${vendor.id}`}
-          />
-        </SwipeActions>
-      </div>
+            },
+          ]}
+          testId={`vendor-card-${vendor.id}`}
+        />
+      </SwipeActions>
     </div>
   )
 }

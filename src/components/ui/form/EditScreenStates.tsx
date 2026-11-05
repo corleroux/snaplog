@@ -24,7 +24,7 @@ export function EditScreenLoading({ entity, className }: EditScreenLoadingProps)
   return (
     <AppFrame className={className}>
       <div className="flex flex-col items-center gap-3">
-        <Loader2 className="h-8 w-8 animate-spin text-orange-500" />
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
         <p className="text-muted-foreground">Loading {entity}...</p>
       </div>
     </AppFrame>

@@ -65,9 +65,9 @@ export function NavigationFooter({
               className={cn(
                 'flex-1 flex flex-col items-center justify-center py-2 px-3 transition-colors',
                 'min-h-[3.5rem]',
-                'focus-visible:ring-2 focus-visible:ring-orange-500/30 focus-visible:outline-none',
+                'focus-visible:ring-2 focus-visible:ring-ring/30 focus-visible:outline-none',
                 isActive
-                  ? 'text-orange-500'
+                  ? 'text-primary'
                   : 'text-muted-foreground hover:text-foreground'
               )}
             >

@@ -88,7 +88,7 @@ export function ExtractionQualityReport() {
                       quality.average_confidence < 0.5
                         ? 'bg-yellow-600'
                         : quality.average_confidence < 0.7
-                          ? 'bg-orange-500'
+                          ? 'bg-primary'
                           : 'bg-green-600'
                     }`}
                     style={{ width: `${overallPercentage}%` }}

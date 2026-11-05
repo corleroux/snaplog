@@ -1,6 +1,8 @@
 node_modules/
 dist/
 .build/
+.venv/
+__pycache__/
 .env
 .env.*
 !.env.example
@@ -28,6 +30,10 @@ backup/
 .cloud-backups/
 test-results/
 playwright-report/
+# DEMO-01 video production: HyperFrames project, raw footage, renders (never in git)
+docs/demo-video/project/
+docs/demo-video/footage/
+docs/demo-video/renders/
 prompts/
 tasks/
 ENGINEERING_CLOSEOUT.md
@@ -50,4 +56,17 @@ graphify-out/
 *.log
 tmp_*.sql
 *.tmp
-.opencode/sessions/
+.opencode/sessions/__pycache__/
+
+# Python bytecode (Modal pipeline tests)
+__pycache__/
+*.py[cod]
+
+# Eval captures stay local (privacy + size) — manifest only is committed.
+eval/captures/
+
+# Local reviewer/owner feedback notes — never committed, never submitted.
+docs/feedback/
+
+.worktrees/
+models.env

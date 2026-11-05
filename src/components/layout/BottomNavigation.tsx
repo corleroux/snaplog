@@ -4,10 +4,10 @@
  * Design System Section 10 (Bottom Navigation):
  * - Fixed at bottom of the 430px shell (content scrolls under)
  * - Height: 72px (nav bar) + FAB protrudes ~28px above
- * - Active state: text-brand (orange-500) icon + label
- * - Inactive state: text-muted (gray-400) icon + label
- * - Icon size: 24px (h-6 w-6)
- * - Label: text-[10px]
+ * - Active state: Stall icon + label + Stall dot indicator (on Ink bar)
+ * - Inactive state: text-paper/70 icon + label
+ * - Icon size: 24px (h-6 w-6), stroke width 2 everywhere
+ * - Label: sans text-[11px], sentence case
  * - Touch target per item: minimum 44px height
  * - Nav items: [Home] [Events] [FAB +] [Search] [Profile]
  * - Centre FAB replaces Notifications; notifications moved to header bell icon
@@ -34,7 +34,7 @@ import { useAuth, signOut, useProfileRole } from '@/features/auth'
 interface NavItem {
   label: string
   href: string
-  icon: React.ComponentType<{ className?: string }>
+  icon: React.ComponentType<{ className?: string; strokeWidth?: number }>
   isAction?: boolean
 }
 
@@ -169,12 +169,12 @@ export function BottomNavigation({
         }}
       >
         {/* White fill with hump cutout */}
-        <path d={NAV_PATH} className="fill-white dark:fill-gray-900" />
+        <path d={NAV_PATH} className="fill-foreground" />
         {/* Border trace */}
         <path
           d={BORDER_PATH}
           fill="none"
-          className="stroke-gray-200 dark:stroke-gray-700"
+          className="stroke-muted-foreground"
           strokeWidth="0.5"
         />
       </svg>
@@ -199,16 +199,17 @@ export function BottomNavigation({
                   className={cn(
                     'w-full flex flex-col items-center justify-center gap-0.5',
                     'h-14 transition-colors duration-150',
-                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/30 focus-visible:ring-offset-1',
+                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-1',
                     active
-                      ? 'text-orange-500'
-                      : 'text-gray-400 hover:text-gray-500 active:text-gray-600',
+                      ? 'text-primary'
+                      : 'text-paper/70 hover:text-paper active:text-paper',
                   )}
                   aria-label={active ? `${item.label} (current)` : item.label}
                   aria-current={active ? 'page' : undefined}
                 >
-                  <Icon className="h-6 w-6" />
-                  <span className="text-[10px] font-medium leading-none">{item.label}</span>
+                  <Icon className="h-6 w-6" strokeWidth={2} />
+                  <span className="text-[11px] font-medium leading-none">{item.label}</span>
+                  {active && <span className="w-1 h-1 rounded-full bg-current" />}
                 </button>
               </li>
             )
@@ -225,18 +226,18 @@ export function BottomNavigation({
                 width: 56,
                 height: 56,
                 borderRadius: '50%',
-                background: '#E8611A',
-                border: '3px solid white',
+                background: 'hsl(var(--primary))',
+                border: '3px solid hsl(var(--background))',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                boxShadow: '0 4px 14px rgba(232,97,26,0.45), 0 1px 4px rgba(0,0,0,0.12)',
+                boxShadow: '0 4px 14px rgba(227,74,11,0.45), 0 1px 4px rgba(0,0,0,0.12)',
                 cursor: 'pointer',
                 flexShrink: 0,
               }}
-              className="transition-transform duration-150 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/50"
+              className="transition-transform duration-150 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
             >
-              <Plus className="h-6 w-6 text-white" strokeWidth={2.5} />
+              <Plus className="h-6 w-6 text-primary-foreground" strokeWidth={2} />
             </button>
           </li>
 
@@ -252,16 +253,17 @@ export function BottomNavigation({
                   className={cn(
                     'w-full flex flex-col items-center justify-center gap-0.5',
                     'h-14 transition-colors duration-150',
-                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/30 focus-visible:ring-offset-1',
+                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-1',
                     active
-                      ? 'text-orange-500'
-                      : 'text-gray-400 hover:text-gray-500 active:text-gray-600',
+                      ? 'text-primary'
+                      : 'text-paper/70 hover:text-paper active:text-paper',
                   )}
                   aria-label={active ? `${item.label} (current)` : item.label}
                   aria-current={active ? 'page' : undefined}
                 >
-                  <Icon className="h-6 w-6" />
-                  <span className="text-[10px] font-medium leading-none">{item.label}</span>
+                  <Icon className="h-6 w-6" strokeWidth={2} />
+                  <span className="text-[11px] font-medium leading-none">{item.label}</span>
+                  {active && <span className="w-1 h-1 rounded-full bg-current" />}
                 </button>
 
                 {/* Profile menu — anchored directly above the Profile button */}
@@ -272,14 +274,14 @@ export function BottomNavigation({
                       'absolute bottom-full right-0 mb-2 z-50',
                       'w-56',
                       'rounded-xl',
-                      'border border-gray-200',
-                      'bg-white',
+                      'border border-border',
+                      'bg-card',
                       'shadow-lg shadow-black/10',
                       'overflow-hidden',
                       'py-1',
                     )}>
-                      <div className="px-3 py-2.5 border-b border-gray-100">
-                        <p className="text-sm font-medium text-gray-900 truncate">
+                      <div className="px-3 py-2.5 border-b border-border">
+                        <p className="text-sm font-medium text-card-foreground truncate">
                           {user?.email}
                         </p>
                       </div>
@@ -293,8 +295,8 @@ export function BottomNavigation({
                             'w-full flex items-center gap-2',
                             'px-3 py-2.5',
                             'text-sm text-left',
-                            'text-gray-700',
-                            'hover:bg-gray-50 active:bg-gray-100',
+                            'text-foreground',
+                            'hover:bg-muted active:bg-muted',
                             'transition-colors duration-100',
                           )}
                         >
@@ -311,8 +313,8 @@ export function BottomNavigation({
                           'w-full flex items-center gap-2',
                           'px-3 py-2.5',
                           'text-sm text-left',
-                          'text-gray-700',
-                          'hover:bg-gray-50 active:bg-gray-100',
+                          'text-foreground',
+                          'hover:bg-muted active:bg-muted',
                           'transition-colors duration-100',
                         )}
                       >
@@ -325,8 +327,8 @@ export function BottomNavigation({
                           'w-full flex items-center gap-2',
                           'px-3 py-2.5',
                           'text-sm text-left',
-                          'text-red-600',
-                          'hover:bg-red-50 active:bg-red-100',
+                          'text-danger',
+                          'hover:bg-danger-bg active:bg-danger-bg',
                           'transition-colors duration-100',
                         )}
                       >
@@ -351,9 +353,9 @@ export function BottomNavigation({
             position: 'absolute',
             left: '50%',
             transform: 'translateX(-50%)',
-            bottom: 6,
-            width: 24,
-            height: 24,
+            bottom: 2,
+            width: 44,
+            height: 44,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -361,9 +363,9 @@ export function BottomNavigation({
             border: 'none',
             background: 'transparent',
           }}
-          className="transition-colors duration-150 text-blue-500 hover:text-blue-600 active:text-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/50"
+          className="transition-colors duration-150 text-paper/70 hover:text-paper active:text-paper focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
         >
-          <MessageSquare className="h-5 w-5" strokeWidth={1.5} />
+          <MessageSquare className="h-5 w-5" strokeWidth={2} />
         </button>
       </nav>
     </div>

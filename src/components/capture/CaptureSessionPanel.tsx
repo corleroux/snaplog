@@ -145,7 +145,7 @@ export function CaptureSessionPanel({
 
             {/* Info badge - prominent with warm accent */}
             {counts.info > 0 && (
-              <Badge variant="accent" className="gap-1 bg-orange-500 text-white font-medium">
+              <Badge variant="accent" className="gap-1 bg-primary text-primary-foreground font-medium">
                 <Sparkles className="h-3 w-3" />
                 1 Info
               </Badge>
@@ -171,15 +171,15 @@ export function CaptureSessionPanel({
 
       {/* Info vs Gallery explanation banner (dismissible) */}
       {showExplanation && !explanationDismissed && session && (
-        <div className="flex items-start gap-3 p-4 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-xl">
-          <HelpCircle className="h-5 w-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
+        <div className="flex items-start gap-3 p-4 bg-secondary border border-border rounded-xl">
+          <HelpCircle className="h-5 w-5 text-foreground flex-shrink-0 mt-0.5" />
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-blue-900 dark:text-blue-100">
+            <p className="text-sm font-medium text-foreground">
               Understanding image types
             </p>
-            <div className="text-sm text-blue-700 dark:text-blue-300 mt-1 space-y-1">
+            <div className="text-sm text-muted-foreground mt-1 space-y-1">
               <p className="flex items-center gap-2">
-                <Sparkles className="h-3.5 w-3.5 text-orange-500" />
+                <Sparkles className="h-3.5 w-3.5 text-primary" />
                 <strong>Info image:</strong> Used for AI extraction (max 1)
               </p>
               <p className="flex items-center gap-2">
@@ -190,7 +190,7 @@ export function CaptureSessionPanel({
           </div>
           <button
             onClick={() => setExplanationDismissed(true)}
-            className="flex-shrink-0 inline-flex items-center justify-center rounded-md p-1 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors"
+            className="flex-shrink-0 inline-flex items-center justify-center rounded-md p-1 text-muted-foreground hover:bg-muted transition-colors"
             type="button"
             aria-label="Dismiss explanation"
           >
@@ -255,10 +255,10 @@ export function CaptureSessionPanel({
           {validation.warnings.map((warning, index) => (
             <div
               key={`warning-${index}`}
-              className="flex items-start gap-3 p-4 bg-amber-500/10 border border-amber-500/20 dark:bg-amber-500/5 dark:border-amber-500/10 rounded-xl"
+              className="flex items-start gap-3 p-4 bg-field-warn border border-danger rounded-xl"
             >
-              <AlertCircle className="h-5 w-5 text-amber-600 dark:text-amber-500 flex-shrink-0 mt-0.5" />
-              <p className="text-sm text-amber-700 dark:text-amber-400 font-medium">{warning}</p>
+              <AlertCircle className="h-5 w-5 text-danger flex-shrink-0 mt-0.5" />
+              <p className="text-sm text-danger font-medium">{warning}</p>
             </div>
           ))}
         </div>

@@ -75,7 +75,7 @@ export function StyleVariantsSection({
                 variant.status === 'discontinued' && "opacity-60"
               )}
             >
-              <div className="flex items-center justify-between p-3 rounded-lg border border-border hover:bg-accent/5 hover:border-orange-500/30 transition-all">
+              <div className="flex items-center justify-between p-3 rounded-lg border border-border hover:bg-accent/5 hover:border-primary/30 transition-all">
                 <div className="flex items-center gap-3 flex-1 min-w-0">
                   {variant.color_code && (
                     <div
@@ -162,12 +162,12 @@ function isValidColorCode(code: string): boolean {
 
 function VariantStatusBadge({ status }: { status: string }) {
   const styles: Record<string, string> = {
-    active: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
-    sample: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
-    partial: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
-    discontinued: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
+    active: 'bg-primary/10 text-primary',
+    sample: 'bg-muted text-muted-foreground',
+    partial: 'bg-field-warn text-danger',
+    discontinued: 'bg-danger-bg text-danger',
   }
-  const className = styles[status] || 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400'
+  const className = styles[status] || 'bg-muted text-muted-foreground'
   return (
     <span className={cn('text-xs px-2 py-1 rounded', className)}>
       {status}

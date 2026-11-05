@@ -94,9 +94,16 @@ export async function callGeminiWithRetry(
 }
 
 /**
+ * The configured Gemini model. Exported so the Gemini provider can report
+ * the exact model used for each extraction run (FR-MOD-01).
+ */
+export function getGeminiModel(): string {
+  return Deno.env.get('GEMINI_MODEL') || 'gemini-flash-lite-latest'
+}
+
+/**
  * Build the full Gemini API URL with the API key.
  */
 export function getGeminiUrl(apiKey: string): string {
-  const model = Deno.env.get('GEMINI_MODEL') || 'gemini-flash-lite-latest'
-  return `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`
+  return `https://generativelanguage.googleapis.com/v1beta/models/${getGeminiModel()}:generateContent?key=${apiKey}`
 }

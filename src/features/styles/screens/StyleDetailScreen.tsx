@@ -136,7 +136,7 @@ export function StyleDetailScreen({
               {onToggleShortlist && (
                 <button
                   onClick={() => onToggleShortlist(!style.is_shortlisted)}
-                  className="h-9 w-9 flex items-center justify-center hover:bg-gray-100 rounded-full transition-colors"
+                  className="h-9 w-9 flex items-center justify-center hover:bg-muted rounded-full transition-colors"
                   aria-label={style.is_shortlisted ? 'Remove from shortlist' : 'Add to shortlist'}
                 >
                   <Heart
@@ -144,7 +144,7 @@ export function StyleDetailScreen({
                       'h-5 w-5 transition-colors',
                       style.is_shortlisted
                         ? 'fill-rose-500 text-rose-500'
-                        : 'text-gray-400'
+                        : 'text-muted-foreground'
                     )}
                   />
                 </button>
@@ -155,12 +155,12 @@ export function StyleDetailScreen({
                 name={style.name || 'Style'}
                 variant="ghost"
                 size="icon"
-                className="h-9 w-9 p-0 hover:bg-gray-100 rounded-full"
+                className="h-9 w-9 p-0 hover:bg-muted rounded-full"
               />
               {onEdit && (
                 <button
                   onClick={onEdit}
-                  className="h-9 w-9 flex items-center justify-center text-orange-500 hover:bg-gray-100 rounded-full transition-colors"
+                  className="h-9 w-9 flex items-center justify-center text-primary hover:bg-muted rounded-full transition-colors"
                 >
                   <Edit3 className="h-5 w-5" />
                 </button>

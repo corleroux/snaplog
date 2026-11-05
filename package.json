@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "typecheck": "tsc -b",
     "lint": "eslint .",
     "preview": "vite preview",
     "check": "tsc --noEmit",
@@ -21,6 +22,7 @@
     "test:e2e:chromium": "playwright test --project=chromium",
     "test:e2e:mobile": "playwright test --project=mobile-chrome",
     "test:e2e:staging": "playwright test --config=playwright.config.ts",
+    "test:e2e:demo": "playwright test --config=playwright.demo.config.ts",
     "test:e2e:report": "playwright show-report",
     "test:rls": "RLS_TESTS_ENABLED=1 vitest run src/features/vendors/api/__tests__/vendors.rls.test.ts src/features/styles/api/__tests__/styles.rls.test.ts",
     "test:edge": "SUPABASE_URL=http://127.0.0.1:54321 SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0 deno test --allow-net --allow-env --no-check supabase/functions/_tests/",
@@ -39,6 +41,7 @@
     "@dnd-kit/modifiers": "^9.0.0",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
+    "@fontsource/ibm-plex-mono": "^5.3.0",
     "@hookform/resolvers": "^5.2.2",
     "@radix-ui/react-label": "^2.1.8",
     "@radix-ui/react-slot": "^1.2.4",
@@ -66,7 +69,7 @@
   "devDependencies": {
     "@capacitor/cli": "^8.2.0",
     "@eslint/js": "^9.25.0",
-    "@playwright/test": "^1.59.1",
+    "@playwright/test": "^1.64.1",
     "@tailwindcss/postcss": "^4.0.0",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",

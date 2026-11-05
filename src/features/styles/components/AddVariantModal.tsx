@@ -98,7 +98,7 @@ export function AddVariantModal({
             value={variantName}
             onChange={(e) => setVariantName(e.target.value)}
             placeholder="e.g., Navy Base"
-            className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-orange-500/50"
+            className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/50"
           />
         </div>
 
@@ -113,7 +113,7 @@ export function AddVariantModal({
               value={colorName}
               onChange={(e) => setColorName(e.target.value)}
               placeholder="e.g., Navy"
-              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-orange-500/50"
+              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/50"
             />
           </div>
           <div className="min-w-0">
@@ -126,7 +126,7 @@ export function AddVariantModal({
                 value={colorCode}
                 onChange={(e) => setColorCode(e.target.value)}
                 placeholder="e.g., NV001"
-                className="min-w-0 flex-1 rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-orange-500/50"
+                className="min-w-0 flex-1 rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/50"
               />
               {colorCode && (
                 <div
@@ -149,7 +149,7 @@ export function AddVariantModal({
               value={washCode}
               onChange={(e) => setWashCode(e.target.value)}
               placeholder="e.g., STW"
-              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-orange-500/50"
+              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/50"
             />
           </div>
           <div>
@@ -161,7 +161,7 @@ export function AddVariantModal({
               value={finishOverride}
               onChange={(e) => setFinishOverride(e.target.value)}
               placeholder="e.g., Brushed"
-              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-orange-500/50"
+              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/50"
             />
           </div>
         </div>

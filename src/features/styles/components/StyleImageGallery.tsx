@@ -60,7 +60,7 @@ export function StyleImageGallery({
               onClick={() => image.public_url && onImageClick(image.public_url, index)}
               className={cn(
                 "relative flex-shrink-0 w-20 h-20 rounded-xl overflow-hidden bg-muted border border-border shadow-sm transition-all active:scale-95",
-                image.id === primaryImage?.id ? "border-orange-500 ring-2 ring-orange-500/10" : "border-border hover:border-orange-500/50"
+                image.id === primaryImage?.id ? "border-primary ring-2 ring-primary/10" : "border-border hover:border-primary/50"
               )}
             >
               {image.public_url ? (
@@ -75,7 +75,7 @@ export function StyleImageGallery({
                 </div>
               )}
               {image.is_primary && (
-                <span className="absolute top-1 left-1 text-[10px] bg-orange-500 text-white px-1.5 py-0.5 rounded-md font-medium">
+                <span className="absolute top-1 left-1 text-[10px] bg-primary text-primary-foreground px-1.5 py-0.5 rounded-md font-medium">
                   Hero
                 </span>
               )}

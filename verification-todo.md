@@ -41,3 +41,43 @@ Hybrid sourcing, written up as docs/plans/FR-MOD-04-eval-set.md: read-only expor
   - See the file `Event Details.md`
 7. Physical access: a garment rack + phone this weekend for the fresh captures and rack-walk video (feeds both the eval set and the demo footage).
   - This will be supplied.
+
+---
+
+## Handover Status
+
+### Done (10 items)
+
+- ⓪/⓪b config alignment
+- ① SUB-01
+- ①b narrative
+- ② registry
+- ④ provider interface
+- ⑤ Muse Spark (+2-call live probe, schema-valid)
+- ⑤b health-check
+- ⑥ garment schema
+- ⑨ review UI
+- ⑨a brief (authored)
+- Modal env + skill
+- Web eval leg (10 garments + 2 videos, manifest validated)
+
+### Postponed per your direction (not forgotten)
+
+- ⑦ endpoint creation (`modal endpoint create --shared`) + Spark Open live probe — code merged, secrets set, waits on endpoint URL.
+- ⑧ video pipeline live test — Modal deploy + 30–60 s rack-walk run (explicit ask).
+- ⑩ live benchmark numbers — Tue explicit go.
+- Shoot (fresh garments + rack-walk) — Sun/Mon.
+
+### Outstanding and actionable now
+
+1. **⑩ Benchmark runner code** (`FR-MOD-04-benchmark-runner.md`, ~6h) — can be built offline against fixtures + the web eval leg; it only calls live models when explicitly asked. The running is postponed, the code isn't blocked.
+2. **⑪ Write-up draft (SUB-02)** — the draft doesn't need everything; only the recording is gated on the architect framing review. Starting the draft now de-risks Wednesday.
+3. **⑨a OpenDesign session** — brief is ready; needs you to run the session, then design-reviewer vets the output.
+4. **Secrets audit decision** — required before snaplog can go public (submission rules allow private repos, but judges can't then run the setup — recommend public).
+5. **Verification debt** — `pnpm test:edge` / `test:rls` have never run (no Docker here); e2e garment spec skips without a fixture asset. All need a machine with Docker + `supabase start`.
+
+### Blocked on owners/others
+
+- Shoot, Modal endpoint, benchmark/video live-test approvals, OpenDesign session run, secrets-audit call, architect framing review (pre-recording).
+
+**Recommendation:** I start ⑩ benchmark runner code now (offline-safe, unblocks Tue), while you hold the OpenDesign session + shoot. Alternatively, I draft the write-up first since it's the deadline-critical path. Which one?

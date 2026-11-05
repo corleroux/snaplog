@@ -5,7 +5,7 @@
  * Supports visual indication of Info vs Gallery classification.
  *
  * DESIGN ALIGNED:
- * - Premium dark surfaces with warm orange accent for Info state
+ * - Stall accent for Info state
  * - Clear typography hierarchy
  * - Modern rounded surfaces
  * - Mobile-first touch-friendly sizing
@@ -43,7 +43,7 @@ export interface ImageThumbnailProps {
  * Image thumbnail component for capture session
  *
  * Shows the image with visual indication of its classification:
- * - Info images have sparkle icon badge, orange ring, and warm accent
+ * - Info images have sparkle icon badge, primary ring, and Stall accent
  * - Gallery images have neutral styling with subtle border
  * - Active/selected state has clear visual distinction
  */
@@ -65,10 +65,10 @@ export function ImageThumbnail({
       className={cn(
         // Base styles - mobile-first touch-friendly sizing
         'relative group aspect-square rounded-xl overflow-hidden bg-muted',
-        // Border styling - Info gets warm orange ring
+        // Border styling - Info gets primary ring
         'border-2 transition-all cursor-pointer tap-target',
         isActive ? 'border-primary ring-2 ring-ring ring-offset-2' : 'border-border',
-        isInfo && 'border-orange-500 shadow-lg shadow-orange-500/20',
+        isInfo && 'border-primary shadow-lg shadow-primary/20',
         className
       )}
       onClick={() => onClick?.(image.id)}
@@ -92,7 +92,7 @@ export function ImageThumbnail({
           <Badge
             variant="accent"
             size="sm"
-            className="gap-1 shadow-md bg-orange-500 text-white font-medium"
+            className="gap-1 shadow-md bg-primary text-primary-foreground font-medium"
           >
             <Sparkles className="h-3 w-3" />
             Info
@@ -138,7 +138,7 @@ export function ImageThumbnail({
             // Mobile-first: always visible, hover effect on desktop
             'opacity-100 sm:opacity-0 sm:group-hover:opacity-100 hover:scale-110',
             isInfo
-              ? 'bg-orange-500 text-white hover:bg-orange-600'
+              ? 'bg-primary text-primary-foreground hover:bg-primary/90'
               : 'bg-background/90 text-foreground hover:bg-background'
           )}
           type="button"

@@ -19,7 +19,12 @@ import {
   StyleDetailFromRouteWithProvider,
   StyleEditScreenFromRouteWithProvider,
   VariantEditScreenFromRouteWithProvider,
+  ItemDetailFromRouteWithProvider,
 } from './styleRouteWrappers'
+import {
+  CatalogueItemCaptureFlowFromRouteWithProvider,
+  VideoCaptureScreenFromRouteWithProvider,
+} from './catalogueRouteWrappers'
 import { SettingsRouteWrapper } from './settingsRouteWrapper'
 import { ApprovalsInboxRouteWrapper } from './approvalsRouteWrapper'
 import { EventSettingsRouteWrapper } from './eventSettingsRouteWrapper'
@@ -299,6 +304,42 @@ function App() {
                 <RequireAuth>
                   <ErrorBoundary feature="variant-edit">
                     <VariantEditScreenFromRouteWithProvider />
+                  </ErrorBoundary>
+                </RequireAuth>
+              }
+            />
+
+            {/* Catalogue item detail (FR-CAT-01) — garments/video. Static
+                segments (new/capture, video) rank above :itemId, so there
+                is no route conflict. */}
+            <Route
+              path="/events/:eventId/vendors/:vendorId/items/:itemId"
+              element={
+                <RequireAuth>
+                  <ErrorBoundary feature="item-detail">
+                    <ItemDetailFromRouteWithProvider />
+                  </ErrorBoundary>
+                </RequireAuth>
+              }
+            />
+
+            {/* Schema-driven item capture (FR-SCH-05) + rack video (FR-VID) */}
+            <Route
+              path="/events/:eventId/vendors/:vendorId/items/new/capture"
+              element={
+                <RequireAuth>
+                  <ErrorBoundary feature="item-capture">
+                    <CatalogueItemCaptureFlowFromRouteWithProvider />
+                  </ErrorBoundary>
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/events/:eventId/vendors/:vendorId/items/video"
+              element={
+                <RequireAuth>
+                  <ErrorBoundary feature="video-capture">
+                    <VideoCaptureScreenFromRouteWithProvider />
                   </ErrorBoundary>
                 </RequireAuth>
               }

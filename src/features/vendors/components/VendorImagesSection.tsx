@@ -107,18 +107,18 @@ export function VendorImagesSection({
               className={cn(
                 'flex items-center gap-2 px-3 py-2 rounded-lg border text-sm transition-colors',
                 extractionEnabled
-                  ? 'border-orange-300 bg-orange-50 text-orange-700 dark:border-orange-700 dark:bg-orange-950/30 dark:text-orange-400'
+                  ? 'border-primary/40 bg-primary/10 text-primary dark:border-primary dark:bg-primary/30 dark:text-primary'
                   : 'border-border bg-background text-muted-foreground hover:bg-muted'
               )}
             >
-              <Sparkles className={cn('h-4 w-4', extractionEnabled && 'text-orange-500')} />
+              <Sparkles className={cn('h-4 w-4', extractionEnabled && 'text-primary')} />
               <span>{extractionEnabled ? 'AI Extraction On' : 'AI Extraction Off'}</span>
             </button>
           </div>
 
           {extractionEnabled && (
             <p className="text-xs text-muted-foreground flex items-center gap-1">
-              <Sparkles className="h-3 w-3 text-orange-500" />
+              <Sparkles className="h-3 w-3 text-primary" />
               Existing vendor values will be replaced by extracted data (booth number preserved if missing)
             </p>
           )}
@@ -147,11 +147,11 @@ export function VendorImagesSection({
               className={cn(
                 'flex items-center gap-2 px-3 py-2 rounded-lg border text-sm transition-colors',
                 extractionEnabled
-                  ? 'border-orange-300 bg-orange-50 text-orange-700 dark:border-orange-700 dark:bg-orange-950/30 dark:text-orange-400'
+                  ? 'border-primary/40 bg-primary/10 text-primary dark:border-primary dark:bg-primary/30 dark:text-primary'
                   : 'border-border bg-background text-muted-foreground hover:bg-muted'
               )}
             >
-              <Sparkles className={cn('h-4 w-4', extractionEnabled && 'text-orange-500')} />
+              <Sparkles className={cn('h-4 w-4', extractionEnabled && 'text-primary')} />
               <span>AI Extraction</span>
             </button>
             <Button
@@ -166,7 +166,7 @@ export function VendorImagesSection({
           </div>
           {extractionEnabled && (
             <p className="text-xs text-muted-foreground flex items-center gap-1">
-              <Sparkles className="h-3 w-3 text-orange-500" />
+              <Sparkles className="h-3 w-3 text-primary" />
               When you replace the image, AI extraction will run on the new image
             </p>
           )}

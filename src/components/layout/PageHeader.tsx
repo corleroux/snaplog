@@ -39,6 +39,7 @@
 import React from 'react'
 import { ChevronLeft, X } from 'lucide-react'
 import { cn } from '@/lib/utils'   // shadcn/ui utility — adjust path if needed
+import { Button } from '@/components/ui/button'
 
 interface PageHeaderProps {
   /** Primary heading — truncates if too long, never wraps */
@@ -98,29 +99,28 @@ export function PageHeader({
         'flex items-center',
         'px-4 gap-3',
         // Visual separation
-        showBorder && 'border-b border-gray-200',
+        showBorder && 'border-b border-border',
         // Always on top of scrollable content
-        'bg-white z-10',
+        'bg-background z-10',
         className,
       )}
     >
       {/* ── Left slot: back chevron ── */}
       {hasLeftSlot && (
-        <button
+        <Button
+          variant="ghost"
+          size="icon"
           onClick={onBack}
           aria-label="Go back"
           className={cn(
             // 44x44px minimum touch target (DESIGN_SYSTEM.md rule)
             'flex-shrink-0 -ml-1',
-            'w-11 h-11 flex items-center justify-center',
-            'rounded-full',
-            'text-gray-700',
-            'hover:bg-gray-100 active:bg-gray-200',
-            'transition-colors duration-150',
+            'w-11 h-11 rounded-full',
+            'text-foreground',
           )}
         >
           <ChevronLeft className="w-6 h-6" strokeWidth={2} />
-        </button>
+        </Button>
       )}
 
       {/* ── Centre: title + subtitle ── */}
@@ -133,14 +133,14 @@ export function PageHeader({
       <div className="flex-1 min-w-0 flex flex-col justify-center">
         <h1
           className={cn(
-            'text-xl font-bold text-gray-900',
+            'font-display text-xl font-bold text-foreground',
             'truncate leading-tight',
           )}
         >
           {title}
         </h1>
         {subtitle && (
-          <p className="text-xs text-gray-500 truncate leading-tight mt-0.5">
+          <p className="text-xs text-muted-foreground truncate leading-tight mt-0.5">
             {subtitle}
           </p>
         )}
@@ -151,19 +151,18 @@ export function PageHeader({
         <div className="flex-shrink-0">
           {onClose ? (
             /* Close button — used in modals/sheets */
-            <button
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={onClose}
               aria-label="Close"
               className={cn(
-                'w-11 h-11 flex items-center justify-center',
-                'rounded-full',
-                'text-gray-500',
-                'hover:bg-gray-100 active:bg-gray-200',
-                'transition-colors duration-150',
+                'w-11 h-11 rounded-full',
+                'text-muted-foreground',
               )}
             >
               <X className="w-5 h-5" strokeWidth={2} />
-            </button>
+            </Button>
           ) : (
             /* Arbitrary action — Button, icon button, etc. */
             action

@@ -30,6 +30,11 @@ export interface StyleCardProps {
   className?: string
   /** Callback to toggle shortlist */
   onToggleShortlist?: (styleId: string, value: boolean) => void
+  /** Whether the shortlist heart is shown. Defaults to true; catalogue
+   * (garment/video) rows pass false since shortlist is a fabric-only path. */
+  shortlistable?: boolean
+  /** Optional badge (e.g. REVIEW / AI Extracted) rendered beside the timestamp. */
+  badge?: React.ReactNode
 }
 
 /**
@@ -98,6 +103,8 @@ export function StyleCard({
   onClick,
   className,
   onToggleShortlist,
+  shortlistable = true,
+  badge,
 }: StyleCardProps) {
   const handleClick = useCallback(() => {
     onClick?.(style)
@@ -107,6 +114,17 @@ export function StyleCard({
     e.stopPropagation()
     onToggleShortlist?.(style.id, !style.isShortlisted)
   }, [style.id, style.isShortlisted, onToggleShortlist])
+
+  const handleCardKeyDown = useCallback((e: React.KeyboardEvent) => {
+    // Ignore keys from nested interactive elements (e.g. the shortlist button).
+    if (e.target !== e.currentTarget) {
+      return
+    }
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      handleClick()
+    }
+  }, [handleClick])
 
   // Get the primary image (source info image or first image)
   const primaryImage = style.images.find(
@@ -126,12 +144,19 @@ export function StyleCard({
   const timeAgo = getRelativeTime(style.createdAt)
 
   return (
-    <button
+    // NOTE: intentionally an <article>, not a <button> — the card contains a
+    // nested shortlist <button>, and <button> inside <button> is invalid HTML
+    // that breaks hydration (React installHook warning on the style list).
+    <article
       onClick={handleClick}
+      onKeyDown={handleCardKeyDown}
+      tabIndex={onClick ? 0 : undefined}
+      aria-label={style.styleName || 'Style'}
       className={cn(
         'group relative w-full overflow-hidden rounded-2xl shadow-sm transition-all duration-300 bg-card border border-border/50',
-        'hover:shadow-md hover:shadow-orange-500/10 active:scale-[0.98]',
-        onClick && 'cursor-pointer tap-target',
+        // Hover/press affordance only when the card is interactive —
+        // catalogue rows without onClick render static (no dead affordance).
+        onClick && 'cursor-pointer tap-target hover:shadow-md hover:shadow-primary/10 active:scale-[0.98]',
         className
       )}
     >
@@ -148,7 +173,7 @@ export function StyleCard({
         ) : (
           <div className="absolute inset-0 flex items-center justify-center">
             <svg
-              className="w-16 h-16 text-orange-500/30"
+              className="w-16 h-16 text-primary/30"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -168,18 +193,19 @@ export function StyleCard({
       {/* Card body - below image */}
       <div className="p-3 text-left">
         {/* Category badge + time pill row */}
-        <div className="flex items-center justify-between mb-1.5">
+        <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1 mb-1.5">
           {categoryBadge ? (
             <Badge
               variant="accent"
-              className="text-[10px] px-2 py-0.5 font-semibold tracking-wide"
+              className="text-xs px-2 py-0.5 font-semibold tracking-wide"
             >
               {categoryBadge}
             </Badge>
           ) : <span />}
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] text-muted-foreground">{timeAgo}</span>
-            {onToggleShortlist && (
+          <div className="flex min-w-0 items-center justify-end gap-2">
+            <span className="text-xs text-muted-foreground whitespace-nowrap">{timeAgo}</span>
+            {badge}
+            {shortlistable && onToggleShortlist && (
               <button
                 type="button"
                 onClick={handleShortlistToggle}
@@ -200,7 +226,7 @@ export function StyleCard({
         </div>
 
         {/* Style name */}
-        <h3 className="text-base font-semibold text-foreground tracking-tight leading-tight mb-0.5">
+        <h3 className="font-display text-base font-semibold text-foreground tracking-tight leading-tight mb-0.5">
           {style.styleName || 'Untitled Style'}
         </h3>
 
@@ -218,13 +244,13 @@ export function StyleCard({
             style.latestPrice.priceUnit
           )
           return (
-            <p className="text-sm font-medium text-foreground mt-1.5">
+            <p className="font-mono text-sm font-medium text-foreground mt-1.5">
               {style.latestPrice.currency} {displayPrice.toFixed(2)}{' '}
               <span className="text-xs text-muted-foreground font-normal">/ {displayUnit}</span>
             </p>
           )
         })()}
       </div>
-    </button>
+    </article>
   )
 }

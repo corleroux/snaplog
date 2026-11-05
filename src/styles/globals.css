@@ -39,7 +39,21 @@
   --color-card: hsl(var(--card));
   --color-card-foreground: hsl(var(--card-foreground));
 
+  /* Snaplog brand tokens (DESIGN_SYSTEM.md, normative) */
+  --color-ink: #16150F;
+  --color-paper: #FAFAF7;
+  --color-kraft: #E8D5AC;
+  --color-mist: #E0E5E8;
+  --color-slate: #6B675C;
+  --color-danger: #B42318;
+  --color-danger-bg: #FDE8E8;
+  --color-field-warn: #FFF7ED;
+  --font-sans: ui-sans-serif, system-ui, sans-serif;
+  --font-display: Georgia, 'Times New Roman', serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+
   /* Border radius tokens */
+  --radius-app: 14px;
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
@@ -52,46 +66,47 @@
 
 @layer base {
   :root {
-    /* Light mode - operational screens */
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Light mode - Snaplog Paper/Ink/Stall (DESIGN_SYSTEM.md) */
+    --background: 60 23.1% 97.5%; /* Paper #FAFAF7 */
+    --foreground: 51.4 18.9% 7.3%; /* Ink #16150F */
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 60 23.1% 97.5%;
+    --card-foreground: 51.4 18.9% 7.3%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 60 23.1% 97.5%;
+    --popover-foreground: 51.4 18.9% 7.3%;
 
-    /* Primary is now the warm orange accent */
-    --primary: 24 95% 53%; /* orange-500: #f97316 */
-    --primary-foreground: 0 0% 100%;
+    /* Primary: Stall Orange, always with Ink text for sunlight legibility */
+    --primary: 17.5 90.8% 46.7%; /* Stall #E34A0B */
+    --primary-foreground: 51.4 18.9% 7.3%; /* Ink #16150F */
 
     /* Secondary for alternative actions */
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 202.5 14.8% 89.4%; /* Mist #E0E5E8 */
+    --secondary-foreground: 51.4 18.9% 7.3%;
 
     /* Muted for subtle backgrounds */
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 202.5 14.8% 89.4%; /* Mist */
+    --muted-foreground: 44 7.5% 39%; /* Stall Grey #6B675C */
 
-    /* Accent for hover states and subtle highlights */
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Accent: subtle Stall hover tint with Ink foreground (shadcn hover
+       semantics — solid Stall lives ONLY in --primary/--ring) */
+    --accent: 21 66% 92%; /* Stall at ~10% over Paper */
+    --accent-foreground: 51.4 18.9% 7.3%;
 
     /* Destructive for error states */
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 4.2 76.5% 40%; /* danger #B42318 */
+    --destructive-foreground: 60 23.1% 97.5%;
 
     /* Borders and inputs */
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 24 95% 53%; /* Orange ring to match primary */
+    --border: 202.5 14.8% 89.4%; /* Mist */
+    --input: 202.5 14.8% 89.4%;
+    --ring: 17.5 90.8% 46.7%; /* Stall ring to match primary */
 
     /* Focus ring enhancement for dark backgrounds */
     --ring-dark: 24 95% 68%; /* Lighter orange for dark mode focus */
 
     /* Radius tokens for rounded surfaces */
-    --radius: 0.5rem;
+    --radius: 0.875rem; /* 14px base (--radius-app) */
     --radius-sm: 0.375rem; /* chips, small controls */
     --radius-md: 0.5rem; /* inputs, secondary buttons */
     --radius-lg: 0.75rem; /* cards and grouped panels */
@@ -145,21 +160,21 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground text-base;
+    @apply bg-background text-foreground font-sans text-base;
   }
 
-  /* Typography hierarchy */
+  /* Typography hierarchy — Georgia/Times display headings */
   h1 {
-    @apply text-2xl font-semibold tracking-tight;
+    @apply font-display text-2xl font-semibold tracking-tight;
   }
   h2 {
-    @apply text-xl font-semibold tracking-tight;
+    @apply font-display text-xl font-semibold tracking-tight;
   }
   h3 {
-    @apply text-lg font-semibold tracking-tight;
+    @apply font-display text-lg font-semibold tracking-tight;
   }
   h4 {
-    @apply text-base font-semibold tracking-tight;
+    @apply font-display text-base font-semibold tracking-tight;
   }
 
   /* Enhanced focus states for better visibility */

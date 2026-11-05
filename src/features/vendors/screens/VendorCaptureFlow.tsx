@@ -290,7 +290,7 @@ export function VendorCaptureFlow({
       {state.currentScreen !== 'success' && state.currentScreen !== 'error' && (
         <div className="h-1 bg-muted">
           <div
-            className="h-full bg-orange-500 transition-all duration-300"
+            className="h-full bg-primary transition-all duration-300"
             style={{ width: `${(currentStep / totalSteps) * 100}%` }}
           />
         </div>
@@ -311,7 +311,7 @@ export function VendorCaptureFlow({
         confirmText="Discard"
         cancelText="Keep Editing"
         variant="destructive"
-        icon={<AlertTriangle className="h-6 w-6 text-amber-500" />}
+        icon={<AlertTriangle className="h-6 w-6 text-danger" />}
       />
 
       {/* Duplicate vendor warning dialog */}
@@ -332,7 +332,7 @@ export function VendorCaptureFlow({
         confirmText="Continue Anyway"
         cancelText="Cancel"
         variant="accent"
-        icon={<AlertTriangle className="h-6 w-6 text-amber-500" />}
+        icon={<AlertTriangle className="h-6 w-6 text-danger" />}
         isConfirming={state.isSaving}
       />
 

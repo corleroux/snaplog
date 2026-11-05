@@ -284,7 +284,7 @@ export function StyleEditScreen({
     return (
       <AppFrame className={cn('flex items-center justify-center', className)}>
         <div className="flex flex-col items-center gap-3">
-          <Loader2 className="h-8 w-8 animate-spin text-orange-500" />
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
           <p className="text-muted-foreground">Loading style data...</p>
         </div>
       </AppFrame>
@@ -413,7 +413,7 @@ export function StyleEditScreen({
         confirmText="Discard Changes"
         cancelText="Keep Editing"
         variant="destructive"
-        icon={<AlertTriangle className="h-6 w-6 text-amber-500" />}
+        icon={<AlertTriangle className="h-6 w-6 text-danger" />}
       />
     </AppFrame>
   )

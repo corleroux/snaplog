@@ -12,7 +12,7 @@
  * - Edit Vendor and Return to Styles CTAs
  */
 
-import { type ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import { Building2, Mail, Phone, Globe, MapPin, User, AlertTriangle, Edit2, Archive } from 'lucide-react'
 import { cn } from '@/lib/utils/cn'
 import { Button } from '@/components/ui'
@@ -62,9 +62,9 @@ function getRelativeTime(timestamp: string): string {
   const hours = Math.floor(diffMs / 3600000)
   const days = Math.floor(diffMs / 86400000)
 
-  if (minutes < 1) return 'Just now'
-  if (minutes < 60) return `${minutes}m ago`
-  if (hours < 24) return `${hours}h ago`
+  if (minutes < 1) {return 'Just now'}
+  if (minutes < 60) {return `${minutes}m ago`}
+  if (hours < 24) {return `${hours}h ago`}
   return `${days}d ago`
 }
 
@@ -157,7 +157,7 @@ export function VendorDetailScreen({
                  variant="accent"
                  onClick={onReturnToStyles}
                  type="button"
-                 className="w-full shadow-md shadow-orange-500/10"
+                 className="w-full shadow-md shadow-primary/10"
                  radius="pill"
                  size="lg"
                >
@@ -171,7 +171,7 @@ export function VendorDetailScreen({
                  variant="outline"
                  onClick={onEditVendor}
                  type="button"
-                 className="w-full border-muted-foreground/20 hover:border-orange-500/50 hover:bg-orange-500/5 transition-all duration-200"
+                 className="w-full border-muted-foreground/20 hover:border-primary/50 hover:bg-primary/5 transition-all duration-200"
                  radius="pill"
                  size="lg"
                >
@@ -212,6 +212,9 @@ export function VendorDetailScreen({
              )}
            </div>
 
+           {/* Catalogue items (garments, video items) live on the unified
+               styles list (FR-CAT-01) — reached via Return to Styles. */}
+
            {/* Extraction warning banner */}
            {vendor.extractionMeta?.warnings && vendor.extractionMeta.warnings.length > 0 && (
              <SectionContainer
@@ -222,10 +225,10 @@ export function VendorDetailScreen({
                  {vendor.extractionMeta.warnings.map((warning, index) => (
                    <div
                      key={index}
-                     className="flex items-start gap-2 p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg"
+                     className="flex items-start gap-2 p-3 bg-field-warn border border-danger rounded-lg"
                    >
-                     <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-500 flex-shrink-0 mt-0.5" />
-                     <p className="text-sm text-amber-700 dark:text-amber-400">{warning}</p>
+                     <AlertTriangle className="h-4 w-4 text-danger flex-shrink-0 mt-0.5" />
+                     <p className="text-sm text-danger">{warning}</p>
                    </div>
                  ))}
                </div>
@@ -293,7 +296,7 @@ export function VendorDetailScreen({
                     <p className="text-sm font-medium text-muted-foreground mb-1">Email</p>
                     <a
                       href={`mailto:${vendor.email}`}
-                      className="text-sm text-orange-500 hover:text-orange-600 flex items-center gap-1"
+                      className="text-sm text-primary hover:text-primary/80 flex items-center gap-1"
                     >
                       <Mail className="h-3.5 w-3.5" />
                       {vendor.email}
@@ -306,7 +309,7 @@ export function VendorDetailScreen({
                     <p className="text-sm font-medium text-muted-foreground mb-1">Phone</p>
                     <a
                       href={`tel:${vendor.phone}`}
-                      className="text-sm text-orange-500 hover:text-orange-600 flex items-center gap-1"
+                      className="text-sm text-primary hover:text-primary/80 flex items-center gap-1"
                     >
                       <Phone className="h-3.5 w-3.5" />
                       {vendor.phone}
@@ -324,7 +327,7 @@ export function VendorDetailScreen({
                 href={vendor.website.startsWith('http') ? vendor.website : `https://${vendor.website}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sm text-orange-500 hover:text-orange-600 flex items-center gap-1"
+                className="text-sm text-primary hover:text-primary/80 flex items-center gap-1"
               >
                 <Globe className="h-3.5 w-3.5" />
                 {vendor.website.replace(/^https?:\/\//, '')}

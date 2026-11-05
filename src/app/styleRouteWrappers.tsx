@@ -1,11 +1,16 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import { useQueryClient } from '@tanstack/react-query'
+import { supabase } from '@/lib/supabase/client'
 import { useEventRole } from '@/features/auth'
 import { useStylesQuery, useDeleteStyle, useToggleShortlist } from '@/features/styles/hooks'
+import { useCatalogueItemsQuery } from '@/features/catalogue/hooks/useCatalogueItemsQuery'
 import { useVendorsQuery } from '@/features/vendors/hooks/useVendorQueries'
 import { useRealtimeRefresh } from '@/lib/realtime'
 import { StyleCaptureFlow, StyleListScreen, StyleDetailScreen, StyleEditScreen, VariantEditScreen, type StyleFilters } from '@/features/styles'
 import { useStyleDetail } from '@/features/styles'
+import { useCatalogueItemDetail } from '@/features/catalogue/hooks/useCatalogueItemDetail'
+import { ItemDetailScreen } from '@/features/catalogue/screens/ItemDetailScreen'
 import { StyleLoadingState, LoadingErrorState } from '@/components/ui'
 import { ConfirmationDialog } from '@/components/feedback/ConfirmationDialog'
 import type { VendorRecord } from '@/types/vendor'
@@ -23,19 +28,32 @@ export function StyleListFromRouteWithProvider() {
   const [filters, setFilters] = useState<StyleFilters>({})
 
   useRealtimeRefresh('fabric_styles', [['styles', vendorId]], { column: 'vendor_id', value: vendorId })
+  // Catalogue items (garments, video items) share the list; an items
+  // failure degrades to fabric-only inside the hook, never blocks.
+  const { data: catalogueItems = [], refetch: refetchCatalogueItems } = useCatalogueItemsQuery(vendorId)
+  useRealtimeRefresh('catalogue_items', [['catalogue-items', vendorId]], { column: 'vendor_id', value: vendorId })
 
   const vendor = vendors.find((v: VendorRecord) => v.id === vendorId)
   const vendorName = vendor?.companyName || ''
 
-  const sortedStyles = [...styles].sort((a, b) =>
+  const catalogueRecords = useMemo(
+    () => catalogueItems.map((item) => item.record),
+    [catalogueItems],
+  )
+  const needsReviewIds = useMemo(
+    () => new Set(catalogueItems.filter((item) => item.needsReview).map((item) => item.record.id)),
+    [catalogueItems],
+  )
+
+  const sortedStyles = [...styles, ...catalogueRecords].sort((a, b) =>
     new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   )
 
   const filterOptions = useMemo(() => ({
-    categories: [...new Set(styles.map((s: any) => s.category).filter(Boolean))] as string[],
-    seasons: [...new Set(styles.map((s: any) => s.season).filter(Boolean))] as string[],
-    statuses: [...new Set(styles.map((s: any) => s.status).filter(Boolean))] as string[],
-  }), [styles])
+    categories: [...new Set(sortedStyles.map((s: any) => s.category).filter(Boolean))] as string[],
+    seasons: [...new Set(sortedStyles.map((s: any) => s.season).filter(Boolean))] as string[],
+    statuses: [...new Set(sortedStyles.map((s: any) => s.status).filter(Boolean))] as string[],
+  }), [sortedStyles])
 
   const toggleShortlist = useToggleShortlist(vendorId)
 
@@ -69,16 +87,32 @@ export function StyleListFromRouteWithProvider() {
       vendorName={vendorName}
       eventId={eventId}
       onBack={() => navigate(`/events/${eventId}/vendors`)}
-      onAddStyle={canEdit ? () => navigate(`/events/${eventId}/vendors/${vendorId}/styles/new/capture`) : undefined}
-      onStyleClick={(style) => navigate(`/events/${eventId}/vendors/${vendorId}/styles/${style.id}`)}
+      // Picker hub first (schema-driven entry; fabric hands back to legacy).
+      onAddStyle={canEdit ? () => navigate(`/events/${eventId}/vendors/${vendorId}/items/new/capture`) : undefined}
+      // FAB keeps the fast legacy fabric path (FR-SCH-05b).
+      onFabPress={canEdit ? () => navigate(`/events/${eventId}/vendors/${vendorId}/styles/new/capture`) : undefined}
+      // Catalogue rows (ci- prefix) open the item detail page; fabric rows
+      // open the style detail page. Catalogue rows have no detail write
+      // paths, so their clicks are read-only navigation.
+      onStyleClick={(style) => {
+        if (style.id.startsWith('ci-')) {
+          navigate(`/events/${eventId}/vendors/${vendorId}/items/${style.id.slice(3)}`)
+          return
+        }
+        navigate(`/events/${eventId}/vendors/${vendorId}/styles/${style.id}`)
+      }}
       onVendorInfo={() => navigate(`/events/${eventId}/vendors/${vendorId}`)}
       searchQuery={searchQuery}
       onSearchChange={setSearchQuery}
       filters={filters}
       onFiltersChange={setFilters}
       filterOptions={filterOptions}
-      onToggleShortlist={(styleId, value) => toggleShortlist.mutate({ styleId, value })}
-      onRefresh={async () => { await refetchStyles() }}
+      onToggleShortlist={(styleId, value) => {
+        if (styleId.startsWith('ci-')) {return}
+        toggleShortlist.mutate({ styleId, value })
+      }}
+      needsReviewIds={needsReviewIds}
+      onRefresh={async () => { await refetchStyles(); await refetchCatalogueItems() }}
     />
   )
 }
@@ -116,7 +150,7 @@ export function StyleDetailFromRouteWithProvider() {
 
   useEffect(() => {
     const fetchApprovalStatus = async () => {
-      if (!styleId) return
+      if (!styleId) {return}
       try {
         const { getLatestApprovalStatus } = await import('@/features/approvals')
         getLatestApprovalStatus('style', styleId).then(setApprovalStatus).catch(() => {})
@@ -215,5 +249,68 @@ export function VariantEditScreenFromRouteWithProvider() {
       variantId={variantId}
       onBack={() => navigate(`/events/${eventId}/vendors/${vendorId}/styles/${styleId}`)}
     />
+  )
+}
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
+/**
+ * Catalogue item detail route wrapper (FR-CAT-01) — read-only + archive.
+ * The route carries the raw UUID; the `ci-` list prefix is stripped by the
+ * list click handler before navigating here.
+ */
+export function ItemDetailFromRouteWithProvider() {
+  const { eventId = '', vendorId = '', itemId = '' } = useParams()
+  const navigate = useNavigate()
+  const queryClient = useQueryClient()
+  const { canEdit } = useEventRole(eventId)
+  const stylesPath = `/events/${eventId}/vendors/${vendorId}/styles`
+
+  const validId = UUID_RE.test(itemId)
+  const { data, isLoading, error, refetch } = useCatalogueItemDetail(
+    vendorId,
+    validId ? itemId : '',
+  )
+
+  const [showArchiveConfirm, setShowArchiveConfirm] = useState(false)
+  const [archiving, setArchiving] = useState(false)
+
+  const handleArchive = async () => {
+    setArchiving(true)
+    try {
+      const { error: archiveError } = await supabase
+        .from('catalogue_items')
+        .update({ status: 'archived' })
+        .eq('id', itemId)
+        .eq('vendor_id', vendorId)
+      if (archiveError) {throw archiveError}
+      queryClient.invalidateQueries({ queryKey: ['catalogue-items', vendorId] })
+      queryClient.invalidateQueries({ queryKey: ['catalogue-item-detail', vendorId, itemId] })
+      navigate(stylesPath)
+    } catch {
+      setArchiving(false)
+      setShowArchiveConfirm(false)
+    }
+  }
+
+  return (
+    <>
+      <ItemDetailScreen
+        data={data ?? undefined}
+        loading={isLoading}
+        error={!validId ? 'Invalid item id' : (error instanceof Error ? error.message : null)}
+        onRefresh={() => { void refetch() }}
+        onBack={() => navigate(stylesPath)}
+        onArchive={canEdit ? () => setShowArchiveConfirm(true) : undefined}
+      />
+      <ConfirmationDialog
+        isOpen={showArchiveConfirm}
+        onClose={() => setShowArchiveConfirm(false)}
+        title="Archive Item"
+        description="Are you sure you want to archive this item? It will be hidden from the catalogue but the data will be preserved."
+        confirmText={archiving ? 'Archiving...' : 'Archive'}
+        onConfirm={() => { void handleArchive() }}
+        variant="destructive"
+      />
+    </>
   )
 }

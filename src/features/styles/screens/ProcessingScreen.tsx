@@ -57,7 +57,7 @@ export function StyleProcessingScreen({
       className
     )}>
       {/* Large hero image - primary focus */}
-      <div className="relative w-full aspect-[4/3] max-w-sm rounded-2xl overflow-hidden shadow-2xl border-2 border-orange-500/20 bg-muted">
+      <div className="relative w-full aspect-[4/3] max-w-sm rounded-2xl overflow-hidden shadow-2xl border-2 border-primary/20 bg-muted">
         {infoImage?.uri ? (
           <img
             src={infoImage.uri}
@@ -74,8 +74,8 @@ export function StyleProcessingScreen({
         {isProcessing && (
           <div className="absolute inset-0 flex items-center justify-center bg-black/30 backdrop-blur-[2px]">
             <div className="flex flex-col items-center gap-3">
-              <div className="w-16 h-16 rounded-full bg-orange-500/90 flex items-center justify-center shadow-lg shadow-orange-500/30">
-                <Sparkles className="h-8 w-8 text-white animate-spin-slow" />
+              <div className="w-16 h-16 rounded-full bg-primary/90 flex items-center justify-center shadow-lg shadow-primary/30">
+                <Sparkles className="h-8 w-8 text-primary-foreground animate-spin-slow" />
               </div>
               <div className="flex items-center gap-2 bg-black/50 backdrop-blur-sm px-4 py-2 rounded-full">
                 <Loader2 className="h-4 w-4 text-white animate-spin" />
@@ -99,9 +99,9 @@ export function StyleProcessingScreen({
             <p className="text-xs text-muted-foreground/70">
               You'll review and edit before saving
             </p>
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-amber-500/10 border border-amber-500/20 rounded-full">
-              <Sparkles className="h-3 w-3 text-amber-600 dark:text-amber-500" />
-              <span className="text-xs text-amber-700 dark:text-amber-400 font-medium">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-field-warn border border-danger rounded-full">
+              <Sparkles className="h-3 w-3 text-danger" />
+              <span className="text-xs text-danger font-medium">
                 Extraction happens once
               </span>
             </div>

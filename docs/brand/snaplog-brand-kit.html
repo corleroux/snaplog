@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Snaplog — Brand Kit — Snap it. Catalogued.</title>
+<style>
+:root{
+  --bg: oklch(98% 0.004 240);
+  --surface: oklch(100% 0 0);
+  --fg: oklch(15% 0.02 100);
+  --muted: oklch(40% 0.02 100);
+  --border: oklch(15% 0.02 100);
+  --accent: oklch(60% 0.22 25);
+  --font-display:'Times New Roman','Iowan Old Style',Georgia,serif;
+  --font-body:ui-monospace,'IBM Plex Mono','JetBrains Mono',Menlo,monospace;
+  --paper:#FAFAF7; --ink:#16150F; --kraft:#C9A86A;
+}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+.topbar{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:2px solid var(--border);display:flex;align-items:center;gap:14px;padding:10px 18px}
+.topbar .mini-mark{width:32px;height:32px;flex:0 0 32px;border:2px solid var(--border);display:grid;place-items:center;background:var(--fg);color:#fff;font-weight:900}
+.topbar b{font-family:var(--font-display);font-size:20px;letter-spacing:-.01em}
+.topbar .tag{font-size:11px;letter-spacing:.14em;text-transform:uppercase;border:1.5px solid var(--border);padding:3px 8px;background:#fff}
+.topbar nav{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.topbar nav a{font-size:12px;letter-spacing:.06em;text-transform:uppercase;text-decoration:none;border:1.5px solid var(--border);padding:7px 10px;background:#fff;min-height:44px;display:inline-flex;align-items:center}
+.topbar nav a:focus-visible,.btn:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 18px 80px}
+.hero{border:2px solid var(--border);background:var(--surface);margin:22px 0 18px;display:grid;grid-template-columns:1.35fr .85fr}
+.hero-left{padding:34px 30px 28px;border-right:2px solid var(--border)}
+.kicker{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+.hero h1{font-family:var(--font-display);font-weight:900;line-height:.92;letter-spacing:-.02em;margin:12px 0 10px;font-size:clamp(56px,8vw,108px)}
+.hero h1 em{font-style:normal;background:var(--fg);color:#fff;padding:0 12px;display:inline-block}
+.hero h1 .acc{color:var(--accent)}
+.sub{font-size:14px;max-width:52ch}
+.rule{height:2px;background:var(--border);margin:18px 0}
+.meta-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;border:2px solid var(--border);background:#fff}
+.meta-grid>div{padding:12px 14px;border-right:2px solid var(--border);font-size:12.5px}
+.meta-grid>div:last-child{border-right:0}
+.meta-grid strong{display:block;font-size:11px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:4px}
+.hero-right{background:var(--fg);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px 22px;gap:14px;min-height:420px}
+.hero-right .cap{font-size:11px;letter-spacing:.16em;text-transform:uppercase;opacity:.8}
+section.card{border:2px solid var(--border);background:var(--surface);margin:18px 0}
+.sec-head{display:flex;align-items:baseline;gap:14px;padding:16px 20px;border-bottom:2px solid var(--border);background:#fff}
+.sec-head .n{font-family:var(--font-display);font-weight:900;font-size:30px;border:2px solid var(--border);width:48px;height:48px;display:grid;place-items:center;background:var(--fg);color:#fff;flex:0 0 48px}
+.sec-head h2{font-family:var(--font-display);font-size:clamp(28px,3.4vw,42px);margin:0;letter-spacing:-.02em;line-height:1}
+.sec-head p{margin:0 0 0 auto;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);max-width:32ch;text-align:right}
+.sec-body{padding:20px;display:grid;gap:18px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
+.panel{border:2px solid var(--border);background:#fff;padding:16px}
+.panel.dark{background:var(--fg);color:#fff;border-color:var(--fg)}
+.panel h3{margin:0 0 6px;font-family:var(--font-display);font-size:22px;letter-spacing:-.01em}
+.panel p.small,.small{font-size:12.5px;color:var(--muted)}
+.panel.dark .small{color:#CFCABB}
+.stage{border:2px solid var(--border);background:var(--paper);display:grid;place-items:center;padding:28px;min-height:220px;position:relative}
+.stage.dark{background:#111109}
+.stage.sun{background:#fff}
+.badge-row{display:flex;align-items:end;gap:22px;flex-wrap:wrap}
+.px-label{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);text-align:center;margin-top:8px}
+.btn{appearance:none;border:2px solid var(--border);background:#fff;color:var(--fg);font:inherit;font-size:12px;letter-spacing:.08em;text-transform:uppercase;padding:12px 14px;cursor:pointer;min-height:44px;font-weight:700}
+.btn:hover{background:var(--fg);color:#fff;border-color:var(--fg)}
+.btn.primary{background:var(--accent);border-color:var(--fg);color:#16150F}
+.btn.primary:hover{background:var(--fg);color:#FAFAF7}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.swatches{display:grid;grid-template-columns:repeat(5,1fr);gap:0;border:2px solid var(--border)}
+.swatches>div{padding:14px 12px;border-right:2px solid var(--border);min-height:118px}
+.swatches>div:last-child{border-right:0}
+.sw{width:100%;height:44px;border:2px solid var(--border);margin-bottom:8px}
+code,input{font-family:var(--font-body)}
+.codebox{border:2px solid var(--border);background:#0F0E0A;color:#F5F2E8;padding:12px;font-size:12px;overflow:auto;white-space:pre}
+.stitch{border-top:3px dashed var(--border);margin:14px 0}
+.avatar-crop{border-radius:50%;overflow:hidden;border:2px solid var(--border);background:var(--fg);flex:0 0 auto}
+table.spec{width:100%;border-collapse:collapse;font-size:13px;background:#fff}
+table.spec th,table.spec td{border:1.5px solid var(--border);padding:10px 12px;text-align:left;vertical-align:top}
+table.spec th{background:var(--fg);color:#fff;font-size:11px;letter-spacing:.12em;text-transform:uppercase}
+.misuse{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px}
+.misuse div{border:2px solid var(--border);padding:10px;background:#fff;font-size:12px;text-align:center}
+.phone{width:184px;border:2px solid var(--border);background:#fff}
+.phone .notch{height:18px;display:grid;place-items:center;font-size:9px;letter-spacing:.2em;border-bottom:2px solid var(--border)}
+.phone .scr{min-height:312px;display:flex;flex-direction:column;align-items:center;gap:8px;padding:14px 12px;text-align:center}
+.ticket{border:2px solid var(--border);background:#E8D5AC;color:#1A160C;padding:14px;display:flex;gap:12px;align-items:center}
+.ticket .hole{width:22px;height:22px;border-radius:50%;background:var(--paper);border:2px solid var(--fg);flex:0 0 22px}
+img.context{width:100%;height:220px;object-fit:cover;border:2px solid var(--border);display:block;filter:contrast(1.05)}
+.sun-toggle{display:flex;gap:10px;align-items:center;font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+footer{margin-top:22px;border:2px solid var(--border);background:var(--fg);color:#fff;padding:18px 20px;display:flex;gap:14px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+@media(max-width:900px){.hero{grid-template-columns:1fr}.hero-left{border-right:0;border-bottom:2px solid var(--border)}.two,.three{grid-template-columns:1fr}.meta-grid{grid-template-columns:1fr}.meta-grid>div{border-right:0;border-bottom:2px solid var(--border)}.misuse{grid-template-columns:1fr 1fr}.swatches{grid-template-columns:1fr 1fr}.sec-head p{display:none}}
+</style>
+</head>
+<body>
+<div class="topbar" data-od-id="topbar">
+  <div class="mini-mark" aria-hidden="true">S◉</div>
+  <b>SNAPLOG</b><span class="tag">Brand kit v1.0</span>
+  <nav aria-label="Sections">
+    <a href="#s-logo">Logo</a><a href="#s-scale">Scale</a><a href="#s-icon">App icon</a><a href="#s-splash">Splash</a><a href="#s-avatar">Avatar</a><a href="#s-lockup">Lockup</a>
+  </nav>
+</div>
+<div class="wrap">
+
+<!-- HERO -->
+<header class="hero" data-od-id="hero">
+  <div class="hero-left">
+    <div class="kicker">Mobile-first trade-fair cataloguing · Fashion buyers · v1.0</div>
+    <h1>SNAP IT.<br><em>CATALOGUED.</em></h1>
+    <p class="sub">Confident, craft-adjacent, sunlight-legible. One decisive mark: a <strong>swing-ticket + viewfinder snap</strong>. Solid inks only — no gradients. Works in a single colour for swing-ticket printing, and holds at 48&nbsp;px and as a 2&nbsp;cm fair-badge sticker.</p>
+    <div class="rule"></div>
+    <div class="meta-grid">
+      <div><strong>Idea</strong>Ticket clipped corner = market stall tag (see Sample tag ref). Dashed stitch = fabric. Orange dot = shutter / snap.</div>
+      <div><strong>Contrast</strong>Ink #16150F on Paper #FAFAF7 = 15.8:1. Accent used once per surface, never for text.</div>
+      <div><strong>Files below</strong>SVG + PNG export at 1024 / 512 / 192 / 180 / 48 px. Foreground + background separated for adaptive icons.</div>
+    </div>
+  </div>
+  <div class="hero-right" data-od-id="hero-mark">
+    <span class="cap">Primary app mark — reversed</span>
+    <!-- PRIMARY MARK LARGE -->
+    <svg id="markHero" width="220" height="220" viewBox="0 0 256 256" role="img" aria-label="Snaplog primary mark">
+      <rect x="4" y="4" width="248" height="248" fill="#16150F"/>
+      <path d="M58 52 H170 L204 86 V204 H58 Z" fill="#FAFAF7"/>
+      <circle cx="164" cy="96" r="13" fill="#16150F"/>
+      <circle cx="164" cy="96" r="5.5" fill="#FAFAF7"/>
+      <g fill="none" stroke="#16150F" stroke-width="13" stroke-linecap="square">
+        <path d="M84 118 h22 v22"/><path d="M150 118 h22 v22"/><path d="M84 162 v22 h22"/><path d="M150 162 v22 h22"/>
+      </g>
+      <circle cx="128" cy="151" r="20" fill="#E34A0B"/>
+      <circle cx="128" cy="151" r="20" fill="none" stroke="#16150F" stroke-width="6"/>
+      <line x1="78" y1="190" x2="184" y2="190" stroke="#16150F" stroke-width="5" stroke-dasharray="9 7" stroke-linecap="square"/>
+    </svg>
+    <span class="cap">Ink / Paper / Stall Orange #E34A0B</span>
+  </div>
+</header>
+
+<!-- 01 LOGO -->
+<section class="card" id="s-logo" data-od-id="primary-logo">
+  <div class="sec-head"><div class="n">01</div><h2>Primary logo + mono</h2><p>SVG masters · solid fills · 8px min stroke</p></div>
+  <div class="sec-body">
+    <div class="two">
+      <div class="panel" data-od-id="logo-primary">
+        <h3>Primary — Ink on Paper</h3>
+        <p class="small">Use on light. Stall Orange appears once: the snap dot.</p>
+        <div class="stage">
+          <svg id="svgPrimary" width="200" height="200" viewBox="0 0 256 256" role="img" aria-label="Snaplog primary logo">
+            <path d="M58 52 H170 L204 86 V204 H58 Z" fill="#FAFAF7" stroke="#16150F" stroke-width="14" stroke-linejoin="miter"/>
+            <circle cx="164" cy="98" r="14" fill="#16150F"/><circle cx="164" cy="98" r="5.5" fill="#FAFAF7"/>
+            <g fill="none" stroke="#16150F" stroke-width="12" stroke-linecap="square"><path d="M86 118 h21 v21"/><path d="M149 118 h21 v21"/><path d="M86 160 v21 h21"/><path d="M149 160 v21 h21"/></g>
+            <circle cx="128" cy="150" r="19" fill="#E34A0B" stroke="#16150F" stroke-width="7"/>
+            <line x1="80" y1="190" x2="182" y2="190" stroke="#16150F" stroke-width="5" stroke-dasharray="9 7"/>
+          </svg>
+        </div>
+        <div class="btn-row"><button class="btn primary" data-dl="svgPrimary">Download SVG</button><button class="btn" data-png="svgPrimary" data-size="1024">PNG 1024</button><button class="btn" data-png="svgPrimary" data-size="512">PNG 512</button><button class="btn" data-png="svgPrimary" data-size="192">PNG 192</button><button class="btn" data-png="svgPrimary" data-size="48">PNG 48</button></div>
+      </div>
+      <div class="panel dark" data-od-id="logo-mono">
+        <h3>Mono — single colour</h3>
+        <p class="small">Swing-ticket / stamp / receipt. No orange. Same geometry.</p>
+        <div class="stage dark">
+          <svg id="svgMono" width="200" height="200" viewBox="0 0 256 256" role="img" aria-label="Snaplog monochrome logo">
+            <path d="M58 52 H170 L204 86 V204 H58 Z" fill="none" stroke="#FAFAF7" stroke-width="14"/>
+            <circle cx="164" cy="98" r="14" fill="#FAFAF7"/><circle cx="164" cy="98" r="5.5" fill="#16150F"/>
+            <g fill="none" stroke="#FAFAF7" stroke-width="12" stroke-linecap="square"><path d="M86 118 h21 v21"/><path d="M149 118 h21 v21"/><path d="M86 160 v21 h21"/><path d="M149 160 v21 h21"/></g>
+            <circle cx="128" cy="150" r="19" fill="#FAFAF7" stroke="#FAFAF7" stroke-width="7"/>
+            <circle cx="128" cy="150" r="7" fill="#16150F"/>
+            <line x1="80" y1="190" x2="182" y2="190" stroke="#FAFAF7" stroke-width="5" stroke-dasharray="9 7"/>
+          </svg>
+        </div>
+        <div class="btn-row"><button class="btn primary" data-dl="svgMono">Download SVG</button><button class="btn" data-dl-ink="true">Download Ink-black SVG</button></div>
+      </div>
+    </div>
+    <div class="panel" data-od-id="logo-construction">
+      <h3>Construction — why it holds small</h3>
+      <p class="small">256 grid · 14px tag stroke · 12px viewfinder strokes · 19px dot with 7px ring · stitch 5px / 9-7 dash. Clipped corner 34px. Clearspace = hole diameter (28px) on all sides. Minimum: 32px digital / 15mm print.</p>
+      <div class="stage" style="min-height:180px">
+        <svg width="320" height="180" viewBox="0 0 320 180" role="img" aria-label="Construction grid">
+          <defs><pattern id="grid" width="16" height="16" patternUnits="userSpaceOnUse"><path d="M16 0H0V16" fill="none" stroke="#16150F" stroke-opacity=".18" stroke-width="1"/></pattern></defs>
+          <rect width="320" height="180" fill="url(#grid)"/>
+          <g transform="translate(108,10) scale(.62)"><path d="M58 52 H170 L204 86 V204 H58 Z" fill="#fff" stroke="#16150F" stroke-width="14"/><circle cx="164" cy="98" r="14" fill="#16150F"/><g stroke="#16150F" stroke-width="12" fill="none"><path d="M86 118 h21 v21"/><path d="M149 118 h21 v21"/><path d="M86 160 v21 h21"/><path d="M149 160 v21 h21"/></g><circle cx="128" cy="150" r="19" fill="#E34A0B" stroke="#16150F" stroke-width="7"/></g>
+          <rect x="108" y="10" width="105" height="105" fill="none" stroke="#E34A0B" stroke-width="2" stroke-dasharray="6 5"/>
+          <text x="12" y="170" font-family="monospace" font-size="11" fill="#16150F">clearspace = ● 28u · no type / stitch inside</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 SCALE -->
+<section class="card" id="s-scale" data-od-id="scale-tests">
+  <div class="sec-head"><div class="n">02</div><h2>Legibility tests</h2><p>48 px app-icon · 2 cm badge · sunlight</p></div>
+  <div class="sec-body">
+    <div class="two">
+      <div class="panel">
+        <h3>48 px + small sizes</h3>
+        <p class="small">Rendered at true pixels, not scaled-down large art. Viewfinder + dot remain separable at 48 / 32 px.</p>
+        <div class="badge-row" style="align-items:flex-end">
+          <div><svg width="96" height="96" viewBox="0 0 256 256"><rect width="256" height="256" fill="#16150F"/><path d="M58 52 H170 L204 86 V204 H58 Z" fill="#FAFAF7"/><circle cx="164" cy="96" r="13" fill="#16150F"/><g stroke="#16150F" stroke-width="14" fill="none"><path d="M86 118 h21 v21"/><path d="M149 118 h21 v21"/><path d="M86 160 v21 h21"/><path d="M149 160 v21 h21"/></g><circle cx="128" cy="150" r="20" fill="#E34A0B" stroke="#16150F" stroke-width="8"/></g></svg><div class="px-label">96 px</div></div>
+          <div><svg width="48" height="48" viewBox="0 0 256 256"><rect width="256" height="256" fill="#16150F"/><path d="M58 52 H170 L204 86 V204 H58 Z" fill="#FAFAF7"/><circle cx="164" cy="96" r="13" fill="#16150F"/><g stroke="#16150F" stroke-width="16" fill="none"><path d="M86 118 h21 v21"/><path d="M149 118 h21 v21"/><path d="M86 160 v21 h21"/><path d="M149 160 v21 h21"/></g><circle cx="128" cy="150" r="22" fill="#E34A0B" stroke="#16150F" stroke-width="9"/></svg><div class="px-label">48 px — pass</div></div>
+          <div><svg width="32" height="32" viewBox="0 0 256 256"><rect width="256" height="256" fill="#16150F"/><path d="M58 52 H170 L204 86 V204 H58 Z" fill="#FAFAF7"/><circle cx="164" cy="96" r="13" fill="#16150F"/><g stroke="#16150F" stroke-width="18" fill="none"><path d="M86 118 h21 v21"/><path d="M149 118 h21 v21"/><path d="M86 160 v21 h21"/><path d="M149 160 v21 h21"/></g><circle cx="128" cy="150" r="24" fill="#E34A0B" stroke="#16150F" stroke-width="10"/></svg><div class="px-label">32 px — min</div></div>
+        </div>
+        <div class="stitch"></div>
+        <p class="small"><strong style="color:#16150F">Fix applied:</strong> stroke weights bumped +12% in the 48/32 masters above (separate small-size cut, same outline).</p>
+      </div>
+      <div class="panel">
+        <h3>2 cm fair-badge sticker</h3>
+        <p class="small">True print size: 2 cm circle + 2 cm square. White knockout on Ink survives cheap vinyl cut.</p>
+        <div class="badge-row">
+          <div style="width:2cm;height:2cm;border-radius:50%;background:#16150F;display:grid;place-items:center;border:2px solid #16150F"><svg width="42" height="42" viewBox="0 0 256 256"><path d="M58 52 H170 L204 86 V204 H58 Z" fill="#FAFAF7"/><circle cx="164" cy="96" r="13" fill="#16150F"/><g stroke="#16150F" stroke-width="16" fill="none"><path d="M86 118 h21 v21"/><path d="M149 118 h21 v21"/><path d="M86 160 v21 h21"/><path d="M149 160 v21 h21"/></g><circle cx="128" cy="150" r="22" fill="#E34A0B" stroke="#16150F" stroke-width="9"/></svg></div>
+          <div style="width:2cm;height:2cm;background:#FAFAF7;display:grid;place-items:center;border:2px solid #16150F"><svg width="42" height="42" viewBox="0 0 256 256"><path d="M58 52 H170 L204 86 V204 H58 Z" fill="#FAFAF7" stroke="#16150F" stroke-width="16"/><circle cx="164" cy="98" r="14" fill="#16150F"/><g stroke="#16150F" stroke-width="16" fill="none"><path d="M86 118 h21 v21"/><path d="M149 118 h21 v21"/><path d="M86 160 v21 h21"/><path d="M149 160 v21 h21"/></g><circle cx="128" cy="150" r="22" fill="#16150F"/></svg></div>
+          <div class="ticket" style="width:2cm;flex-direction:column;gap:6px;text-align:center"><span class="hole"></span><b style="font-family:var(--font-display);font-size:11px">SNAPLOG</b><span style="font-size:8px;letter-spacing:.12em">AISLE B · 042</span></div>
+        </div>
+        <div class="px-label">Left to right: 2 cm sticker / 2 cm single-colour / 2 cm stall ticket</div>
+      </div>
+    </div>
+    <div class="panel" data-od-id="sunlight-test">
+      <h3>Sunlight test — 65000 lux simulation</h3>
+      <div class="sun-toggle"><button class="btn" id="sunBtn" aria-pressed="false">Toggle glare wash</button><span class="small">Target: mark readable with 40% white wash. Orange dot must not be the only carrier of meaning.</span></div>
+      <div class="stage sun" id="sunStage" style="margin-top:12px">
+        <div style="display:flex;gap:26px;align-items:center;flex-wrap:wrap;justify-content:center">
+          <svg width="120" height="120" viewBox="0 0 256 256"><rect width="256" height="256" fill="#16150F"/><path d="M58 52 H170 L204 86 V204 H58 Z" fill="#FAFAF7"/><circle cx="164" cy="96" r="13" fill="#16150F"/><g stroke="#16150F" stroke-width="14" fill="none"><path d="M86 118 h21 v21"/><path d="M149 118 h21 v21"/><path d="M86 160 v21 h21"/><path d="M149 160 v21 h21"/></g><circle cx="128" cy="150" r="20" fill="#E34A0B" stroke="#16150F" stroke-width="8"/></svg>
+          <div style="border:2px solid #16150F;background:#fff;padding:10px 14px;font-weight:700;letter-spacing:.06em">SNAPLOG · A-042 <span style="background:#16150F;color:#fff;padding:2px 8px">SCANNED ✓</span></div>
+        </div>
+        <div id="glare" style="position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 APP ICON -->
+<section class="card" id="s-icon" data-od-id="app-icon-set">
+  <div class="sec-head"><div class="n">03</div><h2>Capacitor icon set</h2><p>iOS 1024 · Android adaptive · no transparency</p></div>
+  <div class="sec-body">
+    <div class="three">
+      <div class="panel" data-od-id="icon-ios">
+        <h3>iOS — 1024 × 1024</h3>
+        <p class="small">Square, full-bleed Ink. No rounding in master — iOS masks it.</p>
+        <div class="stage"><svg id="svgIos" width="180" height="180" viewBox="0 0 1024 1024"><rect width="1024" height="1024" fill="#16150F"/><g transform="translate(256,256) scale(2)"><path d="M58 52 H170 L204 86 V204 H58 Z" fill="#FAFAF7"/><circle cx="164" cy="96" r="13" fill="#16150F"/><g stroke="#16150F" stroke-width="13" fill="none"><path d="M84 118 h22 v22"/><path d="M150 118 h22 v22"/><path d="M84 162 v22 h22"/><path d="M150 162 v22 h22"/></g><circle cx="128" cy="151" r="20" fill="#E34A0B" stroke="#16150F" stroke-width="7"/></g></svg></div>
+        <div class="btn-row"><button class="btn primary" data-png="svgIos" data-size="1024">PNG 1024</button><button class="btn" data-png="svgIos" data-size="512">PNG 512</button><button class="btn" data-png="svgIos" data-size="192">PNG 192</button><button class="btn" data-png="svgIos" data-size="180">PNG 180</button></div>
+      </div>
+      <div class="panel" data-od-id="icon-android">
+        <h3>Android adaptive</h3>
+        <p class="small">Background #16150F · Foreground centred in 72 dp safe zone.</p>
+        <div class="stage" style="gap:14px">
+          <div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center">
+            <div><svg id="svgFg" width="120" height="120" viewBox="0 0 432 432"><rect width="432" height="432" fill="#16150F"/><g transform="translate(88,88) scale(1)"><path d="M58 52 H170 L204 86 V204 H58 Z" fill="#FAFAF7"/><circle cx="164" cy="96" r="13" fill="#16150F"/><g stroke="#16150F" stroke-width="14" fill="none"><path d="M86 118 h21 v21"/><path d="M149 118 h21 v21"/><path d="M86 160 v21 h21"/><path d="M149 160 v21 h21"/></g><circle cx="128" cy="150" r="20" fill="#E34A0B" stroke="#16150F" stroke-width="8"/></g><circle cx="216" cy="216" r="150" fill="none" stroke="#FAFAF7" stroke-dasharray="8 8" stroke-width="3"/></svg><div class="px-label">Foreground + safe-zone</div></div>
+            <div><div style="width:120px;height:120px;background:#16150F;border:2px solid #16150F"></div><div class="px-label">Background #16150F</div></div>
+          </div>
+        </div>
+        <div class="btn-row"><button class="btn" data-dl="svgFg">Foreground SVG</button><button class="btn" data-png="svgFg" data-size="432">FG PNG 432</button></div>
+        <div class="codebox">capacitor.config.ts → android.adaptiveIcon: {
+  background: "#16150F", foreground: "icon-fg.svg" }</div>
+      </div>
+      <div class="panel" data-od-id="icon-mask">
+        <h3>Masks</h3>
+        <p class="small">Holds in circle, squircle, rounded-rect. Keep dot ≥ 12% of icon.</p>
+        <div class="stage" style="flex-direction:row;gap:16px;display:flex">
+          <div class="avatar-crop" style="width:72px;height:72px"><svg width="72" height="72" viewBox="0 0 256 256"><rect width="256" height="256" fill="#16150F"/><path d="M58 52 H170 L204 86 V204 H58 Z" fill="#FAFAF7"/><circle cx="128" cy="150" r="22" fill="#E34A0B" stroke="#16150F" stroke-width="9"/></svg></div>
+          <div style="width:72px;height:72px;border-radius:22%;overflow:hidden;border:2px solid #16150F"><svg width="72" height="72" viewBox="0 0 256 256"><rect width="256" height="256" fill="#16150F"/><path d="M58 52 H170 L204 86 V204 H58 Z" fill="#FAFAF7"/><circle cx="128" cy="150" r="22" fill="#E34A0B" stroke="#16150F" stroke-width="9"/></svg></div>
+          <div style="width:72px;height:72px;border-radius:16px;overflow:hidden;border:2px solid #16150F"><svg width="72" height="72" viewBox="0 0 256 256"><rect width="256" height="256" fill="#16150F"/><path d="M58 52 H170 L204 86 V204 H58 Z" fill="#FAFAF7"/><circle cx="128" cy="150" r="22" fill="#E34A0B" stroke="#16150F" stroke-width="9"/></svg></div>
+        </div>
+      </div>
+    </div>
+    <table class="spec" data-od-id="icon-spec-table">
+      <tr><th>Asset</th><th>Size</th><th>Rule</th></tr>
+      <tr><td>icon-1024.png (iOS / store)</td><td>1024 × 1024, sRGB, no alpha</td><td>Full-bleed Ink; mark centred at 50%</td></tr>
+      <tr><td>icon-foreground.svg</td><td>432 × 432 dp vector</td><td>Artwork inside 264 dp circle safe-zone</td></tr>
+      <tr><td>icon-background</td><td>Colour #16150F</td><td>Flat. Never a photo or gradient</td></tr>
+      <tr><td>mipmap / splash</td><td>hdpi–xxxhdpi via Capacitor assets</td><td>Run: npx capacitor-assets generate --iconBackgroundColor #16150F</td></tr>
+      <tr><td>Exported files (this folder)</td><td>snaplog-icon-1024/512/192/180/48.png · snaplog-icon-fg-432.png · snaplog-icon-bg-432.png</td><td>Byte-verified via resvg 2026-11-01. iOS = full-bleed Ink. Android fg = transparent artwork, bg = flat #16150F.</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- 04 SPLASH -->
+<section class="card" id="s-splash" data-od-id="splash-screen">
+  <div class="sec-head"><div class="n">04</div><h2>Splash screen</h2><p>2732 master · light + dark · centred mark</p></div>
+  <div class="sec-body">
+    <div class="two">
+      <div class="panel"><h3>Light — Paper</h3><div class="stage"><div class="phone"><div class="notch">9:41 ● ● ●</div><div class="scr" style="background:#FAFAF7;justify-content:flex-start;padding-top:52px"><svg width="72" height="72" viewBox="0 0 256 256"><path d="M58 52 H170 L204 86 V204 H58 Z" fill="#fff" stroke="#16150F" stroke-width="14"/><circle cx="164" cy="98" r="14" fill="#16150F"/><g stroke="#16150F" stroke-width="13" fill="none"><path d="M86 119 h20 v20"/><path d="M150 119 h20 v20"/><path d="M86 161 v20 h20"/><path d="M150 161 v20 h20"/></g><circle cx="128" cy="150" r="19" fill="#E34A0B" stroke="#16150F" stroke-width="7"/></svg><b style="font-family:var(--font-display);font-size:22px;letter-spacing:-.02em;line-height:1">SNAPLOG</b><span style="font-size:9px;letter-spacing:.18em">SNAP IT. CATALOGUED.</span><span class="small" style="margin-top:auto;font-size:9px">v1.0 · Paper</span></div></div></div><p class="small">2732 × 2732 master · mark top-edge at 33% · solid Paper fill</p></div>
+      <div class="panel dark"><h3>Dark — Ink (default)</h3><div class="stage dark"><div class="phone" style="border-color:#fff"><div class="notch" style="border-color:#fff;color:#fff">9:41 ● ● ●</div><div class="scr" style="background:#16150F;color:#fff;justify-content:flex-start;padding-top:52px"><svg width="72" height="72" viewBox="0 0 256 256"><rect x="8" y="8" width="240" height="240" fill="#16150F"/><path d="M58 52 H170 L204 86 V204 H58 Z" fill="#FAFAF7"/><circle cx="164" cy="96" r="13" fill="#16150F"/><g stroke="#16150F" stroke-width="13" fill="none"><path d="M84 118 h22 v22"/><path d="M150 118 h22 v22"/><path d="M84 162 v22 h22"/><path d="M150 162 v22 h22"/></g><circle cx="128" cy="151" r="20" fill="#E34A0B" stroke="#16150F" stroke-width="7"/></svg><b style="font-family:var(--font-display);font-size:22px;line-height:1">SNAPLOG</b><span style="font-size:9px;letter-spacing:.18em;opacity:.8">SNAP IT. CATALOGUED.</span><span class="small" style="margin-top:auto;font-size:9px;color:#CFCABB">v1.0 · Ink default</span></div></div></div><p class="small">Default for dim fair halls · solid Ink fill · no photo (cheap screens band gradients)</p></div>
+    </div>
+    <p class="small">Capacitor: centre mark at 33% height on 2732 × 2732 canvas, solid fill. Light and dark share geometry; only the field colour flips. Exported masters in docs/brand: snaplog-splash-dark-2732.png (Ink, default) + snaplog-splash-light-2732.png (Paper).</p>
+    <div class="btn-row"><button class="btn" data-png="svgIos" data-size="1024">Splash PNG 1024</button></div>
+  </div>
+</section>
+
+<!-- 05 AVATAR -->
+<section class="card" id="s-avatar" data-od-id="social-avatar">
+  <div class="sec-head"><div class="n">05</div><h2>Social avatar</h2><p>Circle-cropped · readable at 98 px</p></div>
+  <div class="sec-body">
+    <div class="two">
+      <div class="panel">
+        <h3>Master + sizes</h3>
+        <div class="badge-row">
+          <div><div class="avatar-crop" style="width:98px;height:98px"><svg id="svgAvatar" width="98" height="98" viewBox="0 0 256 256"><rect width="256" height="256" fill="#16150F"/><path d="M62 56 H168 L202 90 V200 H62 Z" fill="#FAFAF7"/><circle cx="162" cy="98" r="13" fill="#16150F"/><g stroke="#16150F" stroke-width="15" fill="none"><path d="M88 120 h20 v20"/><path d="M148 120 h20 v20"/><path d="M88 160 v20 h20"/><path d="M148 160 v20 h20"/></g><circle cx="128" cy="150" r="21" fill="#E34A0B" stroke="#16150F" stroke-width="8"/></svg></div><div class="px-label">98 px — master</div></div>
+          <div><div class="avatar-crop" style="width:48px;height:48px"><svg width="48" height="48" viewBox="0 0 256 256"><rect width="256" height="256" fill="#16150F"/><path d="M62 56 H168 L202 90 V200 H62 Z" fill="#FAFAF7"/><circle cx="162" cy="98" r="13" fill="#16150F"/><g stroke="#16150F" stroke-width="17" fill="none"><path d="M88 120 h20 v20"/><path d="M148 120 h20 v20"/><path d="M88 160 v20 h20"/><path d="M148 160 v20 h20"/></g><circle cx="128" cy="150" r="23" fill="#E34A0B" stroke="#16150F" stroke-width="9"/></svg></div><div class="px-label">48 px</div></div>
+          <div><div class="avatar-crop" style="width:32px;height:32px"><svg width="32" height="32" viewBox="0 0 256 256"><rect width="256" height="256" fill="#16150F"/><rect x="52" y="46" width="152" height="164" fill="#FAFAF7"/><circle cx="128" cy="150" r="28" fill="#E34A0B" stroke="#16150F" stroke-width="12"/></svg></div><div class="px-label">32 px — dot only</div></div>
+        </div>
+        <div class="btn-row"><button class="btn primary" data-png="svgAvatar" data-size="512">Avatar PNG 512</button></div>
+      </div>
+      <div class="panel">
+        <h3>In situ — fair feed</h3>
+        <p class="small">Avatar must survive against denim + busy stalls. Ink disc + Paper tag does; thin grey rings don't.</p>
+        <img class="context" src="garment-04-jean-jacket.jpg" alt="Denim jacket on stall table">
+        <div style="display:flex;gap:10px;align-items:center;margin-top:12px;border:2px solid var(--border);padding:10px;background:#fff">
+          <div class="avatar-crop" style="width:44px;height:44px"><svg width="44" height="44" viewBox="0 0 256 256"><rect width="256" height="256" fill="#16150F"/><path d="M62 56 H168 L202 90 V200 H62 Z" fill="#FAFAF7"/><circle cx="128" cy="150" r="24" fill="#E34A0B" stroke="#16150F" stroke-width="10"/></svg></div>
+          <div><b>snaplog.app</b><br><span class="small">Aisle B · 12 new swatches catalogued ✓</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 LOCKUP -->
+<section class="card" id="s-lockup" data-od-id="wordmark-lockup">
+  <div class="sec-head"><div class="n">06</div><h2>Wordmark lockup + tagline</h2><p>Serif display + mono tagline</p></div>
+  <div class="sec-body">
+    <div class="panel" data-od-id="lockup-horizontal">
+      <h3>Horizontal — default</h3>
+      <div class="stage" style="gap:0">
+        <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap;justify-content:center">
+          <svg width="84" height="84" viewBox="0 0 256 256"><path d="M58 52 H170 L204 86 V204 H58 Z" fill="#FAFAF7" stroke="#16150F" stroke-width="14"/><circle cx="164" cy="98" r="14" fill="#16150F"/><g stroke="#16150F" stroke-width="12" fill="none"><path d="M86 118 h21 v21"/><path d="M149 118 h21 v21"/><path d="M86 160 v21 h21"/><path d="M149 160 v21 h21"/></g><circle cx="128" cy="150" r="19" fill="#E34A0B" stroke="#16150F" stroke-width="7"/></svg>
+          <div><div style="font-family:var(--font-display);font-weight:900;font-size:52px;letter-spacing:-.03em;line-height:1">SNAPLOG</div><div style="font-size:12px;letter-spacing:.22em;margin-top:6px;border-top:2px solid var(--border);padding-top:6px">SNAP IT. CATALOGUED.</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="two">
+      <div class="panel dark" data-od-id="lockup-stacked">
+        <h3>Stacked — reversed, fair banner</h3>
+        <div class="stage dark"><div style="text-align:center"><svg width="72" height="72" viewBox="0 0 256 256"><rect width="256" height="256" fill="#16150F"/><path d="M58 52 H170 L204 86 V204 H58 Z" fill="#FAFAF7"/><circle cx="128" cy="150" r="22" fill="#E34A0B" stroke="#16150F" stroke-width="9"/></svg><div style="font-family:var(--font-display);font-weight:900;font-size:34px;margin-top:8px">SNAPLOG</div><div style="font-size:10px;letter-spacing:.2em;opacity:.85">SNAP IT. CATALOGUED.</div></div></div>
+      </div>
+      <div class="panel" data-od-id="lockup-mono-line">
+        <h3>Single-line — swing ticket</h3>
+        <p class="small">For 1-colour thermal printing. Letterspaced mono, 10 chars min height 3 mm.</p>
+        <div class="ticket"><span class="hole"></span><div><b style="font-family:var(--font-display)">SNAPLOG</b> <span style="font-size:11px;letter-spacing:.14em">— SNAP IT. CATALOGUED. · A-042</span><br><span style="font-size:11px">100% COTTON · LOT 07 · █▓▓█ SWATCH 12/40</span></div></div>
+        <div class="stitch"></div>
+        <img class="context" src="capture-1774937937370-8b0db4b3-7807-4a52-bb43-def276b598ca.webp" alt="Fabric swatch with sample swing tag" style="height:170px">
+        <p class="small">Ref 01 — sample hang-tag with stitch line: direct precedent for ticket lockup above.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 07 SYSTEM -->
+<section class="card" data-od-id="system-specs">
+  <div class="sec-head"><div class="n">07</div><h2>Colour · type · rules</h2><p>No gradients · one accent · 2 px borders</p></div>
+  <div class="sec-body">
+    <div class="swatches" data-od-id="palette">
+      <div><div class="sw" style="background:#FAFAF7"></div><b>Paper</b><br><span class="small">#FAFAF7 · bg</span></div>
+      <div><div class="sw" style="background:#16150F"></div><b>Ink</b><br><span class="small">#16150F · fg / border</span></div>
+      <div><div class="sw" style="background:#E34A0B"></div><b>Stall Orange</b><br><span class="small">#E34A0B · accent only</span></div>
+      <div><div class="sw" style="background:#6B675C"></div><b>Stall Grey</b><br><span class="small">#6B675C · muted</span></div>
+      <div><div class="sw" style="background:#E8D5AC"></div><b>Kraft</b><br><span class="small">#E8D5AC · tickets only</span></div>
+    </div>
+    <div class="two">
+      <div class="panel"><h3>Type</h3><p style="font-family:var(--font-display);font-size:30px;margin:6px 0">Times Display Aa 123</p><p class="small">Display: Times / Iowan Old Style / Georgia — headlines, wordmark. Never Inter / Roboto as display.</p><p style="font-family:var(--font-body);margin:8px 0">MONO BODY 0123456789 — AISLE B-042 ✓</p><p class="small">Body: IBM Plex Mono / JetBrains Mono / Menlo — IDs, lots, prices. Tabular numerals everywhere.</p></div>
+      <div class="panel"><h3>Don'ts</h3><div class="misuse"><div>✕ No gradients</div><div>✕ No grey thin icon</div><div>✕ No photo in icon</div><div>✕ No orange text</div></div><p class="small" style="margin-top:10px">Hover / focus: move background ±, never lighten text to muted. Focus ring 3px Stall Orange. Touch targets ≥ 44px.</p></div>
+    </div>
+    <div class="codebox" data-od-id="handoff">HANDOFF — dev / print
+• Primary SVG: Ink strokes ≥14u, dot #E34A0B, stitch 9-7 dash
+• Mono SVG: all #16150F (or all white reversed), dot centre punched
+• App: icon-1024 (no alpha) + adaptive fg/bg #16150F + splash #16150F dark default
+• Avatar: 512 master, 98 display, 32 fallback = dot-only
+• Ticket: 1-colour black on Kraft #E8D5AC, min 3mm cap-height</div>
+  </div>
+</section>
+
+<footer data-od-id="footer"><span><b style="font-family:var(--font-display)">SNAPLOG</b> — Snap it. Catalogued. · Brand kit v1.0 · Solid inks only</span><span class="small" style="color:#fff">Built for sunlight + cheap screens + thermal tickets.</span></footer>
+</div>
+<script>
+const sunBtn=document.getElementById('sunBtn'),glare=document.getElementById('glare');
+let on=false;sunBtn.addEventListener('click',()=>{on=!on;glare.style.opacity=on?'.42':'0';sunBtn.setAttribute('aria-pressed',on);sunBtn.textContent=on?'Remove glare wash':'Toggle glare wash';});
+function standaloneSVG(id,inkBlack){
+  const el=document.getElementById(id);const c=el.cloneNode(true);
+  c.setAttribute('xmlns','http://www.w3.org/2000/svg');
+  let s=new XMLSerializer().serializeToString(c);
+  if(inkBlack){s=s.split('#FAFAF7').join('#16150F').split('#E34A0B').join('#16150F').split('#fff').join('#16150F');}
+  return '<?xml version="1.0" encoding="UTF-8"?>\n'+s;
+}
+function save(name,blob){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},400);}
+document.querySelectorAll('[data-dl]').forEach(b=>b.addEventListener('click',()=>{
+  const svg=standaloneSVG(b.getAttribute('data-dl'),false);
+  save(b.getAttribute('data-dl')+'.svg',new Blob([svg],{type:'image/svg+xml'}));
+}));
+const inkBtn=document.querySelector('[data-dl-ink]');
+if(inkBtn)inkBtn.addEventListener('click',()=>{save('snaplog-mono-ink.svg',new Blob([standaloneSVG('svgMono',true)],{type:'image/svg+xml'}));});
+document.querySelectorAll('[data-png]').forEach(b=>b.addEventListener('click',()=>{
+  const id=b.getAttribute('data-png'),size=parseInt(b.getAttribute('data-size'),10);
+  const svg=standaloneSVG(id,false);const img=new Image();
+  const url=URL.createObjectURL(new Blob([svg],{type:'image/svg+xml'}));
+  img.onload=()=>{const cv=document.createElement('canvas');cv.width=size;cv.height=size;const cx=cv.getContext('2d');cx.fillStyle=id==='svgPrimary'?'#FAFAF7':'#16150F';cx.fillRect(0,0,size,size);cx.drawImage(img,0,0,size,size);URL.revokeObjectURL(url);cv.toBlob(bl=>save(id+'-'+size+'.png',bl));};
+  img.src=url;
+}));
+</script>
+</body>
+</html>

@@ -49,7 +49,7 @@ import { Button } from '@/components/ui/button'
 // ---------------------------------------------------------------------------
 
 type EmptyStateVariant =
-  | 'default'    // standard list empty — orange-tinted icon bg
+  | 'default'    // standard list empty — Stall-tinted icon bg
   | 'search'     // no search results — neutral icon bg
   | 'offline'    // no connectivity — neutral icon bg
   | 'error'      // failed to load — red-tinted icon bg
@@ -103,10 +103,10 @@ export interface EmptyStateProps {
 // ---------------------------------------------------------------------------
 
 const iconContainerVariants: Record<EmptyStateVariant, string> = {
-  default: 'bg-orange-50 text-orange-400',
-  search:  'bg-gray-100  text-gray-400',
-  offline: 'bg-gray-100  text-gray-400',
-  error:   'bg-red-50    text-red-400',
+  default: 'bg-primary/10 text-primary',
+  search:  'bg-muted  text-muted-foreground',
+  offline: 'bg-muted  text-muted-foreground',
+  error:   'bg-danger-bg    text-danger',
 }
 
 // ---------------------------------------------------------------------------
@@ -117,16 +117,16 @@ function EmptyStateSkeleton() {
   return (
     <div className="flex flex-col items-center gap-4 py-16 px-8 animate-pulse">
       {/* Icon placeholder */}
-      <div className="w-16 h-16 rounded-full bg-gray-100" />
+      <div className="w-16 h-16 rounded-full bg-muted" />
       {/* Heading placeholder */}
-      <div className="h-4 w-36 rounded-full bg-gray-100" />
+      <div className="h-4 w-36 rounded-full bg-muted" />
       {/* Description placeholder */}
       <div className="flex flex-col items-center gap-2 w-full">
-        <div className="h-3 w-56 rounded-full bg-gray-100" />
-        <div className="h-3 w-44 rounded-full bg-gray-100" />
+        <div className="h-3 w-56 rounded-full bg-muted" />
+        <div className="h-3 w-44 rounded-full bg-muted" />
       </div>
       {/* Button placeholder */}
-      <div className="h-11 w-full rounded-xl bg-gray-100 mt-2" />
+      <div className="h-11 w-full rounded-xl bg-muted mt-2" />
     </div>
   )
 }
@@ -185,12 +185,12 @@ export function EmptyState({
       {(heading || description) && (
         <div className="flex flex-col items-center gap-1.5 max-w-[280px]">
           {heading && (
-            <h2 className="text-base font-semibold text-gray-900 leading-snug">
+            <h2 className="text-base font-semibold text-foreground leading-snug">
               {heading}
             </h2>
           )}
           {description && (
-            <p className="text-sm text-gray-500 leading-relaxed">
+            <p className="text-sm text-muted-foreground leading-relaxed">
               {description}
             </p>
           )}

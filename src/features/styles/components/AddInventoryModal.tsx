@@ -93,7 +93,7 @@ export function AddInventoryModal({
               value={quantity}
               onChange={(e) => setQuantity(e.target.value)}
               placeholder="0.00"
-              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-orange-500/50"
+              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/50"
             />
           </div>
 
@@ -105,7 +105,7 @@ export function AddInventoryModal({
             <select
               value={unit}
               onChange={(e) => setUnit(e.target.value)}
-              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-orange-500/50"
+              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring/50"
             >
               <option value="meters">meters</option>
               <option value="yards">yards</option>
@@ -125,7 +125,7 @@ export function AddInventoryModal({
             value={batchNo}
             onChange={(e) => setBatchNo(e.target.value)}
             placeholder="e.g., B2025-01"
-            className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-orange-500/50"
+            className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/50"
           />
         </div>
 
@@ -137,7 +137,7 @@ export function AddInventoryModal({
           <select
             value={stockStatus}
             onChange={(e) => setStockStatus(e.target.value as any)}
-            className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-orange-500/50"
+            className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring/50"
           >
             <option value="in_stock">In Stock</option>
             <option value="low_stock">Low Stock</option>

@@ -1,0 +1,10 @@
+{
+  "_note": "Crafted offline to the documented @meta-sam/parser record shape (track identity + normalized box per frame). NOT a live recording — unit tests never call live model APIs. Verify field names in the supervised probe.",
+  "records": [
+    { "track_id": "track-a", "frame_index": 0, "box": { "x": 0.1, "y": 0.2, "w": 0.2, "h": 0.4 }, "confidence": 0.91 },
+    { "track_id": "track-a", "frame_index": 12, "box": { "x": 0.12, "y": 0.2, "w": 0.22, "h": 0.42 }, "confidence": 0.93 },
+    { "track_id": "track-a", "frame_index": 24, "box": { "x": 0.11, "y": 0.21, "w": 0.21, "h": 0.41 }, "confidence": 0.9 },
+    { "track_id": "track-b", "frame_index": 6, "box": { "x": 0.55, "y": 0.25, "w": 0.18, "h": 0.38 }, "confidence": 0.88 },
+    { "track_id": "track-b", "frame_index": 18, "box": { "x": 0.56, "y": 0.24, "w": 0.25, "h": 0.45 }, "confidence": 0.86 }
+  ]
+}
