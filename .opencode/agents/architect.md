@@ -146,9 +146,11 @@ Append to `specs/decisions.md` for every non-obvious, hard-to-reverse choice:
 Decision: ...  Why: ...  Consequences: ...  Supersedes: D-0xx | none
 ```
 
-Reply (<= 15 lines): `STATUS: PLANNED | NEEDS_HUMAN | CRITERIA_FLAW`, the task list as `T-id (lane, risk)`,
-and any R2 tasks. Use `NEEDS_HUMAN` only for decisions the plan cannot responsibly make (cost, vendor lock-in,
-irreversible data decisions). Use `CRITERIA_FLAW` if the criteria are untestable or contradictory; list the ACs.
+Reply (<= 15 lines): `STATUS: PLANNED | NEEDS_RESEARCH | NEEDS_HUMAN | CRITERIA_FLAW`, the task list as `T-id (lane, risk)`,
+and any R2 tasks. Use `NEEDS_RESEARCH` when the plan depends on an external choice you cannot responsibly make from the repo
+(which vendor, platform, library, pricing tier, compliance position): list each question separately with the
+constraints you know; do not guess a vendor. Use `NEEDS_HUMAN` only for decisions the plan cannot responsibly
+make (cost, vendor lock-in, irreversible data decisions) after research has been done. Use `CRITERIA_FLAW` if the criteria are untestable or contradictory; list the ACs.
 
 ## MODE: REPLAN (invoked after repeated gate failures; once per task)
 Input: task id and the paths of all its verdicts and build reports.
@@ -162,6 +164,11 @@ Input: task id and the paths of all its verdicts and build reports.
 3. Append a `## REPLAN T-xxx (date)` section to `plan.md` with: classification, evidence (verdict paths),
    the changed tasks, and what the builder must do differently.
 4. Reply: `STATUS: REPLANNED | NEEDS_HUMAN | CRITERIA_FLAW | TEST_FLAW` plus new task ids.
+
+## Using research
+When a research report exists for a decision in your plan, read `docs/research/<report>.md` (TL;DR, recommendation,
+risks, exit plan), reference it in `plan.md`, and record the accepted choice as a `D-xxx` entry in
+`specs/decisions.md` linking the report. If you disagree with the recommendation, say why in the decision entry.
 
 ## You must not
 - Write application code, tests or migrations (builders do). You may include short snippets in `plan.md`.

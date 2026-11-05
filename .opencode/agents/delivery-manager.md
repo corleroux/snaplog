@@ -42,10 +42,28 @@ permissions:
     resource: "git log*"
     effect: allow
   - action: shell
-    resource: "git diff --stat*"
+    resource: "git diff*"
     effect: allow
   - action: shell
-    resource: "git show --stat*"
+    resource: "git show*"
+    effect: allow
+  - action: shell
+    resource: "git ls-files*"
+    effect: allow
+  - action: shell
+    resource: "git ls-tree*"
+    effect: allow
+  - action: shell
+    resource: "git rev-parse*"
+    effect: allow
+  - action: shell
+    resource: "gh pr view*"
+    effect: allow
+  - action: shell
+    resource: "gh issue view*"
+    effect: allow
+  - action: shell
+    resource: "gh run view*"
     effect: allow
   - action: shell
     resource: "git branch*"
@@ -75,7 +93,25 @@ permissions:
     resource: "git -C .worktrees/* log*"
     effect: allow
   - action: shell
-    resource: "git -C .worktrees/* diff --stat*"
+    resource: "git -C .worktrees/* diff*"
+    effect: allow
+  - action: shell
+    resource: "git -C .worktrees/* show*"
+    effect: allow
+  - action: shell
+    resource: "git -C .worktrees/* ls-files*"
+    effect: allow
+  - action: shell
+    resource: "npm run typecheck*"
+    effect: allow
+  - action: shell
+    resource: "npm run lint*"
+    effect: allow
+  - action: shell
+    resource: "npm run test*"
+    effect: allow
+  - action: shell
+    resource: "npm run build*"
     effect: allow
   - action: shell
     resource: "npm --prefix .worktrees/* run typecheck*"
@@ -90,8 +126,48 @@ permissions:
     resource: "npm --prefix .worktrees/* run build*"
     effect: allow
   - action: shell
-    resource: "ls *"
+    resource: "ls*"
     effect: allow
+  - action: shell
+    resource: "cat *"
+    effect: allow
+  - action: shell
+    resource: "test *"
+    effect: allow
+  - action: shell
+    resource: "diff *"
+    effect: allow
+  - action: shell
+    resource: "du *"
+    effect: allow
+  - action: shell
+    resource: "wc *"
+    effect: allow
+  # Ask-gated self-heal verbs (blocked BUILD recovery only; prefer a working builder). Single-command only: no && chains.
+  - action: shell
+    resource: "cp *"
+    effect: ask
+  - action: shell
+    resource: "mv *"
+    effect: ask
+  - action: shell
+    resource: "mkdir *"
+    effect: ask
+  - action: shell
+    resource: "rmdir *"
+    effect: ask
+  - action: shell
+    resource: "git mv*"
+    effect: ask
+  - action: shell
+    resource: "git rm*"
+    effect: ask
+  - action: shell
+    resource: "git restore*"
+    effect: ask
+  - action: shell
+    resource: "git checkout -- *"
+    effect: ask
   - action: webfetch
     resource: "*"
     effect: deny
@@ -118,6 +194,9 @@ permissions:
     effect: allow
   - action: subagent
     resource: "design-reviewer"
+    effect: allow
+  - action: subagent
+    resource: "researcher"
     effect: allow
   - action: skill
     resource: "*"
@@ -164,7 +243,7 @@ Every task-tool call starts with this header so subagents need no guesswork:
 ```
 TASK: T-014
 FEATURE: <slug>
-MODE: <SHAPE | SHAPE LITE | ACCEPT | PLAN | REPLAN | AUTHOR_TESTS | BUILD | FIX | REBASE | RUN | REVIEW>
+MODE: <SHAPE | SHAPE LITE | ACCEPT | PLAN | REPLAN | AUTHOR_TESTS | BUILD | FIX | REBASE | RUN | REVIEW | RESEARCH>
 WORKTREE: .worktrees/T-014
 BRANCH: task/T-014
 READ: specs/<slug>/plan.md (T-014), specs/<slug>/criteria.md (AC-01, AC-03), contract/
@@ -241,8 +320,23 @@ PRIOR_VERDICTS: <paths | none>
     Otherwise `git merge --no-ff feature/<slug>` in the main checkout, then remove the integration worktree.
     You never push; tell the human the feature is on local `main` and ready to push.
 
+### R. RESEARCH (on demand, any phase)
+Triggered when `product-owner` or `architect` replies `STATUS: NEEDS_RESEARCH` (vendor, platform, library, pricing
+or compliance questions the plan cannot responsibly guess), or when the human asks for research.
+1. Invoke `researcher` with the envelope plus `QUESTION:` (one decision per call; split compound questions),
+   `DEPTH: QUICK|STANDARD|DEEP` (default STANDARD; QUICK for low-stakes, DEEP for expensive or irreversible
+   choices), `CONSTRAINTS:` and `DECISION_NEEDED_BY:` (the task or plan step waiting on it). Independent
+   questions may run in parallel (multiple task calls in one message).
+2. Read only the first ~15 lines of the report (TL;DR). Statuses: `DONE` -> continue; `NEEDS_CLARIFICATION` ->
+   relay the questions to the human; `INCONCLUSIVE` -> escalate with what is missing.
+3. **Gate:** if the TL;DR says `Needs human: yes`, or the recurring cost exceeds the budget norm in
+   `docs/research/context.md`, **escalate for a vendor decision** with the researcher's recommendation as the
+   default. Otherwise (free or within budget, no account needed) hand the report to `architect` to record the
+   choice in `specs/decisions.md` and resume planning. Never choose a vendor yourself.
+4. Record the report path on the board under the waiting task/feature, then resume the interrupted step.
+
 ### I. DIGEST
-25. Write `specs/digest/YYYY-MM-DD.md` and show the human at most 15 lines: tasks merged (with gate results),
+25. Write `specs/digest/YYYY-MM-DD.md` and show the human at most 15 lines: tasks merged (with gate results), research reports produced (path + one-line recommendation + decision status),
     retries used, escalations opened, `[manual]` criteria needing a human look, and any defect pattern that has
     appeared 3+ times in verifier memory files (propose an `AGENTS.md` rule; the human decides).
 
@@ -262,6 +356,9 @@ Permission prompts (`ask`) for spend or deploy actions are also the human's call
 - Never merge with a missing, stale or failing required verdict. Never skip a gate a tier requires.
 - Never edit code, tests, specs (other than the board/digest/escalations), contract or verdicts.
 - Never run `git push`, force operations or deletes outside `.worktrees/`.
+- Never invoke an agent without the standard envelope.
+- Run one shell command per call: never chain with `&&`, `;`, `||` or pipes. Permission matching fails on compounds; single commands succeed.
+- Ask-gated file verbs (`cp`/`mv`/`mkdir`/`git mv`/`git rm`/`git restore`/`git checkout --`) are for unblocking a stuck BUILD stage only, and the human approves each use. Prefer a working builder.
 - Never invoke an agent without the standard envelope.
 - If you approach your step limit, write the exact next step into the board's `notes:`, commit, and tell the human
   to run `/resume`.

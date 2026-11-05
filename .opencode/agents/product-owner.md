@@ -17,6 +17,15 @@ permissions:
   - action: read
     resource: "*.env.*"
     effect: deny
+  - action: glob
+    resource: "*"
+    effect: allow
+  - action: grep
+    resource: "*"
+    effect: allow
+  - action: list
+    resource: "*"
+    effect: allow
   - action: edit
     resource: "*"
     effect: deny
@@ -32,15 +41,10 @@ permissions:
   - action: edit
     resource: ".opencode/memory/product-owner.md"
     effect: allow
+  # SHAPE LITE observed use: read/glob/grep only. No shell needed.
   - action: shell
     resource: "*"
     effect: deny
-  - action: shell
-    resource: "git log*"
-    effect: allow
-  - action: shell
-    resource: "git status*"
-    effect: allow
   - action: webfetch
     resource: "*"
     effect: allow
@@ -94,7 +98,10 @@ Input: a feature slug and raw intent (a sentence, a rant, a screenshot descripti
    - Make vague words measurable ("fast" -> "< 2 s at p95 on the seeded dataset"). If you cannot, tag it
      `[manual]` and say why; `[manual]` criteria are surfaced to the human in the digest.
    - Maximum **12 criteria** per feature. More means the feature should be split: say so in the brief.
-6. Reply (<= 10 lines): `STATUS: SHAPED | NEEDS_HUMAN`, the file paths, the proposed tier.
+6. If a criterion or scope choice depends on an external fact you cannot responsibly assume (a vendor's limits, a
+   platform's pricing, a legal/compliance position), do not guess: list the questions in the brief under
+   `## Research needed` and reply `STATUS: NEEDS_RESEARCH`.
+7. Reply (<= 10 lines): `STATUS: SHAPED | NEEDS_RESEARCH | NEEDS_HUMAN`, the file paths, the proposed tier.
 
 `MODE: SHAPE LITE` (used for R0 fast path): brief <= 10 lines, <= 3 criteria, no open questions allowed.
 

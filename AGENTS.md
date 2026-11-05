@@ -21,8 +21,10 @@ If a role file and this file conflict, this file wins.
 | QA (Playwright) | `qa-engineer` | subagent | `tests/e2e/**` in task worktree, `specs/<f>/verdicts/`, `evidence/` |
 | Design reviewer | `design-reviewer` | subagent (read-only) | `specs/<f>/verdicts/` |
 | Code reviewer | `code-reviewer` | subagent (read-only) | `specs/<f>/verdicts/` |
+| Researcher | `researcher` | all (human can talk to it) | `docs/research/**` only |
 
 Only `delivery-manager` may invoke other agents. Subagents never invoke each other.
+The human may also address `product-owner` and `researcher` directly (`/research <question>`).
 
 ## 3. Where state lives
 ```
@@ -40,6 +42,7 @@ specs/
     acceptance.md                # product-owner
 contract/                        # architect only: shared types/schemas/OpenAPI
 docs/design-system.md            # maintained by human/architect
+docs/research/                   # researcher: reports, INDEX.md, context.md, _template.md
 .opencode/memory/<role>.md       # per-agent lessons (see section 9)
 .worktrees/<task-id>/            # gitignored: one git worktree per task
 .worktrees/feature-<slug>/       # gitignored: integration worktree per feature
@@ -81,6 +84,8 @@ Feature done = all tasks done + product-owner `ACCEPTED` (R1/R2).
 4. Two verifiers give contradictory findings on the same code.
 5. Any agent hits a `BLOCKED` it cannot resolve (missing credentials, missing design system, tool failure).
 6. A permission prompt (`ask`) appears: spend or deploy action. The human decides.
+7. A research report recommends something that needs the human to create an account, enter payment details, or
+   commit to recurring cost above the budget norm in `docs/research/context.md`. The human chooses the vendor.
 
 ## 9. Memory protocol (all agents)
 Each agent owns `.opencode/memory/<role>.md`.
@@ -131,6 +136,10 @@ exact next step to `specs/<feature>/reports/T-xxx-handoff.md` (or your normal ou
 reply `STATUS: STEP_LIMIT`.
 
 ## 15. Hard prohibitions
+Research reports live in `docs/research/` and are advice, not decisions: the architect records an accepted choice in
+`specs/decisions.md`. Researchers never sign up, pay, submit forms or contact vendors.
+Never apply migrations, run SQL, deploy functions or change branches on the hosted Supabase project through MCP or
+the CLI: migrations live in files, are tested locally, and are applied to hosted environments by the human (R2).
 Never read or print secrets or `.env*` files. Never commit secrets. Never weaken, skip, delete or special-case
 a test to make it pass. Never edit another role's files. Never invent API shapes: the contract is the source
 of truth.

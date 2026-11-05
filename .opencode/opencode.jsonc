@@ -21,6 +21,27 @@
   "permissions": [
     { "action": "external_directory", "resource": "*", "effect": "deny" },
     { "action": "playwright_*", "resource": "*", "effect": "deny" },
+    // Supabase MCP (server key "supabase"). Last match wins: deny everything, re-open read-only
+    // introspection, then gate anything that can write to the hosted project or expose data.
+    // Account, project and cost tools stay denied by the wildcard. Migrations are applied by a human (R2).
+    { "action": "supabase_*", "resource": "*", "effect": "deny" },
+    { "action": "supabase_search_docs", "resource": "*", "effect": "allow" },
+    { "action": "supabase_list_tables", "resource": "*", "effect": "allow" },
+    { "action": "supabase_list_extensions", "resource": "*", "effect": "allow" },
+    { "action": "supabase_list_migrations", "resource": "*", "effect": "allow" },
+    { "action": "supabase_get_advisors", "resource": "*", "effect": "allow" },
+    { "action": "supabase_list_edge_functions", "resource": "*", "effect": "allow" },
+    { "action": "supabase_get_edge_function", "resource": "*", "effect": "allow" },
+    { "action": "supabase_generate_typescript_types", "resource": "*", "effect": "allow" },
+    { "action": "supabase_get_logs", "resource": "*", "effect": "ask" },
+    { "action": "supabase_execute_sql", "resource": "*", "effect": "ask" },
+    { "action": "supabase_apply_migration", "resource": "*", "effect": "ask" },
+    { "action": "supabase_deploy_edge_function", "resource": "*", "effect": "ask" },
+    { "action": "supabase_create_branch", "resource": "*", "effect": "ask" },
+    { "action": "supabase_merge_branch", "resource": "*", "effect": "ask" },
+    { "action": "supabase_rebase_branch", "resource": "*", "effect": "ask" },
+    { "action": "supabase_reset_branch", "resource": "*", "effect": "ask" },
+    { "action": "supabase_delete_branch", "resource": "*", "effect": "ask" },
     { "action": "read", "resource": "*", "effect": "allow" },
     { "action": "glob", "resource": "*", "effect": "allow" },
     { "action": "grep", "resource": "*", "effect": "allow" },

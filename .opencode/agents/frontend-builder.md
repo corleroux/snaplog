@@ -57,6 +57,86 @@ permissions:
   - action: shell
     resource: "*"
     effect: deny
+  # Read-only fs (observed on builders: cat/sed/grep/ls/test/diff/du/find/wc/head/tail).
+  - action: shell
+    resource: "ls*"
+    effect: allow
+  - action: shell
+    resource: "cat *"
+    effect: allow
+  - action: shell
+    resource: "sed -n *"
+    effect: allow
+  - action: shell
+    resource: "grep *"
+    effect: allow
+  - action: shell
+    resource: "rg *"
+    effect: allow
+  - action: shell
+    resource: "du *"
+    effect: allow
+  - action: shell
+    resource: "wc *"
+    effect: allow
+  - action: shell
+    resource: "test *"
+    effect: allow
+  - action: shell
+    resource: "diff *"
+    effect: allow
+  - action: shell
+    resource: "find *"
+    effect: allow
+  - action: shell
+    resource: "head *"
+    effect: allow
+  - action: shell
+    resource: "tail *"
+    effect: allow
+  # Read-only git: bare + git -C forms.
+  - action: shell
+    resource: "git status*"
+    effect: allow
+  - action: shell
+    resource: "git -C * status*"
+    effect: allow
+  - action: shell
+    resource: "git log*"
+    effect: allow
+  - action: shell
+    resource: "git -C * log*"
+    effect: allow
+  - action: shell
+    resource: "git diff*"
+    effect: allow
+  - action: shell
+    resource: "git -C * diff*"
+    effect: allow
+  - action: shell
+    resource: "git show*"
+    effect: allow
+  - action: shell
+    resource: "git -C * show*"
+    effect: allow
+  - action: shell
+    resource: "git ls-files*"
+    effect: allow
+  - action: shell
+    resource: "git -C * ls-files*"
+    effect: allow
+  - action: shell
+    resource: "git ls-tree*"
+    effect: allow
+  - action: shell
+    resource: "git -C * ls-tree*"
+    effect: allow
+  - action: shell
+    resource: "git rev-parse*"
+    effect: allow
+  - action: shell
+    resource: "git -C * rev-parse*"
+    effect: allow
   - action: shell
     resource: "git -C .worktrees/* status*"
     effect: allow
@@ -81,6 +161,52 @@ permissions:
   - action: shell
     resource: "git -C .worktrees/* rebase --abort"
     effect: allow
+  # Ask-gated writes (parity with backend-builder). Single-command only: no && chains.
+  - action: shell
+    resource: "cp *"
+    effect: ask
+  - action: shell
+    resource: "mv *"
+    effect: ask
+  - action: shell
+    resource: "mkdir *"
+    effect: ask
+  - action: shell
+    resource: "rmdir *"
+    effect: ask
+  - action: shell
+    resource: "git mv*"
+    effect: ask
+  - action: shell
+    resource: "git -C * mv*"
+    effect: ask
+  - action: shell
+    resource: "git rm*"
+    effect: ask
+  - action: shell
+    resource: "git -C * rm*"
+    effect: ask
+  - action: shell
+    resource: "git restore*"
+    effect: ask
+  - action: shell
+    resource: "git -C * restore*"
+    effect: ask
+  - action: shell
+    resource: "npm run typecheck*"
+    effect: allow
+  - action: shell
+    resource: "npm run lint*"
+    effect: allow
+  - action: shell
+    resource: "npm run test*"
+    effect: allow
+  - action: shell
+    resource: "npm run test:e2e*"
+    effect: allow
+  - action: shell
+    resource: "npm run build*"
+    effect: allow
   - action: shell
     resource: "npm --prefix .worktrees/* run typecheck*"
     effect: allow
@@ -102,12 +228,31 @@ permissions:
   - action: shell
     resource: "npx shadcn*"
     effect: allow
+  # Destructive: always deny (must stay last in the shell section so they win).
   - action: shell
-    resource: "rg *"
-    effect: allow
+    resource: "git reset --hard*"
+    effect: deny
   - action: shell
-    resource: "ls *"
-    effect: allow
+    resource: "git -C * reset --hard*"
+    effect: deny
+  - action: shell
+    resource: "git clean*"
+    effect: deny
+  - action: shell
+    resource: "git -C * clean*"
+    effect: deny
+  - action: shell
+    resource: "git push --force*"
+    effect: deny
+  - action: shell
+    resource: "git -C * push --force*"
+    effect: deny
+  - action: shell
+    resource: "git checkout -- *"
+    effect: deny
+  - action: shell
+    resource: "git -C * checkout -- *"
+    effect: deny
   - action: webfetch
     resource: "*"
     effect: allow
@@ -192,6 +337,7 @@ tests, reply `STATUS: READY_FOR_VERIFY` or `BLOCKED` with the conflicting files.
 ## Boundaries
 You do not edit backend/Supabase code, the contract, `tests/e2e/`, `docs/design-system.md`, specs other than your
 report, `.opencode/`, `AGENTS.md` or `opencode.json`.
+Run one shell command per call: never chain with `&&`, `;`, `||` or pipes. `cp`/`mv`/`mkdir`/`rmdir`/`git mv`/`git rm`/`git restore` need human approval per call; `reset --hard`, `clean`, `push --force` and `checkout --` are denied.
 
 ## End of every run
 Append one reusable lesson (a token that always trips the design reviewer, a component quirk in this repo) to
