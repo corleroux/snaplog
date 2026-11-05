@@ -45,7 +45,7 @@ demo, the rack footage is Mixkit stock B-roll illustrating this).
 > the biggest help you can give.
 >
 > Watch the 2-minute demo: https://youtu.be/rgE5Kw5XFlo
-> Back the build: https://www.backabuddy.co.za/campaign/back-the-launch-of-snaplog-snap-it-catalogued
+> Back the build: https://tinyurl.com/snaplog-app
 
 ### Instagram (feed post — use existing IG post export, then demo stills carousel)
 
@@ -120,7 +120,7 @@ no new claims, same story).
 > reaches rooms I can't — thank you.
 >
 > 2-minute demo: https://youtu.be/rgE5Kw5XFlo
-> Support the build: https://www.backabuddy.co.za/campaign/back-the-launch-of-snaplog-snap-it-catalogued
+> Support the build: https://tinyurl.com/snaplog-app
 
 ## Artwork map
 

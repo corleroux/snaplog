@@ -44,7 +44,7 @@ Recommended: **#1** (names the product, the action and the event).
 > appears as the recorded legacy baseline only and never runs in the
 > product. Full method: see the project write-up in the submission repo.
 >
-> Back the self-funded build: https://www.backabuddy.co.za/campaign/back-the-launch-of-snaplog-snap-it-catalogued
+> Back the self-funded build: https://tinyurl.com/snaplog-app
 >
 > Chapters
 > 0:00 Snap it. Catalogued.
