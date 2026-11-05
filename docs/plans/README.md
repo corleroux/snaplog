@@ -212,6 +212,13 @@ Locked input set for final assembly — all present in `docs/assets/` (verified)
 - **Captions rule:** caption text is generated FROM `docs/DEMO-SCRIPT.md` (locked wording incl. verbatim migration sentence + benchmark footnote honesty), timed to the VO — never transcribed from audio (transcription drift would corrupt the graded verbatim lines).
 - **Generation location:** everything renders OFF the owner's laptop (builder infra/Modal as already established — the dry run proved the path). Laptop only reviews/downloads the final file. No local Hyperframes renders, no local benchmark runs.
 
+## Status update — Wed Nov 4, PUBLIC REPO FREEZE (owner directive)
+
+- **No more code is to be pushed to `corleroux/snaplog-meta-hackathon`, effective immediately.** Do NOT run `build-submission.sh`; do not push, PR, or sync anything to the public repo from here on. The repo stays exactly as it is for judging.
+- This overrides the standing "sync after every merge" rule for the remainder of the event. Work in `snaplog` continues normally (commits, PRs, staging merges) — it just no longer propagates outward.
+- Deliverables from here go elsewhere, not the repo: final video → YouTube unlisted link; submission entry + video link → CV platform; social assets → their platforms. Nothing pending requires a repo push (public + accessible + submission-synced state already holds).
+- Only the owner can lift this freeze, explicitly and in session. Builder: if you have a queued sync or an in-flight push, stop — leave it local and report it as unpushed.
+
 ## Status update — Wed Nov 4, final assembly DONE (builder, 20:17 ET)
 
 - **Final demo video RENDERED:** `docs/demo-video/renders/snaplog-demo-final.mp4` — 128.0s, 1920x1080, with owner VO (7 tracks timed per beat), captions from the locked DEMO-SCRIPT. Final-inputs lock executed in full: fabric beat re-shot on `fabric.webp` (real Chinese composition label — extraction + translation on screen), garment capture uploads front+back+label with extraction against the label (review hero = label, item code NALP-WS23-BLK extracted), rack beat = owner `rack-walk.mp4` (supersedes Mixkit). Silent 129s cut retained as fallback. Demo data cleaned again (0 demo events/vendors).
