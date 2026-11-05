@@ -16,7 +16,7 @@ Snap it. Catalogued."
 "extraction used to run on Gemini; this week we moved it behind a
 provider interface onto Muse Spark."
 
-Before: a fabric catalogue at `snaplog@hackathon-baseline`. This week:
+Before: a fabric catalogue at `corleroux/snaplog`. This week:
 schema registry, provider interface, garment-as-config, video, benchmark.
 
 ## 0:30–1:15 — Fabric tag with Chinese label

@@ -203,6 +203,32 @@ async function uploadCapture(page: Page, imagePath: string) {
   await beat(page)
 }
 
+/**
+ * Multi-image capture (final-inputs lock): upload the full set, then mark
+ * ONE named image as Info — extraction runs against that image only, the
+ * rest ride along as record/context images.
+ * DEMO_GARMENT_IMAGE_SET is a comma-separated path list; the LAST entry is
+ * the extraction (Info) source.
+ */
+async function uploadCaptureSet(page: Page, imagePaths: string[]) {
+  for (const p of imagePaths) {
+    if (!existsSync(p)) {
+      throw new Error(`[demo] Capture image not found: ${p} (DEMO_GARMENT_IMAGE_SET).`)
+    }
+  }
+  // The file input is single-file: the app consumes each selection into
+  // the capture session, so add the images one at a time.
+  for (const p of imagePaths) {
+    await page.locator('input[type="file"]').first().setInputFiles(p)
+    await beat(page)
+  }
+
+  const infoButtons = page.getByRole('button', { name: /set as info/i })
+  await expect(infoButtons.last()).toBeVisible({ timeout: 15_000 })
+  await infoButtons.last().click()
+  await beat(page)
+}
+
 test.describe.configure({ mode: 'serial' })
 
 test.describe('DEMO-01 footage', () => {
@@ -248,7 +274,15 @@ test.describe('DEMO-01 footage', () => {
     await page.getByRole('button', { name: /garment/i }).first().click()
     await beat(page)
 
-    await uploadCapture(page, GARMENT_IMAGE)
+    const garmentSet = (process.env.DEMO_GARMENT_IMAGE_SET || '')
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean)
+    if (garmentSet.length > 1) {
+      await uploadCaptureSet(page, garmentSet)
+    } else {
+      await uploadCapture(page, GARMENT_IMAGE)
+    }
 
     await page.getByRole('button', { name: /extract item info/i }).first().click()
     await expect(page.getByLabel(/garment.*type/i).first()).toBeVisible({
