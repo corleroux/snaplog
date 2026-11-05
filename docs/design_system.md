@@ -1,8 +1,8 @@
 # Snaplog Design System
 
-> Adopted from the approved OpenDesign output (`docs/brand/snaplog-app-redesign.html`,
+> Adopted from the approved OpenDesign output (`archive/hackathon-2026-11/brand/snaplog-app-redesign.html`,
 > DESIGN-01 Stream C, CONDITIONAL PASS — see `docs/DESIGN-01-review-feedback.md`).
-> Normative source for tokens is the `@theme` block below; where `docs/brand/DESIGN-HANDOFF.md`
+> Normative source for tokens is the `@theme` block below; where `archive/hackathon-2026-11/brand/DESIGN-HANDOFF.md`
 > disagrees, this file wins.
 
 ## Stack
