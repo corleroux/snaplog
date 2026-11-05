@@ -11,7 +11,7 @@ no returns promised.** Say that plainly on the page.
 2. **Snap It. Catalogued. — Back the Launch of Snaplog**
 3. **From Camera Roll to Catalogue: Fund Snaplog's First Season**
 
-Owner-selected (Wed Nov 4): **"Back the Launch of Snaplog — Snap It. Catalogued."** — https://www.backabuddy.co.za/campaign/back-the-launch-of-snaplog-snap-it-catalogued . Goal (owner-supplied; itemisation to be refined before heavy promotion): **R 100,000**. The guidance below still applies — publish the line items when final.
+Owner-selected (Wed Nov 4): **"Back the Launch of Snaplog — Snap It. Catalogued."** — https://tinyurl.com/snaplog-app . Goal (owner-supplied; itemisation to be refined before heavy promotion): **R 100,000**. The guidance below still applies — publish the line items when final.
 
 ## The hook (first 3 lines of the campaign page)
 
@@ -92,5 +92,5 @@ what shipped, what it cost, what's next.
 
 Campaign link goes into: X viral post reply chain, IG bio, TikTok bio,
 FB pinned post, LinkedIn post (all written in 01/03 with
-https://www.backabuddy.co.za/campaign/back-the-launch-of-snaplog-snap-it-catalogued). Never gate the demo video behind backing — the demo
+https://tinyurl.com/snaplog-app). Never gate the demo video behind backing — the demo
 is free, the ask is separate and clearly optional.

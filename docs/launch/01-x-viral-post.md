@@ -62,7 +62,7 @@ Thread body (posts 2–5, each stands alone if screenshotted):
 >
 > If this deserves to exist, a repost is the cheapest way to make it real:
 > https://youtu.be/rgE5Kw5XFlo
-> Back the build: https://www.backabuddy.co.za/campaign/back-the-launch-of-snaplog-snap-it-catalogued
+> Back the build: https://tinyurl.com/snaplog-app
 
 ## Example C — SA-startup angle (quote-post / second push, Nov 5–6)
 
