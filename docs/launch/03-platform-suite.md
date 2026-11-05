@@ -44,7 +44,7 @@ demo, the rack footage is Mixkit stock B-roll illustrating this).
 > anyone who lives out of a camera roll at fairs, sharing this post is
 > the biggest help you can give.
 >
-> Watch the 2-minute demo: {{VIDEO_URL}}
+> Watch the 2-minute demo: https://youtu.be/rgE5Kw5XFlo
 > Back the build: https://www.backabuddy.co.za/campaign/back-the-launch-of-snaplog-snap-it-catalogued
 
 ### Instagram (feed post — use existing IG post export, then demo stills carousel)
@@ -67,13 +67,13 @@ Carousel order: (1) existing IG post 1080×1080, (2) fabric review still
 (`docs/demo-video/project` footage still — use art/youtube-thumbnail
 crop), (3) garment review still, (4) rack still, (5) "Snap it.
 Catalogued." card (IG story export frame). Story on launch day: IG story
-export + link sticker to {{VIDEO_URL}} + poll sticker ("Your fair photos:
+export + link sticker to https://youtu.be/rgE5Kw5XFlo + poll sticker ("Your fair photos:
 organised or chaos?").
 
 ### X
 
 Pinned post = the main viral post (01). Profile header: new X header
-art (below). Bio link: {{VIDEO_URL}} until the Back-a-Buddy page exists,
+art (below). Bio link: https://youtu.be/rgE5Kw5XFlo until the Back-a-Buddy page exists,
 then the campaign.
 
 ### TikTok (first post)
@@ -87,7 +87,7 @@ cover art; caption:
 > self-funded from South Africa 🇿🇦 #FashionTech #SmallBusiness
 > #SouthAfrica #TextileTok #StartupTok
 
-Pin a comment: "Full story + how it works: {{VIDEO_URL}} — a like &
+Pin a comment: "Full story + how it works: https://youtu.be/rgE5Kw5XFlo — a like &
 share today helps a self-funded startup more than you'd think."
 Stitch/duet bait (day 2): film the "spreadsheet at midnight" pain as a
 15s hook and stitch the demo's first 15s onto it (owner phone footage —
@@ -119,7 +119,7 @@ no new claims, same story).
 > partners who want their next fair to catalogue itself. A reshare
 > reaches rooms I can't — thank you.
 >
-> 2-minute demo: {{VIDEO_URL}}
+> 2-minute demo: https://youtu.be/rgE5Kw5XFlo
 > Support the build: https://www.backabuddy.co.za/campaign/back-the-launch-of-snaplog-snap-it-catalogued
 
 ## Artwork map

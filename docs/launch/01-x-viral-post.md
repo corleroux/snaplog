@@ -12,7 +12,7 @@ the stack — the stack is the proof in post 2.
 - One line that a non-technical person can quote: **“Snap it. Catalogued.”**
 - Show, don't claim: the 129s demo shows a real label becoming a real
   catalogue record. Attach the video natively to X if possible (native
-  video outperforms links); keep `{{VIDEO_URL}}` as the pinned reply.
+  video outperforms links); keep `https://youtu.be/rgE5Kw5XFlo` as the pinned reply.
 - Ask for ONE action explicitly: repost. Likes are nice; reposts travel.
 - No numbers we can't stand behind. No prize amounts. No "revolutionary".
 
@@ -27,7 +27,7 @@ the stack — the stack is the proof in post 2.
 > Snap it. Catalogued. 🎥 [video]
 >
 > Repost to help a self-funded SA startup launch? It would mean the world.
-> {{VIDEO_URL}}
+> https://youtu.be/rgE5Kw5XFlo
 
 ## Example B — thread opener (use if threading)
 
@@ -61,7 +61,7 @@ Thread body (posts 2–5, each stands alone if screenshotted):
 > Africa, building for the buyers I watched drown in camera rolls.
 >
 > If this deserves to exist, a repost is the cheapest way to make it real:
-> {{VIDEO_URL}}
+> https://youtu.be/rgE5Kw5XFlo
 > Back the build: https://www.backabuddy.co.za/campaign/back-the-launch-of-snaplog-snap-it-catalogued
 
 ## Example C — SA-startup angle (quote-post / second push, Nov 5–6)
@@ -72,12 +72,12 @@ Thread body (posts 2–5, each stands alone if screenshotted):
 >
 > Snaplog turns fair photos into searchable records for fabric &
 > garment buyers. Demo's 2 minutes. A repost could change where this
-> goes next. 🇿🇦 {{VIDEO_URL}}
+> goes next. 🇿🇦 https://youtu.be/rgE5Kw5XFlo
 
 ## Posting mechanics
 
 - Post natively with the video file (`docs/demo-video/renders/snaplog-demo.mp4`)
-  attached where the platform supports it; `{{VIDEO_URL}}` goes in the
+  attached where the platform supports it; `https://youtu.be/rgE5Kw5XFlo` goes in the
   first reply + bio link until the YouTube link exists.
 - Pin the post. Add alt text (art/alt-text.txt) to any image attached.
 - Hashtags (max 3, end of post only): #BuildForYourWorld #FashionTech

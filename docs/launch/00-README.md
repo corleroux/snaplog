@@ -8,7 +8,7 @@ copy-paste ready once the placeholders are swapped.
 
 | Placeholder | Replace with | Where |
 |---|---|---|
-| `{{VIDEO_URL}}` | Public demo video link (YouTube unlisted→public, or the X-native upload) | 01, 02, 03, 04 |
+| `https://youtu.be/rgE5Kw5XFlo` | Public demo video link (YouTube unlisted→public, or the X-native upload) | 01, 02, 03, 04 |
 | `{{X_POST_URL}}` | URL of the main viral X post (posted first) | 05 (all share pleas point here) |
 | `https://www.backabuddy.co.za/campaign/back-the-launch-of-snaplog-snap-it-catalogued` | Live Back-a-Buddy campaign URL | 01 (optional), 03, 04, 05 |
 | YouTube channel | ✓ SUPPLIED: @Snaplog-app (https://www.youtube.com/channel/UCiuqhD74A_z6lD0i1vxEFtw) | 02 |

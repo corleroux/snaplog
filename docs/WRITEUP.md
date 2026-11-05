@@ -80,7 +80,7 @@ with bulk assignment. Nothing you snap is ever lost.
 ## Submission checklist (owner, before Wed Nov 4 9PM ET)
 
 - [ ] `snaplog-meta-hackathon` public and rebuildable from the README alone
-- [ ] Demo video (≤3:00) recorded Tue, linked (unlisted, anyone-with-link)
+- [x] Demo video (2:08, with owner VO) recorded and linked: https://youtu.be/rgE5Kw5XFlo
 - [ ] Team + Startup track on the CV platform; bonus opt-ins ticked
 - [ ] X post with the demo link (engagement counts to Nov 8)
 - [ ] Architect framing review of the demo script (migration narrative = SUB-01b verbatim)
