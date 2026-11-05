@@ -36,7 +36,7 @@ Owner-selected (Wed Nov 4): **"Back the Launch of Snaplog — Snap It. Catalogue
    schema definition with no application code changes, and rack video is
    catalogued item-by-item in the background (Modal + SAM 3.1 via the
    Meta Model API). Built with Muse Spark Open. Link the demo:
-   {{VIDEO_URL}}
+   https://youtu.be/rgE5Kw5XFlo
 4. **Why crowdfunding, why now.** No investors, no salary — every rand so
    far is mine. The next step is unglamorous and specific: put Snaplog in
    real buyers' hands at real fairs and pay the running costs while the

@@ -95,4 +95,4 @@ mobile size; no benchmark numbers, no logos it can't back. Alt text in
 - [ ] Thumbnail uploaded (art file above), title #1, description + chapters pasted
 - [ ] Subtitles: upload this transcript as the caption track (matches the silent cut; also serves hearing-impaired judges)
 - [ ] End screen (last 20s): subscribe + link to the X post if available
-- [ ] Copy the final URL into `{{VIDEO_URL}}` everywhere (00-README swap list)
+- [ ] Copy the final URL into `https://youtu.be/rgE5Kw5XFlo` everywhere (00-README swap list)
