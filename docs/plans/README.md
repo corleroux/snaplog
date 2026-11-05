@@ -211,3 +211,8 @@ Locked input set for final assembly — all present in `docs/assets/` (verified)
 - **VO:** 7 owner-recorded `.m4a` files, each named for its script section (`hook`, `before-this-week`, `fabric-tag`, `Garments`, `Rack-walk-video`, `benchmarks`, `Whats next and close`) — one file per beat, in script order.
 - **Captions rule:** caption text is generated FROM `docs/DEMO-SCRIPT.md` (locked wording incl. verbatim migration sentence + benchmark footnote honesty), timed to the VO — never transcribed from audio (transcription drift would corrupt the graded verbatim lines).
 - **Generation location:** everything renders OFF the owner's laptop (builder infra/Modal as already established — the dry run proved the path). Laptop only reviews/downloads the final file. No local Hyperframes renders, no local benchmark runs.
+
+## Status update — Wed Nov 4, final assembly DONE (builder, 20:17 ET)
+
+- **Final demo video RENDERED:** `docs/demo-video/renders/snaplog-demo-final.mp4` — 128.0s, 1920x1080, with owner VO (7 tracks timed per beat), captions from the locked DEMO-SCRIPT. Final-inputs lock executed in full: fabric beat re-shot on `fabric.webp` (real Chinese composition label — extraction + translation on screen), garment capture uploads front+back+label with extraction against the label (review hero = label, item code NALP-WS23-BLK extracted), rack beat = owner `rack-walk.mp4` (supersedes Mixkit). Silent 129s cut retained as fallback. Demo data cleaned again (0 demo events/vendors).
+- **Remaining before 21:00 ET (owner):** upload final video (YouTube @Snaplog-app pack in docs/launch/02), swap {{VIDEO_URL}}, X viral post, CV platform submission. Submission repo sync follows this merge.
