@@ -6,3 +6,8 @@
   - Back the Launch of Snaplog — Snap It. Catalogued.
   - R 100,000.00 
   - https://www.backabuddy.co.za/campaign/back-the-launch-of-snaplog-snap-it-catalogued
+  - https://tinyurl.com/snaplog-app
+  
+3. X Post
+  - https://x.com/corleroux/status/2118160481563316520
+  - https://tinyurl.com/snaplog-viral
