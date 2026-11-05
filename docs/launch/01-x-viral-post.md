@@ -18,15 +18,13 @@ the stack — the stack is the proof in post 2.
 
 ## Example A — single post (recommended main)
 
-> Every trade fair ends the same way: 400 photos on your phone, a pocket
-> full of business cards, and a spreadsheet you build by hand at midnight.
+> Every trade fair ends the same: 400+ phone photos, business cards everywhere, and a spreadsheet built by hand.
 >
-> I built Snaplog so a buyer can just point their phone at a label or a
-> garment — and get a structured, searchable catalogue back.
+> Snaplog lets a buyer point their phone at a label or garment and get a searchable catalogue back.
 >
-> Snap it. Catalogued. 🎥 [video]
+> Snap it. Catalogued. 🎥
 >
-> Repost to help a self-funded SA startup launch? It would mean the world.
+> Repost to help a self-funded startup launch? 🇿🇦
 > https://youtu.be/rgE5Kw5XFlo
 
 ## Example B — thread opener (use if threading)
