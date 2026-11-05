@@ -38,11 +38,11 @@ footer{margin-top:22px;border:2px solid var(--ink);background:var(--ink);color:#
 <header class="hero" data-od-id="hero">
   <div class="kicker">Stream A kit → Stream B · editable SVG masters, safe-area aware</div>
   <h1>Covers that survive the crop.</h1>
-  <p style="max-width:62ch">Facebook and LinkedIn masters at current upload dimensions, with safe-zone guides baked in as toggleable layers. Export PNGs below, or download the SVGs and edit text directly — no flattened files.</p>
+  <p style="max-width:62ch">Facebook and LinkedIn masters at current upload dimensions. Export PNGs below, or download the SVGs and edit text directly — no flattened files.</p>
 </header>
 
 <section class="card" id="s-fb" data-od-id="facebook-cover">
-  <div class="sec-head"><h2>Facebook Page cover — 851 × 315</h2><p>Meta upload spec · displays 820×312 desktop / 640×360 mobile · dashed = mobile-safe centre</p></div>
+  <div class="sec-head"><h2>Facebook Page cover — 851 × 315</h2><p>Meta upload spec · displays 820×312 desktop / 640×360 mobile · key content kept in mobile-safe centre</p></div>
   <div class="sec-body">
     <div class="stage">
       <svg class="master" id="svgFb" width="851" height="315" viewBox="0 0 851 315" role="img" aria-label="Snaplog Facebook cover">
@@ -57,11 +57,10 @@ footer{margin-top:22px;border:2px solid var(--ink);background:var(--ink);color:#
         <text x="270" y="182" font-family="Menlo,monospace" font-size="17" letter-spacing="4.5" fill="#FAFAF7">SNAP IT. CATALOGUED.</text>
         <line x1="270" y1="206" x2="790" y2="206" stroke="#FAFAF7" stroke-width="3" stroke-dasharray="10 8"/>
         <text x="270" y="240" font-family="Menlo,monospace" font-size="15" letter-spacing="2" fill="#E34A0B">TRADE-FAIR CATALOGUING FOR FASHION BUYERS</text>
-        <rect x="105" y="6" width="641" height="303" fill="none" stroke="#E34A0B" stroke-width="2" stroke-dasharray="8 6"/>
-        <text x="112" y="28" font-family="Menlo,monospace" font-size="12" letter-spacing="2" fill="#E34A0B">MOBILE-SAFE 640</text>
+
       </svg>
     </div>
-    <p class="px">Guides: orange dashed rect = 640px mobile-safe centre · profile photo overlaps bottom-left (~170px) — no text there · upload sRGB JPG &lt;100KB (PNG keeps the mono type crisp)</p>
+    <p class="px">Layout: key content in 640px mobile-safe centre · profile photo overlaps bottom-left (~170px) — no text there · upload sRGB JPG &lt;100KB (PNG keeps the mono type crisp)</p>
     <div class="btn-row"><button class="btn primary" data-dl="svgFb">Download SVG (editable)</button><button class="btn" data-png="svgFb" data-size="851x315">PNG 851×315</button><button class="btn" data-png="svgFb" data-size="1702x630">PNG 2× 1702×630</button></div>
   </div>
 </section>
@@ -83,11 +82,10 @@ footer{margin-top:22px;border:2px solid var(--ink);background:var(--ink);color:#
         <line x1="1050" y1="60" x2="1050" y2="196" stroke="#E34A0B" stroke-width="4"/>
         <text x="1080" y="112" font-family="Menlo,monospace" font-size="19" letter-spacing="2" fill="#FAFAF7">TRADE-FAIR CATALOGUING</text>
         <text x="1080" y="148" font-family="Menlo,monospace" font-size="19" letter-spacing="2" fill="#FAFAF7">FOR FASHION BUYERS</text>
-        <rect x="380" y="14" width="752" height="228" fill="none" stroke="#E34A0B" stroke-width="2" stroke-dasharray="8 6"/>
-        <text x="388" y="38" font-family="Menlo,monospace" font-size="13" letter-spacing="2" fill="#E34A0B">TEXT SAFE ZONE</text>
+
       </svg>
     </div>
-    <p class="px">Guides: dashed = text safe zone (clear of logo overlap bottom-left and trims) · max 3MB PNG/JPEG · limited text per LinkedIn guidance</p>
+    <p class="px">Layout: text clear of logo overlap bottom-left and trims · max 3MB PNG/JPEG · limited text per LinkedIn guidance</p>
     <div class="btn-row"><button class="btn primary" data-dl="svgLi">Download SVG (editable)</button><button class="btn" data-png="svgLi" data-size="1512x256">PNG 1512×256</button></div>
   </div>
 </section>
@@ -101,7 +99,7 @@ Both: test on mobile before publishing; re-crop trims sides first</div>
   </div>
 </section>
 
-<footer data-od-id="footer"><b style="font-family:var(--font-display)">SNAPLOG</b> — Stream B · covers · solid inks only · guides are layers, delete before final export if desired</footer>
+<footer data-od-id="footer"><b style="font-family:var(--font-display)">SNAPLOG</b> — Stream B · covers · solid inks only</footer>
 </div>
 <script>
 function standaloneSVG(id){const el=document.getElementById(id);const c=el.cloneNode(true);c.setAttribute('xmlns','http://www.w3.org/2000/svg');return '<?xml version="1.0" encoding="UTF-8"?>\n'+new XMLSerializer().serializeToString(c);}
