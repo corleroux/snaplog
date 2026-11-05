@@ -1,71 +1,136 @@
-# Agent notes
+# Team Operating Rules
 
-## Mission
+Applies to **every** agent. Role-specific behaviour lives in `.opencode/agents/<role>.md`.
+If a role file and this file conflict, this file wins.
 
-Snaplog turns phone photos and video into structured, searchable catalogues. We are in a hackathon build (Meta × Cerebral Valley, deadline Wed Nov 4 9PM ET) to prove one pipeline can catalogue more than one category: **fabric (exists) and garments (new)**, driven by schema configuration, not new code.
+## 1. Stack (edit to match the repo)
+- TypeScript, React, Tailwind, shadcn/ui (Capacitor for mobile shells where present)
+- Supabase (Postgres, Auth, Edge Functions, Storage, Realtime); Modal for GPU/batch jobs
+- Playwright for end-to-end tests
+- Package manager: `npm`. Required scripts in `package.json`: `typecheck`, `lint`, `test`, `test:e2e`, `build`
+- Design system source of truth: `docs/design-system.md`
 
-Requirements live in `docs/PRD.md`. Reference requirement IDs (`FR-SCH-*`, `FR-EXT-*`, `FR-VID-*`, `FR-MOD-*`, `FR-CAT-*`) in task titles, branch names and PR descriptions.
+## 2. Roles
+| Role | Agent name | Mode | Writes |
+| --- | --- | --- | --- |
+| Product owner | `product-owner` | all (human can talk to it) | `specs/<f>/brief.md`, `criteria.md`, `acceptance.md` |
+| Architect/planner | `architect` | subagent | `specs/<f>/plan.md`, `contract/**`, `specs/decisions.md` |
+| Delivery manager | `delivery-manager` | primary (default) | `specs/board.md`, `specs/digest/**`, `specs/escalations/**`, merges |
+| Backend builder | `backend-builder` | subagent | code in task worktree, `specs/<f>/reports/` |
+| Frontend builder | `frontend-builder` | subagent | code in task worktree, `specs/<f>/reports/` |
+| QA (Playwright) | `qa-engineer` | subagent | `tests/e2e/**` in task worktree, `specs/<f>/verdicts/`, `evidence/` |
+| Design reviewer | `design-reviewer` | subagent (read-only) | `specs/<f>/verdicts/` |
+| Code reviewer | `code-reviewer` | subagent (read-only) | `specs/<f>/verdicts/` |
 
-**Priority order:** P0 requirements first, then P1, then P2. Visual search (`FR-CAT-03`) is a stretch goal: only start it when all P0 and P1 work is done and the demo flow works end to end.
+Only `delivery-manager` may invoke other agents. Subagents never invoke each other.
 
-**Scope guard:** two categories only. Do not add accounts, billing, ordering, extra categories or native-app work. If a task is not traceable to a PRD requirement, ask before starting it.
+## 3. Where state lives
+```
+specs/
+  board.md                       # delivery-manager only
+  decisions.md                   # architect appends (D-001, D-002 ...)
+  digest/YYYY-MM-DD.md           # delivery-manager
+  escalations/<date>-<id>.md     # delivery-manager
+  <feature>/
+    brief.md  criteria.md        # product-owner
+    plan.md                      # architect
+    reports/T-xxx-build.md       # builders
+    verdicts/T-xxx-<role>-<n>.md # qa-engineer, code-reviewer, design-reviewer
+    evidence/T-xxx/              # screenshots, traces (qa-engineer)
+    acceptance.md                # product-owner
+contract/                        # architect only: shared types/schemas/OpenAPI
+docs/design-system.md            # maintained by human/architect
+.opencode/memory/<role>.md       # per-agent lessons (see section 9)
+.worktrees/<task-id>/            # gitignored: one git worktree per task
+.worktrees/feature-<slug>/       # gitignored: integration worktree per feature
+```
+**Rule:** orchestration state (specs, verdicts, reports, board, memory) is read and written in the
+**main checkout at the repo root** using root-relative paths. **Code** is read and written only inside
+the task's worktree. Never read specs from a worktree copy: it may be stale.
 
-## Architecture rules
+## 4. Task lifecycle
+`intake → briefed → planned → tests-written → building → verifying → verified → merged`
+Side states: `blocked`, `escalated`, `abandoned`.
+Task IDs are `T-001`, `T-002` ... (never reused). Feature slugs are kebab-case.
 
-- Workflow is capture → extract → review → explicit commit. Keep AI extraction separate from committing reviewed data, and preserve the `raw_payload` → `normalised_payload` → `reviewed_payload` audit chain.
-- **Schema registry:** catalogue types (fabric, garment) are versioned schema definitions in config. Adding a category must not require application code changes (`FR-SCH-03`). Record the schema version on every extracted record.
-- **Provider interface:** all extraction goes through one interface, image(s) + schema in, structured JSON + usage out. Providers: Gemini (legacy baseline — code, fixtures, write-up only; never called live), Muse Spark via Meta Model API (default), Muse Spark Open via Modal *Shared Endpoint* (never self-hosted). Import provider SDKs only inside the provider modules, never in feature code.
-- **All-Meta runtime (event rule):** every model the demo calls at runtime must be Meta. Default extraction provider is `muse-spark`; Gemini is baseline-only (fixtures/write-up) and is never called live — no `GEMINI_API_KEY` requirement on the default path.
-- **Extraction runs:** record provider, model, schema version, raw output, latency and cost for every run.
-- **Never guess.** Low-confidence or missing fields are flagged for review, not filled in (`FR-EXT-06`). Never overwrite a user's correction with a re-extraction.
-- **Video is asynchronous.** Edge functions hand video jobs to Modal and return; Modal orchestrates while SAM 3.1 is called via the Meta Model API — Modal never hosts the model — and writes results back to Supabase. Never block an edge function on video processing.
-- AI calls are backend-only. No model keys in the client bundle.
-- Prefer additive migrations. Do not rename or drop existing fabric tables to introduce the generalised model.
+## 5. Risk tiers
+| Tier | Meaning | Gates |
+| --- | --- | --- |
+| R0 | Copy, styling, docs, config with no behaviour change | QA smoke (if UI) + design review (if UI). No code review. PO acceptance batched. |
+| R1 | Normal feature or bug fix | QA + code review + design review (if UI). PO acceptance per feature. |
+| R2 | Touches contract (breaking), auth, RLS, migrations that drop or rewrite data, spend/billing, secrets, infra/deploy, anything irreversible | All R1 gates **plus human approval before merge**. |
 
-## Setup and conventions
+Product owner proposes the tier, architect confirms. When unsure, choose the higher tier.
 
-- Single-package React 19 + TypeScript + Vite app with Capacitor clients. Use **pnpm** (`pnpm-lock.yaml`). Entry is `src/main.tsx`, routing is `src/app/App.tsx`, feature code is in `src/features/`. Use the `@/` alias for `src/`.
-- `pnpm install`, copy `.env.example` to `.env` and set `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY`. `VITE_*` values are bundled for the browser; never put secrets there. Edge-function secrets are set via Supabase (`supabase/.sb.env.example` is the template), not loaded from `.env`.
-- Follow `DESIGN_SYSTEM.md` for UI work.
+## 6. Autonomy dial (set in `specs/board.md` header)
+`human_gates: exception-only | plan | merge | plan+merge` (default `exception-only`)
+- `exception-only`: the team gatekeeps itself; the human is pulled in only by section 8 triggers.
+- `plan`: human approves `plan.md` before building. `merge`: human approves before merge to main.
+- R2 always requires human approval before merge regardless of the dial.
 
-## Checks
+## 7. Definition of done (task)
+All of: QA tests tagged to every assigned AC pass with no flakes; no unexpected console errors or failed
+requests; code review PASS (R1/R2); design review PASS (UI tasks); `contract/` unchanged or change logged in
+`specs/decisions.md`; typecheck, lint and unit tests green; build report present.
+Feature done = all tasks done + product-owner `ACCEPTED` (R1/R2).
 
-- Before finishing any task run `pnpm lint`, `pnpm check`, `pnpm test:run`. Run `pnpm build` when types or routing changed. One Vitest file: `pnpm test:run -- src/path/to/file.test.tsx`.
-- Vitest runs in jsdom with `src/test/setup.ts`; Capacitor APIs are mocked. RLS tests: `pnpm test:rls`. Edge tests need `supabase start` first, then `pnpm test:edge`.
-- Provider tests use recorded fixtures. Unit tests never call live model APIs. Only the benchmark runner (`FR-MOD-04`) calls live models, and only when explicitly asked. The benchmark runs Standard-mode models only and never calls Gemini live.
-- Playwright does not start the app: run `pnpm dev` separately (`BASE_URL` defaults to `http://localhost:5173`). Focus a spec with `pnpm test:e2e -- e2e/path/to/spec.ts`.
-- CI workflows are disabled (`on: []`). Run relevant checks locally.
+## 8. Escalation triggers (the only times the human is interrupted)
+1. Product owner returns `NEEDS_HUMAN` (genuine product trade-off).
+2. A task fails the same gate after the full retry protocol (section 10).
+3. Anything R2.
+4. Two verifiers give contradictory findings on the same code.
+5. Any agent hits a `BLOCKED` it cannot resolve (missing credentials, missing design system, tool failure).
+6. A permission prompt (`ask`) appears: spend or deploy action. The human decides.
 
-## Safety
+## 9. Memory protocol (all agents)
+Each agent owns `.opencode/memory/<role>.md`.
+- **Start of work:** read your memory file.
+- **End of work:** if you learned a *reusable* lesson (a recurring failure, a project quirk, a command that
+  works, a trap), append one line: `- YYYY-MM-DD <lesson, <= 200 chars>`. Never log task-specific narrative.
+- **Cap:** 40 lines. At the cap, consolidate duplicates and delete stale lines before adding.
+- Verifier memory records *recurring defect patterns*; the delivery manager promotes a pattern that appears
+  3+ times to a proposed `AGENTS.md` rule in the digest (the human approves rule changes).
+- Memory is advice, never authority: if it conflicts with `AGENTS.md` or the task, those win.
 
-- Staging and production share one Supabase project. Treat its data as production. Do not push migrations, deploy functions or mutate the remote project unless explicitly asked. Local database changes belong in `supabase/migrations/`.
-- Do not run `modal deploy`, GPU jobs or benchmark runs unless explicitly asked. They consume sponsor credits.
-- Confirm the configured URL before E2E tests that write data.
+## 10. Retry and failure protocol
+- A **fix cycle** = builder FIX → re-run QA → re-run only the gates that previously failed.
+- Max **2 fix cycles** per task. Then architect **REPLAN** (once per task). Then max **2 more fix cycles**.
+- Still failing → `escalated`, with a one-page escalation file. No further attempts without a human decision.
+- A builder that disagrees with a finding says so with evidence. The delivery manager re-invokes the verifier
+  once with the dispute. If the verifier holds, the builder complies.
 
-## Agents
+## 11. Evidence rules (verdicts)
+Verdict files use exactly this shape:
+```
+# Verdict: <ROLE> on T-xxx (run <n>)
+VERDICT: PASS | FAIL | BLOCKED
+Summary: <= 3 lines
+## Findings
+- [BLOCKER|MAJOR|MINOR|NIT] F-<n> <title> — path/to/file.ts:LINE or evidence/T-xxx/shot.png — <what is wrong> — <what good looks like>
+## Checked (what you actually ran/looked at)
+- ...
+```
+- PASS requires **zero BLOCKER and zero MAJOR**. MINOR/NIT never fail a task.
+- A finding without a file:line or evidence path is invalid and must not be counted.
+- A PASS must list what was actually checked. "Looks good" is not evidence.
+- Authors never verify their own work. Verifiers are read-only on application code.
 
-| Agent | Use for |
-|---|---|
-| `architect` (primary) | Planning against the PRD; writes `docs/plans/<FR-ID>-<slug>.md`; never writes code |
-| `builder` (primary, default) | Implementing one planned task at a time |
-| `inference` | Provider interface, Muse Spark / Gemini / open-weights providers, Modal, SAM 3.1, benchmarks |
-| `tester` | Unit, edge and Playwright tests; edits test files only |
-| `reviewer` | Read-only PASS/BLOCK review against the PRD and these rules; run before finishing P0 work |
-| `design-reviewer` | Read-only UI review against `DESIGN_SYSTEM.md`; run after UI changes |
-| `explore` | Read-only code search |
+## 12. Git rules
+- Branches: `feature/<slug>` (integration), `task/T-xxx` (per task, created from the feature branch).
+- Commits: `T-xxx: <imperative summary>`. Small and frequent.
+- **Nobody pushes, force-pushes, resets hard, or cleans.** The human pushes.
+- Only `delivery-manager` merges.
 
-Flow: architect plans → builder implements, delegating model-layer work to `inference` and tests to `tester` → `reviewer` (P0) and `design-reviewer` (UI) → PR. Only the builder commits.
+## 13. Subagent response format (keep context small)
+Final message to the caller is at most 15 lines: `STATUS: <enum>`, the paths you wrote, blockers.
+Detail goes in files, not in the reply.
 
-## Workflow
+## 14. Step-limit behaviour
+If you are told you are at your step limit, stop starting new work. Write what is done, what is left and the
+exact next step to `specs/<feature>/reports/T-xxx-handoff.md` (or your normal output file), commit WIP, and
+reply `STATUS: STEP_LIMIT`.
 
-- Branch from `staging` on `task/*` branches and integrate by PR. Never push directly to `main`.
-- One plan in `docs/plans/` per task, one task per branch. Name branches after the requirement ID, for example `task/fr-sch-03-garment-schema`.
-- Done means: the PRD requirement is met, checks pass, the demo flow still works, any new environment variable is added to the relevant `.example` file, and the submission repo is synced via `build-submission.sh` + push.
-
-### Shared-doc discipline (prevents silent overwrites)
-
-- `docs/plans/**` is architect-integrated. The builder appends status ONLY under dated "Status update" sections, or reports in session chat — never rewrites, deletes, or "resolves" another author's sections. The architect likewise never edits builder status sections; it appends its own.
-- Sync before every commit on a shared branch: fetch and rebase onto the latest `staging` (or pull with rebase). Never `push --force` to `staging` or any `task/*` branch under review.
-- Never `git checkout -- <file>` a shared doc to clear a conflict. If a merge touches `docs/plans/**` or `AGENTS.md`, stop and escalate to the architect — do not resolve unilaterally.
-- If you work in a worktree, sync it at session start and state the worktree path + branch in every report, so divergent copies are diagnosable.
-- Commit task branches early and often; small, recent commits shrink the overwrite window.
+## 15. Hard prohibitions
+Never read or print secrets or `.env*` files. Never commit secrets. Never weaken, skip, delete or special-case
+a test to make it pass. Never edit another role's files. Never invent API shapes: the contract is the source
+of truth.

@@ -17,12 +17,19 @@ export default defineConfig({
 
   use: {
     baseURL: process.env.BASE_URL || 'http://localhost:5173',
-    trace: 'on-first-retry',
+    trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
     // Clear storage before each test to avoid state pollution
     contextOptions: {
       storageState: undefined, // No persistent storage state
     },
+  },
+
+  webServer: {
+    command: 'pnpm dev',
+    url: 'http://localhost:5173',
+    reuseExistingServer: !process.env.CI,
+    timeout: 120 * 1000,
   },
 
   projects: [
